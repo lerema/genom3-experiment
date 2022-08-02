@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs shell/eltclsh net/genomix supervision/tcl-genomix interfaces/openrobots2-idl simulation/mrsim-gazebo simulation/optitrack-gazebo path/libkdtp"
-GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 minnie-tf2 felix-g3utils felix-idl ct_drone hippo-genom3"
+GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils ct_drone minnie-tf2 hippo-genom3"
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"/..
+INSTALL_DIR=$(realpath "$INSTALL_DIR")
 
 readonly SCRIPT_DIR INSTALL_DIR ROBOTPKG_MODULES GENOM_MODULES
 build_start="$(date)"
@@ -27,7 +28,7 @@ fi
 
 # Install dependencies
 sudo apt-get install -y bison python3-vcstool libudev-dev tmux \
-    ros-"$ROS_DISTRO"-jsk-rviz-plugins
+    ros-"$ROS_DISTRO"-jsk-rviz-plugins asciidoctor
 
 # Finally build ros simulation package
 cd "${SCRIPT_DIR}"/../catkin_ws
@@ -87,7 +88,6 @@ done
 for module in $GENOM_MODULES; do
     install_genom_modules "$module"
 done
-
 
 # Final setup
 
