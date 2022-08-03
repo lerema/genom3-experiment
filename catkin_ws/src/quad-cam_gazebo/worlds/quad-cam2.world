@@ -219,7 +219,7 @@
     </include>
 
     <include>
-      <uri>model://mrsim-quadrotor-cam2</uri>
+      <uri>model://mrsim-quadrotor-cam</uri>
       <name>quad2</name>
       <pose>2 2 0.02 0 0 0</pose>
     </include>
