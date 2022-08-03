@@ -46,14 +46,14 @@ cd "$INSTALL_DIR"/robotpkg/bootstrap
 ./bootstrap --prefix="$INSTALL_DIR"/openrobots
 
 # EXPORT PACKAGE PATH
-echo "export DRONE_VV_PATH="$INSTALL_DIR"" >>~/.bashrc
+echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>~/.bashrc
 echo "export PATH=${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
 export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
 
 export PYTHONPATH=${INSTALL_DIR}/lib/python2.7/site-packages:${INSTALL_DIR}/openrobots/lib/python2.7/site-packages:${PYTHONPATH}
 
 export GAZEBO_PLUGIN_PATH=${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
-export GAZEBO_MODEL_PATH=${INSTALL_DIR}/openrobots/share/gazebo/models:${GAZEBO_MODEL_PATH}
+export GAZEBO_MODEL_PATH=${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../models):${GAZEBO_MODEL_PATH}
 
 export GENOM_TMPL_PATH=${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
 " >>~/.bashrc
