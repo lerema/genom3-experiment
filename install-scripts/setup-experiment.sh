@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Order preserved.
 ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs shell/eltclsh net/genomix supervision/tcl-genomix interfaces/openrobots2-idl simulation/mrsim-gazebo simulation/optitrack-gazebo path/libkdtp"
 GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils ct_drone minnie-tf2 hippo-genom3"
 
@@ -8,6 +9,53 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"/..
 INSTALL_DIR=$(realpath "$INSTALL_DIR")
+
+function show_help {
+    echo "Usage: setup-experiment.sh [--help] [--clean] [--genom] [--robotpkg] [--all] [--update]"
+    echo "  --help: show this help"
+    echo "  --clean: clean the experiment"
+    echo "  --genom: install/reinstall the genom3 modules"
+    echo "  --robotpkg: install/reinstall the robotpkg modules"
+    echo "  --all: install/reinstall all the modules"
+    echo "  --update: update the experiment"
+    exit 0
+}
+
+if [ $# -eq 0 ]; then
+    show_help
+    exit 0
+fi
+
+if [ "$1" == "--help" ]; then
+    show_help
+fi
+
+if [ "$1" == "--clean" ]; then
+    echo "Cleaning the experiment"
+    # TODO: complete the cleaning
+    exit 0
+fi
+
+if [ "$1" == "--genom" ]; then
+    INSTALL_GENOM=true
+else
+    INSTALL_GENOM=false
+fi
+
+if [ "$1" == "--robotpkg" ]; then
+    INSTALL_ROBOTPKG=true
+else
+    INSTALL_ROBOTPKG=false
+fi
+
+if [ "$1" == "--all" ]; then
+    INSTALL_GENOM=true
+    INSTALL_ROBOTPKG=true
+fi
+
+if [ "$1" == "--update" ]; then
+    echo "Updating the experiment"
+fi
 
 readonly SCRIPT_DIR INSTALL_DIR ROBOTPKG_MODULES GENOM_MODULES
 build_start="$(date)"
@@ -39,13 +87,16 @@ cd "$INSTALL_DIR"
 vcs import -w 1 <"$SCRIPT_DIR"/drone-genom3.repos
 
 # Install robot-pkg
-printf "Installing robot-pkg...\n"
-# Remove existing installation of robot-pkg
-rm -rf "$INSTALL_DIR"/openrobots/etc/robotpkg.conf
-cd "$INSTALL_DIR"/robotpkg/bootstrap
-./bootstrap --prefix="$INSTALL_DIR"/openrobots
+if [ "$INSTALL_ROBOTPKG" = true ]; then
+    printf "Installing robot-pkg...\n"
+    # Remove existing installation of robot-pkg
+    rm -rf "$INSTALL_DIR"/openrobots/etc/robotpkg.conf
+    cd "$INSTALL_DIR"/robotpkg/bootstrap
+    ./bootstrap --prefix="$INSTALL_DIR"/openrobots
+fi
 
 # EXPORT PACKAGE PATH
+# TODO: add sed comparison to check if the path is already exported
 echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>~/.bashrc
 echo "export PATH=${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
 export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
@@ -80,14 +131,19 @@ function install_genom_modules {
 }
 
 # TODO: automatically detect the base directory of the robot-pkg repository
-for module in $ROBOTPKG_MODULES; do
-    install_robotpkg_modules "$module"
-done
+
+if [ "$INSTALL_ROBOTPKG" = true ]; then
+    for module in $ROBOTPKG_MODULES; do
+        install_robotpkg_modules "$module"
+    done
+fi
 
 # Install genom modules
-for module in $GENOM_MODULES; do
-    install_genom_modules "$module"
-done
+if [ "$INSTALL_GENOM" = true ]; then
+    for module in $GENOM_MODULES; do
+        install_genom_modules "$module"
+    done
+fi
 
 # Final setup
 
