@@ -35,6 +35,10 @@ repositories:
     type: git
     url: git://git.openrobots.org/robots/pom-genom3.git
     version: master
+  python-genomix:
+    type: git
+    url: https://git.openrobots.org/robots/genomix/python-genomix.git
+    version: master
   robotpkg:
     type: git
     url: git://git.openrobots.org/robots/robotpkg

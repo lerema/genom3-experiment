@@ -5,7 +5,13 @@
 The easier way to setup repository is to launch the following command:
 
 ```bash
-bash install-scripts/setup-experiment.sh
+bash install-scripts/setup-experiment.sh --all
+```
+
+If we are expecting different operations, we can use the following command:
+
+```bash
+bash install-scripts/setup-experiment.sh --help
 ```
 
 ## Usage

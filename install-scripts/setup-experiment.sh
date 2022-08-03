@@ -2,7 +2,9 @@
 
 # Order preserved.
 ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs shell/eltclsh net/genomix supervision/tcl-genomix interfaces/openrobots2-idl simulation/mrsim-gazebo simulation/optitrack-gazebo path/libkdtp"
-GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils ct_drone minnie-tf2 hippo-genom3"
+GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils ct_drone minnie-tf2 python-genomix hippo-genom3"
+# Get python version similar to 3.8.
+PYTHON_VERSION=$(python -c 'import sys; print(sys.version_info[0])').$(python -c 'import sys; print(sys.version_info[1])')
 
 set -e
 
@@ -101,7 +103,7 @@ echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>~/.bashrc
 echo "export PATH=${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
 export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
 
-export PYTHONPATH=${INSTALL_DIR}/lib/python2.7/site-packages:${INSTALL_DIR}/openrobots/lib/python2.7/site-packages:${PYTHONPATH}
+export PYTHONPATH=${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
 
 export GAZEBO_PLUGIN_PATH=${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
 export GAZEBO_MODEL_PATH=${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../models):${GAZEBO_MODEL_PATH}
