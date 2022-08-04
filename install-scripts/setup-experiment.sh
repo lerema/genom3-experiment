@@ -106,7 +106,7 @@ export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig
 export PYTHONPATH=${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
 
 export GAZEBO_PLUGIN_PATH=${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
-export GAZEBO_MODEL_PATH=${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../models):${GAZEBO_MODEL_PATH}
+export GAZEBO_MODEL_PATH=${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models):${GAZEBO_MODEL_PATH}
 
 export GENOM_TMPL_PATH=${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
 " >>~/.bashrc
