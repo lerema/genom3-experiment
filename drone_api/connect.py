@@ -1,19 +1,20 @@
-"""Connect to genomix server and load all pocolib modules"""
+"""Connect to genomix server, load and setup all pocolib modules"""
 import glob
 import logging
 import os
 import subprocess
 import multiprocessing
+from drone_api.utils import Singleton
 
 import genomix
+from drone_api import EXPECTED_MODULES
 
 USE_ROBOT = False
 USE_CAM = True
 
 LIB_PATH = os.environ["DRONE_VV_PATH"] + "/lib"
-OPTITRACK = "optitrack-2"
 
-logger = logging.getLogger("Drone Connector")
+logger = logging.getLogger("[Drone Connector]")
 logger.setLevel(logging.DEBUG)
 
 
@@ -28,11 +29,10 @@ class Optitrack:
         """
         Connect to Optitrack and load all pocolib modules
         """
-        optitrack = None
         try:
             logger.info("Connecting to Optitrack")
             if USE_ROBOT:
-                optitrack = self.component.connect(
+                self.component.connect(
                     {
                         "host": "marey",
                         "host_port": "1510",
@@ -41,7 +41,7 @@ class Optitrack:
                     }
                 )
             else:
-                optitrack = self.component.connect(
+                self.component.connect(
                     {
                         "host": "localhost",
                         "host_port": "1509",
@@ -58,7 +58,18 @@ class Optitrack:
         return self
 
     def start(self):
+        """Start the Optitrack component"""
         return
+
+    def stop(self):
+        """Stop the Optitrack component"""
+        return
+
+    def __del__(self):
+        self.component.kill()
+
+    def __str__(self) -> str:
+        return "optitrack"
 
 
 class POM:
@@ -70,23 +81,22 @@ class POM:
 
     def __call__(self):
         """Connect to component port"""
-        pom = None
 
         try:
             logger.info("Connecting to POM")
-            pom = self._connect_port("measure/imu", "rotorcraft/imu")
+            self._connect_port("measure/imu", "rotorcraft/imu")
             if USE_ROBOT:
-                pom = self._connect_port("measure/mocap", "optitrack/bodies/QR_1")
+                self._connect_port("measure/mocap", "optitrack/bodies/QR_1")
             else:
-                pom = self._connect_port("measure/mag", "rotorcraft/mag")
-                pom = self._connect_port("measure/mocap", "optitrack/bodies/QR")
+                self._connect_port("measure/mag", "rotorcraft/mag")
+                self._connect_port("measure/mocap", "optitrack/bodies/QR")
 
-            pom = self._add_measurement(port="imu")
-            pom = self._add_measurement(port="mocap")
+            self._add_measurement(port="imu")
+            self._add_measurement(port="mocap")
             if not USE_ROBOT:
-                pom = self._add_measurement(port="mag")
-                pom = self._set_mag_field(x=23.816e-6, y=-0.41e-6, z=-39.829e-6)
-            pom = self.component.set_history_length({"history_length": 0.5})
+                self._add_measurement(port="mag")
+                self._set_mag_field(x=23.816e-6, y=-0.41e-6, z=-39.829e-6)
+            self.component.set_history_length({"history_length": 0.5})
         except Exception as e:
             logger.error(f"Failed to connect to POM. Throws {e}")
             raise e
@@ -96,8 +106,18 @@ class POM:
         return self
 
     def start(self):
-        """Start the component"""
+        """Start the POM component"""
         return
+
+    def stop(self):
+        """Stop the POM component"""
+        return
+
+    def __del__(self):
+        self.component.kill()
+
+    def __str__(self) -> str:
+        return "pom"
 
     def _connect_port(self, local, remote):
         return self.component.connect_port(
@@ -141,13 +161,12 @@ class Maneuver:
 
     def __call__(self):
         """Connect to component port"""
-        maneuver = None
 
         try:
             logger.info("Connecting to maneuver")
-            maneuver = self._connect_port("state", "pom/frame/robot")
+            self._connect_port("state", "pom/frame/robot")
             if not USE_ROBOT:
-                maneuver = self.component.set_velocity_limit({"v": 2, "w": 1})
+                self.component.set_velocity_limit({"v": 2, "w": 1})
         except Exception as e:
             logger.error(f"Failed to connect to maneuver. Throws {e}")
             raise e
@@ -157,7 +176,7 @@ class Maneuver:
         return self
 
     def start(self):
-        """Start the component"""
+        """Start the Maneuver component"""
         logger.info("Starting maneuver")
         self.component.set_bounds(
             {
@@ -179,6 +198,16 @@ class Maneuver:
             }
         )
 
+    def stop(self):
+        """Stop the Maneuver component"""
+        self.component.stop()
+
+    def __del__(self):
+        self.component.kill()
+
+    def __str__(self) -> str:
+        return "maneuver"
+
     def _connect_port(self, local, remote):
         return self.component.connect_port(
             {
@@ -194,22 +223,21 @@ class RotorCraft:
         self.component = component
 
     def __call__(self):
-        rotorcraft = None
 
         try:
             if USE_ROBOT:
-                rotorcraft = self._connect("/dev/ttyUSB0", "500000")
-                rotorcraft = self._set_sensor_rate(1000, 0, 16, 1)
-                rotorcraft = self._load_imu_calibration()
+                self._connect("/dev/ttyUSB0", "500000")
+                self._set_sensor_rate(1000, 0, 16, 1)
+                self._load_imu_calibration()
             else:
                 if USE_CAM:
-                    rotorcraft = self._connect("/tmp/pty-mrsim-quadrotor-cam", "500000")
+                    self._connect("/tmp/pty-mrsim-quadrotor-cam", "500000")
                 else:
-                    rotorcraft = self._connect("/tmp/pty-mrsim-quadrotor", "500000")
+                    self._connect("/tmp/pty-mrsim-quadrotor", "500000")
 
-                rotorcraft = self._set_sensor_rate(1000, 50, 16, 1)
+                self._set_sensor_rate(1000, 50, 16, 1)
 
-            rotorcraft = self.component.connect_port(
+            self.component.connect_port(
                 {"local": "rotor_input", "remote": "nhfc/rotor_input"}
             )
         except Exception as e:
@@ -221,13 +249,35 @@ class RotorCraft:
         return self
 
     def start(self):
+        """Start the Rotorcraft component"""
         logger.info("Starting Rotorcraft")
         self.component.start()
         self._thread = multiprocessing.Process(target=self.component.servo)
         self._thread.start()
-    
+
+    def stop(self):
+        """Stop the Rotorcraft component"""
+        self.component.set_velocity(
+            {
+                "desired": {
+                    "1": 0,
+                    "2": 0,
+                    "3": 0,
+                    "4": 0,
+                    "5": 0,
+                    "6": 0,
+                    "7": 0,
+                }
+            }
+        )
+        self.component.stop()
+
     def __del__(self):
         self._thread.terminate()
+        self.component.kill()
+
+    def __str__(self) -> str:
+        return "rotorcraft"
 
     def _load_imu_calibration(self):
         # TODO: fix this
@@ -268,16 +318,15 @@ class NHFC:
         self.component = component
 
     def __call__(self):
-        nhfc = None
 
         try:
-            nhfc = self.component.set_gtmrp_geom({})
+            self.component.set_gtmrp_geom({})
             if USE_ROBOT:
                 self._servo_gain(20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
             else:
                 self._servo_gain(20, 20, 3, 0.3, 8, 8, 0.3, 0.03, 0, 0)
-                nhfc = self.component.set_wlimit({"wmin": 16, "wmax": 100})
-            nhfc = self.component.set_emerg(
+                self.component.set_wlimit({"wmin": 16, "wmax": 100})
+            self.component.set_emerg(
                 {
                     "emerg": {
                         "descent": 1.2,
@@ -299,13 +348,22 @@ class NHFC:
         return self
 
     def start(self):
+        """Start the NHFC component"""
         logger.info("Starting NHFC")
         self.component.set_current_position()
         self._thread = multiprocessing.Process(target=self.component.servo)
         self._thread.start()
 
+    def stop(self):
+        """Stop the NHFC component"""
+        self.component.stop()
+
     def __del__(self):
         self._thread.terminate()
+        self.component.kill()
+
+    def __str__(self) -> str:
+        return "nhfc"
 
     def _servo_gain(self, Kpxy, Kpz, Kqxy, Kqz, Kvxy, Kvz, Kwxy, Kwz, Kixy, Kiz):
         return self.component.set_servo_gain(
@@ -341,19 +399,18 @@ class CTDrone:
 
     def __call__(self):
         """CTDrone component"""
-        ctdrone = None
 
         try:
-            ctdrone = self.component.connect_port(
+            self.component.connect_port(
                 {
                     "local": "Pose",
                     "remote": "pom/frame/robot",
                 }
             )
-            ctdrone = self.component.SetCameraImageTopicName(
+            self.component.SetCameraImageTopicName(
                 "/quad1/down_camera_link/down_raw_image"
             )
-            ctdrone = self.component.SetCameraInfoTopicName(
+            self.component.SetCameraInfoTopicName(
                 "/quad1/down_camera_link/down_camera_info"
             )
         except Exception as e:
@@ -365,14 +422,23 @@ class CTDrone:
         return self
 
     def start(self):
+        """Start the CTDrone component"""
         logger.info("Starting CT_Drone")
         self._thread = multiprocessing.Process(
             target=self.component.PublishOccupancyGrid
         )
         self._thread.start()
 
+    def stop(self):
+        """Stop the CTDrone component"""
+        return
+
     def __del__(self):
         self._thread.terminate()
+        self.component.kill()
+
+    def __str__(self) -> str:
+        return "CT_drone"
 
 
 class TF2:
@@ -382,18 +448,17 @@ class TF2:
 
     def __call__(self):
         """TF2 component"""
-        tf2 = None
 
         try:
-            tf2 = self._connect_port("Poses/drone", "pom/frame/robot")
-            tf2 = self._connect_port("Poses/drone_pos", "pom/frame/robot")
-            tf2 = self._connect_port("OccupancyGrids/og", "CT_drone/OccupancyGrid")
-            tf2 = self.component.Init()
-            tf2 = self._publish_static_tf("base", "drone", 0, 0, 0, 0, 0, 0)
-            tf2 = self._add_dynamic_tf("drone", "world", 10, True)
-            tf2 = self._add_dynamic_pos_tf("drone_pos", "world", 10, True)
-            tf2 = self._add_odometry("drone")
-            tf2 = self.component.AddTwistFromPose(
+            self._connect_port("Poses/drone", "pom/frame/robot")
+            self._connect_port("Poses/drone_pos", "pom/frame/robot")
+            self._connect_port("OccupancyGrids/og", "CT_drone/OccupancyGrid")
+            self.component.Init()
+            self._publish_static_tf("base", "drone", 0, 0, 0, 0, 0, 0)
+            self._add_dynamic_tf("drone", "world", 10, True)
+            self._add_dynamic_pos_tf("drone_pos", "world", 10, True)
+            self._add_odometry("drone")
+            self.component.AddTwistFromPose(
                 {
                     "name": "drone",
                     "frame": "drone_pos",
@@ -401,7 +466,7 @@ class TF2:
                     "ms_period": 10,
                 }
             )
-            tf2 = self.component.AddWrenchFromPose(
+            self.component.AddWrenchFromPose(
                 {
                     "name": "drone",
                     "frame": "drone_pos",
@@ -409,8 +474,8 @@ class TF2:
                     "ms_period": 10,
                 }
             )
-            tf2 = self._publish_static_tf("og", "world", 0, 0, 0, 0, 0, 0)
-            tf2 = self.component.AddOccupancyGrid(
+            self._publish_static_tf("og", "world", 0, 0, 0, 0, 0, 0)
+            self.component.AddOccupancyGrid(
                 {
                     "name": "og",
                     "frame": "og",
@@ -428,6 +493,15 @@ class TF2:
 
     def start(self):
         return
+
+    def stop(self):
+        return
+
+    def __del__(self):
+        self.component.kill()
+
+    def __str__(self) -> str:
+        return "tf2"
 
     def _connect_port(self, local, remote):
         return self.component.connect_port(
@@ -489,23 +563,37 @@ class Connector:
         assert self.genomix_process is not None
 
         self._load_modules()
+        if not set(EXPECTED_MODULES).issubset({*self.components}):
+            raise ModuleNotFoundError(f"Failed to load all expected modules")
+
         self.components = {
-            self._connect_optitrack(): self.components["optitrack"],
-            self._connect_pom(): self.components["pom"],
-            self._connect_maneuver(): self.components["maneuver"],
-            self._connect_rotorcraft(): self.components["rotorcraft"],
-            self._connect_nhfc(): self.components["nhfc"],
-            self._connect_ctdrone(): self.components["CT_drone"],
-            self._connect_tf2(): self.components["tf2"],
+            "optitrack": self._connect_optitrack(),
+            "pom": self._connect_pom(),
+            "maneuver": self._connect_maneuver(),
+            "rotorcraft": self._connect_rotorcraft(),
+            "nhfc": self._connect_nhfc(),
+            "CT_drone": self._connect_ctdrone(),
+            "tf2": self._connect_tf2(),
         }
 
     def start(self):
-        for component in self.components.keys():
+        for component in self.components.values():
             component.start()
+        print("Started")
+
+    def stop(self):
+        for component in self.components.values():
+            component.stop()
+        print("Stopped")
 
     def __del__(self):
         # self._unload_modules()
         self.genomix_process.kill()
+        subprocess.call(["pkill", "gzserver"])
+        subprocess.call(["pkill", "gzclient"])
+        subprocess.call(["h2", "end"])
+        subprocess.call(["pkill", "genomixd"])
+        subprocess.call(["pkill", "-f", "\-pocolibs"])
 
     def _load_modules(self) -> None:
         """Load all pocolib modules"""
@@ -514,14 +602,13 @@ class Connector:
         modules = glob.glob(f"{LIB_PATH}/genom/*/plugins/*.so")
 
         for module in modules:
-            logger.info(f"Loading module {module}")
+            logger.info(f"Loading module {os.path.basename(module)}")
             tag = os.path.basename(module).split(".")[0]
             try:
                 self.components[tag] = self.handle.load(module)
             except Exception as e:
                 logger.error(
-                    f"Failed to load module {module}. Check if  the \
-                    respective module is available in the genomix server. Throws {e}"
+                    f"Failed to load module {os.path.basename(module)}. Check if  the respective module is available in the genomix server. Throws {e}"
                 )
 
     def _unload_modules(self) -> None:
@@ -531,11 +618,13 @@ class Connector:
         modules = glob.glob(f"{LIB_PATH}/genom/*/plugins/*.so")
 
         for module in modules:
-            logger.info(f"Unloading module {module}")
+            logger.info(f"Unloading module {os.path.basename(module)}")
             try:
                 self.handle.unload(module)
             except Exception as e:
-                logger.error(f"Failed to unload module {module}. Throws {e}")
+                logger.error(
+                    f"Failed to unload module {os.path.basename(module)}. Throws {e}"
+                )
 
     def _connect_optitrack(self) -> Optitrack:
         """Connect to Optitrack and load all pocolib modules"""
@@ -569,6 +658,7 @@ class Connector:
 def main():
     connector = Connector()
     connector.start()
+    connector.stop()
 
 
 if __name__ == "__main__":
