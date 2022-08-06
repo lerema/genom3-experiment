@@ -1,14 +1,478 @@
 """Connect to genomix server and load all pocolib modules"""
-import subprocess
-import genomix
-import os
-import logging
 import glob
+import logging
+import os
+import subprocess
+import multiprocessing
 
+import genomix
+
+USE_ROBOT = False
+USE_CAM = True
 
 LIB_PATH = os.environ["DRONE_VV_PATH"] + "/lib"
+OPTITRACK = "optitrack-2"
 
 logger = logging.getLogger("Drone Connector")
+logger.setLevel(logging.DEBUG)
+
+
+class Optitrack:
+    def __init__(self, component) -> None:
+        """
+        Connect to Optitrack and load all pocolib modules
+        """
+        self.component = component
+
+    def __call__(self):
+        """
+        Connect to Optitrack and load all pocolib modules
+        """
+        optitrack = None
+        try:
+            logger.info("Connecting to Optitrack")
+            if USE_ROBOT:
+                optitrack = self.component.connect(
+                    {
+                        "host": "marey",
+                        "host_port": "1510",
+                        "mcast": "239.192.168.30",
+                        "mcast_port": "1511",
+                    }
+                )
+            else:
+                optitrack = self.component.connect(
+                    {
+                        "host": "localhost",
+                        "host_port": "1509",
+                        "mcast": "",
+                        "mcast_port": "",
+                    }
+                )
+        except Exception as e:
+            logger.error(f"Failed to connect to Optitrack. Throws {e}")
+            raise e
+        finally:
+            logger.info("Connected to Optitrack")
+
+        return self
+
+    def start(self):
+        return
+
+
+class POM:
+    def __init__(self, component) -> None:
+        """
+        Connect to POM and load all pocolib modules
+        """
+        self.component = component
+
+    def __call__(self):
+        """Connect to component port"""
+        pom = None
+
+        try:
+            logger.info("Connecting to POM")
+            pom = self._connect_port("measure/imu", "rotorcraft/imu")
+            if USE_ROBOT:
+                pom = self._connect_port("measure/mocap", "optitrack/bodies/QR_1")
+            else:
+                pom = self._connect_port("measure/mag", "rotorcraft/mag")
+                pom = self._connect_port("measure/mocap", "optitrack/bodies/QR")
+
+            pom = self._add_measurement(port="imu")
+            pom = self._add_measurement(port="mocap")
+            if not USE_ROBOT:
+                pom = self._add_measurement(port="mag")
+                pom = self._set_mag_field(x=23.816e-6, y=-0.41e-6, z=-39.829e-6)
+            pom = self.component.set_history_length({"history_length": 0.5})
+        except Exception as e:
+            logger.error(f"Failed to connect to POM. Throws {e}")
+            raise e
+        finally:
+            logger.info("Connected to POM")
+
+        return self
+
+    def start(self):
+        """Start the component"""
+        return
+
+    def _connect_port(self, local, remote):
+        return self.component.connect_port(
+            {
+                "local": local,
+                "remote": remote,
+            }
+        )
+
+    def _add_measurement(self, port, x=0.0, y=0.0, z=0.0, roll=0.0, pitch=0.0, yaw=0.0):
+        return self.component.add_measurement(
+            {
+                "port": port,
+                "x": x,
+                "y": y,
+                "z": z,
+                "roll": roll,
+                "pitch": pitch,
+                "yaw": yaw,
+            }
+        )
+
+    def _set_mag_field(self, x=0.0, y=0.0, z=0.0):
+        return self.component.set_mag_field(
+            {
+                "magdir": {
+                    "x": x,
+                    "y": y,
+                    "z": z,
+                }
+            }
+        )
+
+
+class Maneuver:
+    def __init__(self, component) -> None:
+        """
+        Connect to POM and load all pocolib modules
+        """
+        self.component = component
+
+    def __call__(self):
+        """Connect to component port"""
+        maneuver = None
+
+        try:
+            logger.info("Connecting to maneuver")
+            maneuver = self._connect_port("state", "pom/frame/robot")
+            if not USE_ROBOT:
+                maneuver = self.component.set_velocity_limit({"v": 2, "w": 1})
+        except Exception as e:
+            logger.error(f"Failed to connect to maneuver. Throws {e}")
+            raise e
+        finally:
+            logger.info("Connected to maneuver")
+
+        return self
+
+    def start(self):
+        """Start the component"""
+        logger.info("Starting maneuver")
+        self.component.set_bounds(
+            {
+                "xmin": -100,
+                "xmax": 100,
+                "ymin": -100,
+                "ymax": 100,
+                "zmin": -2,
+                "zmax": 30,
+                "yawmin": -10,
+                "yawmax": 10,
+            }
+        )
+        self.component.set_current_state()
+        self.component.take_off(
+            {
+                "height": 0.15,
+                "duration": 0,
+            }
+        )
+
+    def _connect_port(self, local, remote):
+        return self.component.connect_port(
+            {
+                "local": local,
+                "remote": remote,
+            }
+        )
+
+
+class RotorCraft:
+    def __init__(self, component):
+        """Connect to Rotorcraft and load all pocolib modules"""
+        self.component = component
+
+    def __call__(self):
+        rotorcraft = None
+
+        try:
+            if USE_ROBOT:
+                rotorcraft = self._connect("/dev/ttyUSB0", "500000")
+                rotorcraft = self._set_sensor_rate(1000, 0, 16, 1)
+                rotorcraft = self._load_imu_calibration()
+            else:
+                if USE_CAM:
+                    rotorcraft = self._connect("/tmp/pty-mrsim-quadrotor-cam", "500000")
+                else:
+                    rotorcraft = self._connect("/tmp/pty-mrsim-quadrotor", "500000")
+
+                rotorcraft = self._set_sensor_rate(1000, 50, 16, 1)
+
+            rotorcraft = self.component.connect_port(
+                {"local": "rotor_input", "remote": "nhfc/rotor_input"}
+            )
+        except Exception as e:
+            logger.error(f"Failed to connect to Rotorcraft. Throws {e}")
+            raise e
+        finally:
+            logger.info("Connected to Rotorcraft")
+
+        return self
+
+    def start(self):
+        logger.info("Starting Rotorcraft")
+        self.component.start()
+        self._thread = multiprocessing.Process(target=self.component.servo)
+        self._thread.start()
+    
+    def __del__(self):
+        self._thread.terminate()
+
+    def _load_imu_calibration(self):
+        # TODO: fix this
+        with open(
+            os.path.join(os.path.dirname(__file__), "../imu_calib.txt"),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            lines = f.readlines()
+            for line in lines:
+                self.component.set_imu_calibration({"calib": line})
+
+    def _connect(self, serial, baudrate):
+        """Connect to Rotorcraft and load all pocolib modules"""
+        return self.component.connect(
+            {
+                "serial": serial,
+                "baud": baudrate,
+            }
+        )
+
+    def _set_sensor_rate(self, imu_rate, mag_rate, motor_rate, battery_rate):
+        return self.component.set_sensor_rate(
+            {
+                "rate": {
+                    "imu": imu_rate,
+                    "mag": mag_rate,
+                    "motor": motor_rate,
+                    "battery": battery_rate,
+                }
+            }
+        )
+
+
+class NHFC:
+    def __init__(self, component):
+        """Connect to NHFC and load all pocolib modules"""
+        self.component = component
+
+    def __call__(self):
+        nhfc = None
+
+        try:
+            nhfc = self.component.set_gtmrp_geom({})
+            if USE_ROBOT:
+                self._servo_gain(20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
+            else:
+                self._servo_gain(20, 20, 3, 0.3, 8, 8, 0.3, 0.03, 0, 0)
+                nhfc = self.component.set_wlimit({"wmin": 16, "wmax": 100})
+            nhfc = self.component.set_emerg(
+                {
+                    "emerg": {
+                        "descent": 1.2,
+                        "dx": 0.1,
+                        "dq": 1,
+                        "dv": 0.3,
+                        "dw": 1,
+                    }
+                }
+            )
+            self._connect_port("state", "pom/frame/robot")
+            self._connect_port("reference", "maneuver/desired")
+        except Exception as e:
+            logger.error(f"Failed to connect to NHFC. Throws {e}")
+            raise e
+        finally:
+            logger.info("Connected to NHFC")
+
+        return self
+
+    def start(self):
+        logger.info("Starting NHFC")
+        self.component.set_current_position()
+        self._thread = multiprocessing.Process(target=self.component.servo)
+        self._thread.start()
+
+    def __del__(self):
+        self._thread.terminate()
+
+    def _servo_gain(self, Kpxy, Kpz, Kqxy, Kqz, Kvxy, Kvz, Kwxy, Kwz, Kixy, Kiz):
+        return self.component.set_servo_gain(
+            {
+                "gain": {
+                    "Kpxy": Kpxy,
+                    "Kpz": Kpz,
+                    "Kqxy": Kqxy,
+                    "Kqz": Kqz,
+                    "Kvxy": Kvxy,
+                    "Kvz": Kvz,
+                    "Kwxy": Kwxy,
+                    "Kwz": Kwz,
+                    "Kixy": Kixy,
+                    "Kiz": Kiz,
+                }
+            }
+        )
+
+    def _connect_port(self, local, remote):
+        return self.component.connect_port(
+            {
+                "local": local,
+                "remote": remote,
+            }
+        )
+
+
+class CTDrone:
+    def __init__(self, component):
+        """Connect to CTDrone and load all pocolib modules"""
+        self.component = component
+
+    def __call__(self):
+        """CTDrone component"""
+        ctdrone = None
+
+        try:
+            ctdrone = self.component.connect_port(
+                {
+                    "local": "Pose",
+                    "remote": "pom/frame/robot",
+                }
+            )
+            ctdrone = self.component.SetCameraImageTopicName(
+                "/quad1/down_camera_link/down_raw_image"
+            )
+            ctdrone = self.component.SetCameraInfoTopicName(
+                "/quad1/down_camera_link/down_camera_info"
+            )
+        except Exception as e:
+            logging.error(f"Failed to connect to CTDrone. Throws {e}")
+            raise e
+        finally:
+            logging.info("Connected to CTDrone")
+
+        return self
+
+    def start(self):
+        logger.info("Starting CT_Drone")
+        self._thread = multiprocessing.Process(
+            target=self.component.PublishOccupancyGrid
+        )
+        self._thread.start()
+
+    def __del__(self):
+        self._thread.terminate()
+
+
+class TF2:
+    def __init__(self, component):
+        """Connect to TF2 and load all pocolib modules"""
+        self.component = component
+
+    def __call__(self):
+        """TF2 component"""
+        tf2 = None
+
+        try:
+            tf2 = self._connect_port("Poses/drone", "pom/frame/robot")
+            tf2 = self._connect_port("Poses/drone_pos", "pom/frame/robot")
+            tf2 = self._connect_port("OccupancyGrids/og", "CT_drone/OccupancyGrid")
+            tf2 = self.component.Init()
+            tf2 = self._publish_static_tf("base", "drone", 0, 0, 0, 0, 0, 0)
+            tf2 = self._add_dynamic_tf("drone", "world", 10, True)
+            tf2 = self._add_dynamic_pos_tf("drone_pos", "world", 10, True)
+            tf2 = self._add_odometry("drone")
+            tf2 = self.component.AddTwistFromPose(
+                {
+                    "name": "drone",
+                    "frame": "drone_pos",
+                    "topic": "drone_twist",
+                    "ms_period": 10,
+                }
+            )
+            tf2 = self.component.AddWrenchFromPose(
+                {
+                    "name": "drone",
+                    "frame": "drone_pos",
+                    "topic": "drone_wrench",
+                    "ms_period": 10,
+                }
+            )
+            tf2 = self._publish_static_tf("og", "world", 0, 0, 0, 0, 0, 0)
+            tf2 = self.component.AddOccupancyGrid(
+                {
+                    "name": "og",
+                    "frame": "og",
+                    "topic": "og",
+                    "ms_period": 50,
+                }
+            )
+        except Exception as e:
+            logging.error(f"Failed to connect to TF2. Throws {e}")
+            raise e
+        finally:
+            logging.info("Connected to TF2")
+
+        return self
+
+    def start(self):
+        return
+
+    def _connect_port(self, local, remote):
+        return self.component.connect_port(
+            {
+                "local": local,
+                "remote": remote,
+            }
+        )
+
+    def _add_odometry(self, name):
+        return self.component.AddOdometry({"name": name})
+
+    def _publish_static_tf(self, name, parent_frame, x, y, z, roll, pitch, yaw):
+        return self.component.PublishStaticTF(
+            {
+                "name": name,
+                "parent_frame": parent_frame,
+                "x": x,
+                "y": y,
+                "z": z,
+                "roll": roll,
+                "pitch": pitch,
+                "yaw": yaw,
+            }
+        )
+
+    def _add_dynamic_tf(self, name, parent_frame, ms_period, undef_in_orig):
+        return self.component.AddDynamicTF(
+            {
+                "name": name,
+                "parent_frame": parent_frame,
+                "ms_period": ms_period,
+                "undef_in_orig": undef_in_orig,
+            }
+        )
+
+    def _add_dynamic_pos_tf(self, name, parent_frame, ms_period, undef_in_orig):
+        return self.component.AddDynamicPosTF(
+            {
+                "name": name,
+                "parent_frame": parent_frame,
+                "ms_period": ms_period,
+                "undef_in_orig": undef_in_orig,
+            }
+        )
 
 
 class Connector:
@@ -19,13 +483,28 @@ class Connector:
         )
 
         self.handle = genomix.connect(f"{host}:{port}")
+        self.components = {}
 
         assert self.handle is not None
         assert self.genomix_process is not None
 
         self._load_modules()
+        self.components = {
+            self._connect_optitrack(): self.components["optitrack"],
+            self._connect_pom(): self.components["pom"],
+            self._connect_maneuver(): self.components["maneuver"],
+            self._connect_rotorcraft(): self.components["rotorcraft"],
+            self._connect_nhfc(): self.components["nhfc"],
+            self._connect_ctdrone(): self.components["CT_drone"],
+            self._connect_tf2(): self.components["tf2"],
+        }
+
+    def start(self):
+        for component in self.components.keys():
+            component.start()
 
     def __del__(self):
+        # self._unload_modules()
         self.genomix_process.kill()
 
     def _load_modules(self) -> None:
@@ -36,11 +515,60 @@ class Connector:
 
         for module in modules:
             logger.info(f"Loading module {module}")
-            self.handle.load(module)
+            tag = os.path.basename(module).split(".")[0]
+            try:
+                self.components[tag] = self.handle.load(module)
+            except Exception as e:
+                logger.error(
+                    f"Failed to load module {module}. Check if  the \
+                    respective module is available in the genomix server. Throws {e}"
+                )
+
+    def _unload_modules(self) -> None:
+        """Unload all pocolib modules"""
+
+        assert os.path.isdir(LIB_PATH)
+        modules = glob.glob(f"{LIB_PATH}/genom/*/plugins/*.so")
+
+        for module in modules:
+            logger.info(f"Unloading module {module}")
+            try:
+                self.handle.unload(module)
+            except Exception as e:
+                logger.error(f"Failed to unload module {module}. Throws {e}")
+
+    def _connect_optitrack(self) -> Optitrack:
+        """Connect to Optitrack and load all pocolib modules"""
+        return Optitrack(self.components["optitrack"])()
+
+    def _connect_pom(self) -> POM:
+        """Connect to POM and load all pocolib modules"""
+        return POM(self.components["pom"])()
+
+    def _connect_maneuver(self) -> Maneuver:
+        """Connect to maneuver and load all pocolib modules"""
+        return Maneuver(self.components["maneuver"])()
+
+    def _connect_rotorcraft(self) -> RotorCraft:
+        """Connect to Rotorcraft and load all pocolib modules"""
+        return RotorCraft(self.components["rotorcraft"])()
+
+    def _connect_nhfc(self) -> NHFC:
+        """Connect to NHFC and load all pocolib modules"""
+        return NHFC(self.components["nhfc"])()
+
+    def _connect_ctdrone(self) -> CTDrone:
+        """Connect to CTDrone and load all pocolib modules"""
+        return CTDrone(self.components["CT_drone"])()
+
+    def _connect_tf2(self) -> TF2:
+        """Connect to TF2 and load all pocolib modules"""
+        return TF2(self.components["tf2"])()
 
 
 def main():
     connector = Connector()
+    connector.start()
 
 
 if __name__ == "__main__":
