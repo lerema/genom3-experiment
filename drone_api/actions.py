@@ -28,6 +28,7 @@ class Land:
         result = self.maneuver.take_off(
             {"height": 0.15 if self._is_robot else 0.05, "duration": 0}, ack=self.ack
         )
+        result = self.maneuver.wait()
 
         return result
 
@@ -95,6 +96,7 @@ class Move:
             },
             ack=self.ack,
         )
+        result = self.maneuver.wait()
 
         return result
 
@@ -108,7 +110,8 @@ class Takeoff:
 
     def __call__(self, **kwargs):
         height = kwargs.get("height", 0.15)
+        duration = kwargs.get("duration", 0)
         logger.info(f"Taking off to {height}")
-        result = self.maneuver.take_off(height=height, duration=0, ack=self.ack)
-
+        result = self.maneuver.take_off(height=height, duration=duration, ack=self.ack)
+        result = self.maneuver.wait()
         return result
