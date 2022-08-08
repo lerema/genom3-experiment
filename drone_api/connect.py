@@ -1,13 +1,14 @@
 """Connect to genomix server, load and setup all pocolib modules"""
 import glob
 import logging
+import multiprocessing
 import os
 import subprocess
-import multiprocessing
-from drone_api.utils import Singleton
 
 import genomix
+
 from drone_api import EXPECTED_MODULES
+from drone_api.utils import Singleton
 
 USE_ROBOT = False
 USE_CAM = True
@@ -24,6 +25,7 @@ class Optitrack:
         Connect to Optitrack and load all pocolib modules
         """
         self.component = component
+        self.ack = True
 
     def __call__(self):
         """
@@ -38,8 +40,9 @@ class Optitrack:
                         "host_port": "1510",
                         "mcast": "239.192.168.30",
                         "mcast_port": "1511",
-                    }
-                )
+                    },
+                    ack=self.ack,
+                ).wait()
             else:
                 self.component.connect(
                     {
@@ -47,8 +50,9 @@ class Optitrack:
                         "host_port": "1509",
                         "mcast": "",
                         "mcast_port": "",
-                    }
-                )
+                    },
+                    ack=self.ack,
+                ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to Optitrack. Throws {e}")
             raise e
@@ -78,6 +82,7 @@ class POM:
         Connect to POM and load all pocolib modules
         """
         self.component = component
+        self.ack = True
 
     def __call__(self):
         """Connect to component port"""
@@ -96,7 +101,9 @@ class POM:
             if not USE_ROBOT:
                 self._add_measurement(port="mag")
                 self._set_mag_field(x=23.816e-6, y=-0.41e-6, z=-39.829e-6)
-            self.component.set_history_length({"history_length": 0.5})
+            self.component.set_history_length(
+                {"history_length": 0.5}, ack=self.ack
+            ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to POM. Throws {e}")
             raise e
@@ -124,8 +131,9 @@ class POM:
             {
                 "local": local,
                 "remote": remote,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def _add_measurement(self, port, x=0.0, y=0.0, z=0.0, roll=0.0, pitch=0.0, yaw=0.0):
         return self.component.add_measurement(
@@ -137,8 +145,9 @@ class POM:
                 "roll": roll,
                 "pitch": pitch,
                 "yaw": yaw,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def _set_mag_field(self, x=0.0, y=0.0, z=0.0):
         return self.component.set_mag_field(
@@ -148,8 +157,9 @@ class POM:
                     "y": y,
                     "z": z,
                 }
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
 
 class Maneuver:
@@ -158,6 +168,7 @@ class Maneuver:
         Connect to POM and load all pocolib modules
         """
         self.component = component
+        self.ack = True
 
     def __call__(self):
         """Connect to component port"""
@@ -166,7 +177,7 @@ class Maneuver:
             logger.info("Connecting to maneuver")
             self._connect_port("state", "pom/frame/robot")
             if not USE_ROBOT:
-                self.component.set_velocity_limit({"v": 2, "w": 1})
+                self.component.set_velocity_limit({"v": 2, "w": 1}, ack=self.ack).wait()
         except Exception as e:
             logger.error(f"Failed to connect to maneuver. Throws {e}")
             raise e
@@ -188,15 +199,17 @@ class Maneuver:
                 "zmax": 30,
                 "yawmin": -10,
                 "yawmax": 10,
-            }
-        )
-        self.component.set_current_state()
+            },
+            ack=self.ack,
+        ).wait()
+        self.component.set_current_state(ack=self.ack).wait()
         self.component.take_off(
             {
                 "height": 0.15,
                 "duration": 0,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def stop(self):
         """Stop the Maneuver component"""
@@ -213,14 +226,16 @@ class Maneuver:
             {
                 "local": local,
                 "remote": remote,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
 
 class RotorCraft:
     def __init__(self, component):
         """Connect to Rotorcraft and load all pocolib modules"""
         self.component = component
+        self.ack = True
 
     def __call__(self):
 
@@ -238,8 +253,8 @@ class RotorCraft:
                 self._set_sensor_rate(1000, 50, 16, 1)
 
             self.component.connect_port(
-                {"local": "rotor_input", "remote": "nhfc/rotor_input"}
-            )
+                {"local": "rotor_input", "remote": "nhfc/rotor_input"}, ack=self.ack
+            ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to Rotorcraft. Throws {e}")
             raise e
@@ -251,7 +266,7 @@ class RotorCraft:
     def start(self):
         """Start the Rotorcraft component"""
         logger.info("Starting Rotorcraft")
-        self.component.start()
+        self.component.start(ack=self.ack).wait()
         self._thread = multiprocessing.Process(target=self.component.servo)
         self._thread.start()
 
@@ -259,18 +274,11 @@ class RotorCraft:
         """Stop the Rotorcraft component"""
         self.component.set_velocity(
             {
-                "desired": {
-                    "1": 0,
-                    "2": 0,
-                    "3": 0,
-                    "4": 0,
-                    "5": 0,
-                    "6": 0,
-                    "7": 0,
-                }
-            }
-        )
-        self.component.stop()
+                "desired": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+            ack=self.ack,
+        ).wait()
+        self.component.stop(ack=self.ack).wait()
 
     def __del__(self):
         self._thread.terminate()
@@ -296,8 +304,9 @@ class RotorCraft:
             {
                 "serial": serial,
                 "baud": baudrate,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def _set_sensor_rate(self, imu_rate, mag_rate, motor_rate, battery_rate):
         return self.component.set_sensor_rate(
@@ -308,14 +317,16 @@ class RotorCraft:
                     "motor": motor_rate,
                     "battery": battery_rate,
                 }
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
 
 class NHFC:
     def __init__(self, component):
         """Connect to NHFC and load all pocolib modules"""
         self.component = component
+        self.ack = True
 
     def __call__(self):
 
@@ -325,7 +336,9 @@ class NHFC:
                 self._servo_gain(20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
             else:
                 self._servo_gain(20, 20, 3, 0.3, 8, 8, 0.3, 0.03, 0, 0)
-                self.component.set_wlimit({"wmin": 16, "wmax": 100})
+                self.component.set_wlimit(
+                    {"wmin": 16, "wmax": 100}, ack=self.ack
+                ).wait()
             self.component.set_emerg(
                 {
                     "emerg": {
@@ -335,8 +348,9 @@ class NHFC:
                         "dv": 0.3,
                         "dw": 1,
                     }
-                }
-            )
+                },
+                ack=self.ack,
+            ).wait()
             self._connect_port("state", "pom/frame/robot")
             self._connect_port("reference", "maneuver/desired")
         except Exception as e:
@@ -380,22 +394,25 @@ class NHFC:
                     "Kixy": Kixy,
                     "Kiz": Kiz,
                 }
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def _connect_port(self, local, remote):
         return self.component.connect_port(
             {
                 "local": local,
                 "remote": remote,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
 
 class CTDrone:
     def __init__(self, component):
         """Connect to CTDrone and load all pocolib modules"""
         self.component = component
+        self.ack = True
 
     def __call__(self):
         """CTDrone component"""
@@ -405,14 +422,15 @@ class CTDrone:
                 {
                     "local": "Pose",
                     "remote": "pom/frame/robot",
-                }
-            )
+                },
+                ack=self.ack,
+            ).wait()
             self.component.SetCameraImageTopicName(
-                "/quad1/down_camera_link/down_raw_image"
-            )
+                "/quad1/down_camera_link/down_raw_image", ack=self.ack
+            ).wait()
             self.component.SetCameraInfoTopicName(
-                "/quad1/down_camera_link/down_camera_info"
-            )
+                "/quad1/down_camera_link/down_camera_info", ack=self.ack
+            ).wait()
         except Exception as e:
             logging.error(f"Failed to connect to CTDrone. Throws {e}")
             raise e
@@ -445,6 +463,7 @@ class TF2:
     def __init__(self, component):
         """Connect to TF2 and load all pocolib modules"""
         self.component = component
+        self.ack = True
 
     def __call__(self):
         """TF2 component"""
@@ -453,7 +472,7 @@ class TF2:
             self._connect_port("Poses/drone", "pom/frame/robot")
             self._connect_port("Poses/drone_pos", "pom/frame/robot")
             self._connect_port("OccupancyGrids/og", "CT_drone/OccupancyGrid")
-            self.component.Init()
+            self.component.Init(ack=self.ack).wait()
             self._publish_static_tf("base", "drone", 0, 0, 0, 0, 0, 0)
             self._add_dynamic_tf("drone", "world", 10, True)
             self._add_dynamic_pos_tf("drone_pos", "world", 10, True)
@@ -464,16 +483,18 @@ class TF2:
                     "frame": "drone_pos",
                     "topic": "drone_twist",
                     "ms_period": 10,
-                }
-            )
+                },
+                ack=self.ack,
+            ).wait()
             self.component.AddWrenchFromPose(
                 {
                     "name": "drone",
                     "frame": "drone_pos",
                     "topic": "drone_wrench",
                     "ms_period": 10,
-                }
-            )
+                },
+                ack=self.ack,
+            ).wait()
             self._publish_static_tf("og", "world", 0, 0, 0, 0, 0, 0)
             self.component.AddOccupancyGrid(
                 {
@@ -481,8 +502,9 @@ class TF2:
                     "frame": "og",
                     "topic": "og",
                     "ms_period": 50,
-                }
-            )
+                },
+                ack=self.ack,
+            ).wait()
         except Exception as e:
             logging.error(f"Failed to connect to TF2. Throws {e}")
             raise e
@@ -508,11 +530,12 @@ class TF2:
             {
                 "local": local,
                 "remote": remote,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def _add_odometry(self, name):
-        return self.component.AddOdometry({"name": name})
+        return self.component.AddOdometry({"name": name}, ack=self.ack).wait()
 
     def _publish_static_tf(self, name, parent_frame, x, y, z, roll, pitch, yaw):
         return self.component.PublishStaticTF(
@@ -525,8 +548,9 @@ class TF2:
                 "roll": roll,
                 "pitch": pitch,
                 "yaw": yaw,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def _add_dynamic_tf(self, name, parent_frame, ms_period, undef_in_orig):
         return self.component.AddDynamicTF(
@@ -535,8 +559,9 @@ class TF2:
                 "parent_frame": parent_frame,
                 "ms_period": ms_period,
                 "undef_in_orig": undef_in_orig,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
     def _add_dynamic_pos_tf(self, name, parent_frame, ms_period, undef_in_orig):
         return self.component.AddDynamicPosTF(
@@ -545,8 +570,9 @@ class TF2:
                 "parent_frame": parent_frame,
                 "ms_period": ms_period,
                 "undef_in_orig": undef_in_orig,
-            }
-        )
+            },
+            ack=self.ack,
+        ).wait()
 
 
 class Connector:
@@ -579,11 +605,11 @@ class Connector:
     def start(self):
         for component in self.components.values():
             component.start()
-        print("Started")
 
     def stop(self):
-        for component in self.components.values():
-            component.stop()
+        self._thread1.terminate()
+        self._thread2.terminate()
+        self._thread3.terminate()
         print("Stopped")
 
     def __del__(self):
@@ -653,15 +679,3 @@ class Connector:
     def _connect_tf2(self) -> TF2:
         """Connect to TF2 and load all pocolib modules"""
         return TF2(self.components["tf2"])()
-
-
-def main():
-    connector = Connector()
-    connector.start()
-    connector.stop()
-
-
-if __name__ == "__main__":
-    main()
-    print("Done")
-    exit(0)
