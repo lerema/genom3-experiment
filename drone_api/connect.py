@@ -4,6 +4,7 @@ import logging
 import multiprocessing
 import os
 import subprocess
+import time
 
 import genomix
 
@@ -267,7 +268,9 @@ class RotorCraft:
         """Start the Rotorcraft component"""
         logger.info("Starting Rotorcraft")
         self.component.start(ack=self.ack).wait()
-        self._thread = multiprocessing.Process(target=self.component.servo)
+        self._thread = multiprocessing.Process(
+            target=self.component.servo, kwargs={"ack": self.ack}
+        )
         self._thread.start()
 
     def stop(self):
@@ -365,7 +368,9 @@ class NHFC:
         """Start the NHFC component"""
         logger.info("Starting NHFC")
         self.component.set_current_position()
-        self._thread = multiprocessing.Process(target=self.component.servo)
+        self._thread = multiprocessing.Process(
+            target=self.component.servo, kwargs={"ack": self.ack}
+        )
         self._thread.start()
 
     def stop(self):
@@ -443,7 +448,7 @@ class CTDrone:
         """Start the CTDrone component"""
         logger.info("Starting CT_Drone")
         self._thread = multiprocessing.Process(
-            target=self.component.PublishOccupancyGrid
+            target=self.component.PublishOccupancyGrid, kwargs={"ack": self.ack}
         )
         self._thread.start()
 
@@ -603,8 +608,15 @@ class Connector:
         }
 
     def start(self):
-        for component in self.components.values():
-            component.start()
+        # for component in self.components.values():
+        #     component.start()
+        self.components["rotorcraft"].start()
+        time.sleep(1)
+        self.components["nhfc"].start()
+        time.sleep(1)
+        self.components["maneuver"].start()
+        time.sleep(1)
+        self.components["CT_drone"].start()
 
     def stop(self):
         self._thread1.terminate()
