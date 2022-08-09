@@ -5,6 +5,7 @@ import multiprocessing
 import os
 import subprocess
 import time
+from drone_api.params import DRONES
 
 import genomix
 
@@ -21,12 +22,13 @@ logger.setLevel(logging.DEBUG)
 
 
 class Optitrack:
-    def __init__(self, component) -> None:
+    def __init__(self, component, params) -> None:
         """
         Connect to Optitrack and load all pocolib modules
         """
         self.component = component
         self.ack = True
+        self.params = params[str(self)]
 
     def __call__(self):
         """
@@ -34,26 +36,15 @@ class Optitrack:
         """
         try:
             logger.info("Connecting to Optitrack")
-            if USE_ROBOT:
-                self.component.connect(
-                    {
-                        "host": "marey",
-                        "host_port": "1510",
-                        "mcast": "239.192.168.30",
-                        "mcast_port": "1511",
-                    },
-                    ack=self.ack,
-                ).wait()
-            else:
-                self.component.connect(
-                    {
-                        "host": "localhost",
-                        "host_port": "1509",
-                        "mcast": "",
-                        "mcast_port": "",
-                    },
-                    ack=self.ack,
-                ).wait()
+            self.component.connect(
+                {
+                    "host": self.params["host"],
+                    "host_port": self.params["host_port"],
+                    "mcast": self.params["mcast"],
+                    "mcast_port": self.params["mcast_port"],
+                },
+                ack=self.ack,
+            ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to Optitrack. Throws {e}")
             raise e
@@ -78,11 +69,12 @@ class Optitrack:
 
 
 class POM:
-    def __init__(self, component) -> None:
+    def __init__(self, component, params) -> None:
         """
         Connect to POM and load all pocolib modules
         """
         self.component = component
+        self.params = params[str(self)]
         self.ack = True
 
     def __call__(self):
@@ -90,20 +82,19 @@ class POM:
 
         try:
             logger.info("Connecting to POM")
-            self._connect_port("measure/imu", "rotorcraft/imu")
-            if USE_ROBOT:
-                self._connect_port("measure/mocap", "optitrack/bodies/QR_1")
-            else:
-                self._connect_port("measure/mag", "rotorcraft/mag")
-                self._connect_port("measure/mocap", "optitrack/bodies/QR")
+            for port in self.params["ports"]:
+                self._connect_port(port[0], port[1])
 
-            self._add_measurement(port="imu")
-            self._add_measurement(port="mocap")
-            if not USE_ROBOT:
-                self._add_measurement(port="mag")
-                self._set_mag_field(x=23.816e-6, y=-0.41e-6, z=-39.829e-6)
+            for measurement in self.params["add_measurements"].keys():
+                self._add_measurement(measurement)
+
+            self._set_mag_field(
+                x=self.params["set_mag_field"][0],
+                y=self.params["set_mag_field"][1],
+                z=self.params["set_mag_field"][2],
+            )
             self.component.set_history_length(
-                {"history_length": 0.5}, ack=self.ack
+                {"history_length": self.params["history_length"]}, ack=self.ack
             ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to POM. Throws {e}")
@@ -164,21 +155,28 @@ class POM:
 
 
 class Maneuver:
-    def __init__(self, component) -> None:
+    def __init__(self, component, params) -> None:
         """
         Connect to POM and load all pocolib modules
         """
         self.component = component
         self.ack = True
+        self.params = params[str(self)]
 
     def __call__(self):
         """Connect to component port"""
 
         try:
             logger.info("Connecting to maneuver")
-            self._connect_port("state", "pom/frame/robot")
+            self._connect_port(self.params["ports"][0], self.params["ports"][1])
             if not USE_ROBOT:
-                self.component.set_velocity_limit({"v": 2, "w": 1}, ack=self.ack).wait()
+                self.component.set_velocity_limit(
+                    {
+                        "v": self.params["set_velocity_limit"][0],
+                        "w": self.params["set_velocity_limit"][1],
+                    },
+                    ack=self.ack,
+                ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to maneuver. Throws {e}")
             raise e
@@ -233,28 +231,32 @@ class Maneuver:
 
 
 class RotorCraft:
-    def __init__(self, component):
+    def __init__(self, component, params):
         """Connect to Rotorcraft and load all pocolib modules"""
         self.component = component
         self.ack = True
+        self.params = params[str(self)]
 
     def __call__(self):
 
         try:
-            if USE_ROBOT:
-                self._connect("/dev/ttyUSB0", "500000")
-                self._set_sensor_rate(1000, 0, 16, 1)
-                self._load_imu_calibration()
+            # TODO: Fix the ports
+            if USE_CAM:
+                self._connect("/tmp/pty-mrsim-quadrotor-cam", "500000")
             else:
-                if USE_CAM:
-                    self._connect("/tmp/pty-mrsim-quadrotor-cam", "500000")
-                else:
-                    self._connect("/tmp/pty-mrsim-quadrotor", "500000")
-
-                self._set_sensor_rate(1000, 50, 16, 1)
+                self._connect(self.params["connect"][0], self.params["connect"][1])
+            self._set_sensor_rate(
+                self.params["set_sensor_rate"][0],
+                self.params["set_sensor_rate"][1],
+                self.params["set_sensor_rate"][2],
+                self.params["set_sensor_rate"][3],
+            )
+            if USE_ROBOT:
+                self._load_imu_calibration()
 
             self.component.connect_port(
-                {"local": "rotor_input", "remote": "nhfc/rotor_input"}, ack=self.ack
+                {"local": self.params["ports"][0], "remote": self.params["ports"][1]},
+                ack=self.ack,
             ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to Rotorcraft. Throws {e}")
@@ -326,36 +328,48 @@ class RotorCraft:
 
 
 class NHFC:
-    def __init__(self, component):
+    def __init__(self, component, params):
         """Connect to NHFC and load all pocolib modules"""
         self.component = component
         self.ack = True
+        self.params = params[str(self)]
 
     def __call__(self):
 
         try:
             self.component.set_gtmrp_geom({})
-            if USE_ROBOT:
-                self._servo_gain(20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
-            else:
-                self._servo_gain(20, 20, 3, 0.3, 8, 8, 0.3, 0.03, 0, 0)
-                self.component.set_wlimit(
-                    {"wmin": 16, "wmax": 100}, ack=self.ack
-                ).wait()
+            self._servo_gain(
+                self.params["servo_gain"][0],
+                self.params["servo_gain"][1],
+                self.params["servo_gain"][2],
+                self.params["servo_gain"][3],
+                self.params["servo_gain"][4],
+                self.params["servo_gain"][5],
+                self.params["servo_gain"][6],
+                self.params["servo_gain"][7],
+                self.params["servo_gain"][8],
+                self.params["servo_gain"][9],
+            )
+            self.component.set_wlimit(
+                {"wmin": self.params["wlimit"][0], "wmax": self.params["wlimit"][1]},
+                ack=self.ack,
+            ).wait()
             self.component.set_emerg(
                 {
                     "emerg": {
-                        "descent": 1.2,
-                        "dx": 0.1,
-                        "dq": 1,
-                        "dv": 0.3,
-                        "dw": 1,
+                        "descent": self.params["set_emerg"][0],
+                        "dx": self.params["set_emerg"][1],
+                        "dq": self.params["set_emerg"][2],
+                        "dv": self.params["set_emerg"][3],
+                        "dw": self.params["set_emerg"][4],
                     }
                 },
                 ack=self.ack,
             ).wait()
-            self._connect_port("state", "pom/frame/robot")
-            self._connect_port("reference", "maneuver/desired")
+            for port in self.params["ports"]:
+                self.component.connect_port(
+                    {"local": port[0], "remote": port[1]}, ack=self.ack
+                ).wait()
         except Exception as e:
             logger.error(f"Failed to connect to NHFC. Throws {e}")
             raise e
@@ -414,27 +428,32 @@ class NHFC:
 
 
 class CTDrone:
-    def __init__(self, component):
+    def __init__(self, component, params):
         """Connect to CTDrone and load all pocolib modules"""
         self.component = component
         self.ack = True
+        self.params = params[str(self)]
 
     def __call__(self):
         """CTDrone component"""
 
         try:
+            self.component.Set_my_r(self.params["rgb"][0])
+            self.component.Set_my_g(self.params["rgb"][1])
+            self.component.Set_my_b(self.params["rgb"][2])
+            self.component.Set_my_seuil(self.params["threshold"])
             self.component.connect_port(
                 {
-                    "local": "Pose",
-                    "remote": "pom/frame/robot",
+                    "local": self.params["ports"][0],
+                    "remote": self.params["ports"][1],
                 },
                 ack=self.ack,
             ).wait()
             self.component.SetCameraImageTopicName(
-                "/quad1/down_camera_link/down_raw_image", ack=self.ack
+                self.params["image_topic"], ack=self.ack
             ).wait()
             self.component.SetCameraInfoTopicName(
-                "/quad1/down_camera_link/down_camera_info", ack=self.ack
+                self.params["image_info_topic"], ack=self.ack
             ).wait()
         except Exception as e:
             logging.error(f"Failed to connect to CTDrone. Throws {e}")
@@ -465,50 +484,35 @@ class CTDrone:
 
 
 class TF2:
-    def __init__(self, component):
+    def __init__(self, component, params):
         """Connect to TF2 and load all pocolib modules"""
         self.component = component
+        self.params = params[str(self)]
         self.ack = True
 
     def __call__(self):
         """TF2 component"""
 
         try:
-            self._connect_port("Poses/drone", "pom/frame/robot")
-            self._connect_port("Poses/drone_pos", "pom/frame/robot")
-            self._connect_port("OccupancyGrids/og", "CT_drone/OccupancyGrid")
+            for port in self.params["ports"]:
+                self.component.connect_port(
+                    {"local": port[0], "remote": port[1]}, ack=self.ack
+                ).wait()
             self.component.Init(ack=self.ack).wait()
-            self._publish_static_tf("base", "drone", 0, 0, 0, 0, 0, 0)
-            self._add_dynamic_tf("drone", "world", 10, True)
-            self._add_dynamic_pos_tf("drone_pos", "world", 10, True)
-            self._add_odometry("drone")
+            self._add_dynamic_tf(**self.params["dynamic_tf"])
+            self._add_dynamic_pos_tf(**self.params["dynamic_tf_pos"])
+            self._add_odometry(self.params["odometry"])
+
             self.component.AddTwistFromPose(
-                {
-                    "name": "drone",
-                    "frame": "drone_pos",
-                    "topic": "drone_twist",
-                    "ms_period": 10,
-                },
-                ack=self.ack,
+                self.params["twist_from_pose"], ack=self.ack
             ).wait()
             self.component.AddWrenchFromPose(
-                {
-                    "name": "drone",
-                    "frame": "drone_pos",
-                    "topic": "drone_wrench",
-                    "ms_period": 10,
-                },
-                ack=self.ack,
+                self.params["wrench_from_pose"], ack=self.ack
             ).wait()
-            self._publish_static_tf("og", "world", 0, 0, 0, 0, 0, 0)
+            for tf in self.params["static_transform"]:
+                self._publish_static_tf(**tf)
             self.component.AddOccupancyGrid(
-                {
-                    "name": "og",
-                    "frame": "og",
-                    "topic": "og",
-                    "ms_period": 50,
-                },
-                ack=self.ack,
+                self.params["occupancy_grid"], ack=self.ack
             ).wait()
         except Exception as e:
             logging.error(f"Failed to connect to TF2. Throws {e}")
@@ -542,47 +546,24 @@ class TF2:
     def _add_odometry(self, name):
         return self.component.AddOdometry({"name": name}, ack=self.ack).wait()
 
-    def _publish_static_tf(self, name, parent_frame, x, y, z, roll, pitch, yaw):
+    def _publish_static_tf(self, **kwargs):
         return self.component.PublishStaticTF(
-            {
-                "name": name,
-                "parent_frame": parent_frame,
-                "x": x,
-                "y": y,
-                "z": z,
-                "roll": roll,
-                "pitch": pitch,
-                "yaw": yaw,
-            },
+            kwargs,
             ack=self.ack,
         ).wait()
 
-    def _add_dynamic_tf(self, name, parent_frame, ms_period, undef_in_orig):
-        return self.component.AddDynamicTF(
-            {
-                "name": name,
-                "parent_frame": parent_frame,
-                "ms_period": ms_period,
-                "undef_in_orig": undef_in_orig,
-            },
-            ack=self.ack,
-        ).wait()
+    def _add_dynamic_tf(self, **kwargs):
+        return self.component.AddDynamicTF(kwargs, ack=self.ack).wait()
 
-    def _add_dynamic_pos_tf(self, name, parent_frame, ms_period, undef_in_orig):
-        return self.component.AddDynamicPosTF(
-            {
-                "name": name,
-                "parent_frame": parent_frame,
-                "ms_period": ms_period,
-                "undef_in_orig": undef_in_orig,
-            },
-            ack=self.ack,
-        ).wait()
+    def _add_dynamic_pos_tf(self, **kwargs):
+        return self.component.AddDynamicPosTF(kwargs, ack=self.ack).wait()
 
 
 class Connector:
-    def __init__(self, host: str = "localhost", port: int = 8080) -> None:
+    def __init__(self, id: int = 0, host: str = "localhost", port: int = 8080) -> None:
         # Attempt to start the genomix server
+        self.id = id
+        self.params = DRONES[self.id]
         self.genomix_process = subprocess.Popen(
             ["genomixd", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
@@ -666,28 +647,28 @@ class Connector:
 
     def _connect_optitrack(self) -> Optitrack:
         """Connect to Optitrack and load all pocolib modules"""
-        return Optitrack(self.components["optitrack"])()
+        return Optitrack(self.components["optitrack"], params=self.params)()
 
     def _connect_pom(self) -> POM:
         """Connect to POM and load all pocolib modules"""
-        return POM(self.components["pom"])()
+        return POM(self.components["pom"], params=self.params)()
 
     def _connect_maneuver(self) -> Maneuver:
         """Connect to maneuver and load all pocolib modules"""
-        return Maneuver(self.components["maneuver"])()
+        return Maneuver(self.components["maneuver"], params=self.params)()
 
     def _connect_rotorcraft(self) -> RotorCraft:
         """Connect to Rotorcraft and load all pocolib modules"""
-        return RotorCraft(self.components["rotorcraft"])()
+        return RotorCraft(self.components["rotorcraft"], params=self.params)()
 
     def _connect_nhfc(self) -> NHFC:
         """Connect to NHFC and load all pocolib modules"""
-        return NHFC(self.components["nhfc"])()
+        return NHFC(self.components["nhfc"], params=self.params)()
 
     def _connect_ctdrone(self) -> CTDrone:
         """Connect to CTDrone and load all pocolib modules"""
-        return CTDrone(self.components["CT_drone"])()
+        return CTDrone(self.components["CT_drone"], params=self.params)()
 
     def _connect_tf2(self) -> TF2:
         """Connect to TF2 and load all pocolib modules"""
-        return TF2(self.components["tf2"])()
+        return TF2(self.components["tf2"], params=self.params)()
