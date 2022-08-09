@@ -14,10 +14,24 @@ If we are expecting different operations, we can use the following command:
 bash install-scripts/setup-experiment.sh --help
 ```
 
+To install the python api, we can use the following command:
+
+```bash
+# In the root of the repository
+pip install -e .
+```
+
 ## Usage
 
 To start the experiment, you need to launch the files from `run/` directory. For example, the following command starts the experiment with a single drone:
 
 ```bash
-bash run/start-simu.sh
+bash run/start-simu-cam.sh
+```
+
+To start the sample experiment with the python api, run the following command:
+
+```bash
+# Simple example for a single drone
+python3 src/sample_app.py
 ```
