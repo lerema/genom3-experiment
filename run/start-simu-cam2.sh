@@ -10,7 +10,6 @@ rm -f core
 h2 init
 #Source workspace
 # shellcheck source=/dev/null
-source "$(dirname "$(file)")"/catkin_ws/devel/setup.bash
 
 genomixd -v -v >"$logdir"/genomixd.log &
 tmux \

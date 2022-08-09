@@ -5,13 +5,11 @@ SCRIPT_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
 # Source ROS workspace
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}"/../catkin_ws/devel/setup.bash
-this_file_dir="$(dirname "$(file)")"
 mkdir -p "$logdir"
 rm -f core
 h2 init
 #Source workspace
 # shellcheck source=/dev/null
-source "$this_file_dir"/catkin_ws/devel/setup.bash
 
 genomixd -v -v >"$logdir"/genomixd.log &
 
