@@ -178,7 +178,7 @@
         <update_rate>10</update_rate>
         <!-- <visualize>true</visualize> -->
         <plugin filename="libgazebo_ros_camera.so" name="camera_en_ros">
-          <robotNamespace>quad1</robotNamespace>
+          <robotNamespace></robotNamespace>
           <cameraName>down_camera_link</cameraName>
           <imageTopicName>down_raw_image</imageTopicName>
           <cameraInfoTopicName>down_info_image</cameraInfoTopicName>
@@ -198,7 +198,7 @@
       </axis>
     </joint>
     <!--down cam link end-->
-    
+
     <plugin name="mrsim" filename="mrsim-gazebo.so">
       <link>base</link>
 

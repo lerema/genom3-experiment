@@ -215,12 +215,14 @@
     <include>
       <uri>model://mrsim-quadrotor-cam</uri>
       <name>quad1</name>
+      <robotNamespace>quad1</robotNamespace>
       <pose>0 0 0.02 0 0 0</pose>
     </include>
 
     <include>
       <uri>model://mrsim-quadrotor-cam</uri>
       <name>quad2</name>
+      <robotNamespace>quad2</robotNamespace>
       <pose>2 2 0.02 0 0 0</pose>
     </include>
 
