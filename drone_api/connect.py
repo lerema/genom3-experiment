@@ -62,7 +62,10 @@ class Optitrack:
         return
 
     def __del__(self):
-        self.component.kill()
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
 
     def __str__(self) -> str:
         return "optitrack"
@@ -113,7 +116,10 @@ class POM:
         return
 
     def __del__(self):
-        self.component.kill()
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
 
     def __str__(self) -> str:
         return "pom"
@@ -215,7 +221,10 @@ class Maneuver:
         self.component.stop()
 
     def __del__(self):
-        self.component.kill()
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
 
     def __str__(self) -> str:
         return "maneuver"
@@ -286,8 +295,11 @@ class RotorCraft:
         self.component.stop(ack=self.ack).wait()
 
     def __del__(self):
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
         self._thread.terminate()
-        self.component.kill()
 
     def __str__(self) -> str:
         return "rotorcraft"
@@ -392,8 +404,11 @@ class NHFC:
         self.component.stop()
 
     def __del__(self):
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
         self._thread.terminate()
-        self.component.kill()
 
     def __str__(self) -> str:
         return "nhfc"
@@ -476,8 +491,11 @@ class CTDrone:
         return
 
     def __del__(self):
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
         self._thread.terminate()
-        self.component.kill()
 
     def __str__(self) -> str:
         return "CT_drone"
@@ -529,7 +547,10 @@ class TF2:
         return
 
     def __del__(self):
-        self.component.kill()
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
 
     def __str__(self) -> str:
         return "tf2"
@@ -565,7 +586,9 @@ class Connector:
         self.id = id
         self.params = DRONES[self.id]
         self.genomix_process = subprocess.Popen(
-            ["genomixd", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            ["genomixd", "-d", "-v", "-v"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
 
         self.handle = genomix.connect(f"{host}:{port}")
@@ -600,13 +623,11 @@ class Connector:
         self.components["CT_drone"].start()
 
     def stop(self):
-        self._thread1.terminate()
-        self._thread2.terminate()
-        self._thread3.terminate()
         print("Stopped")
 
     def __del__(self):
         # self._unload_modules()
+        del self.components
         self.genomix_process.kill()
         subprocess.call(["pkill", "gzserver"])
         subprocess.call(["pkill", "gzclient"])
