@@ -164,7 +164,7 @@ proc init {} {
 	rotorcraft::connect { serial /dev/ttyUSB0 baud 500000 }
     } else {
 	if {$cam} {
-	    rotorcraft::connect { serial /tmp/pty-mrsim-quadrotor-cam baud 500000 }
+	    rotorcraft::connect { serial /tmp/pty-quad1 baud 500000 }
 	} else {
 	    rotorcraft::connect { serial /tmp/pty-mrsim-quadrotor baud 500000 }
 	}

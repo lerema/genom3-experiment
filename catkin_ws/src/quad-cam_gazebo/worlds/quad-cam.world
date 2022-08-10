@@ -215,13 +215,15 @@
     <include>
       <uri>model://mrsim-quadrotor-cam</uri>
       <pose>0 0 0.02 0 0 0</pose>
+      <name>quad1</name>
+      <robotNamespace>quad1</robotNamespace>
     </include>
 
     <plugin name="optitrack" filename="optitrack-gazebo.so">
       <hz>1000</hz>
       <port>1509</port>
       <publish>
-        <link>mrsim-quadrotor-cam::base</link>
+        <link>quad1::base</link>
         <name>QR</name>
       </publish>
     </plugin>
