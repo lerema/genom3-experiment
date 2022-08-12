@@ -150,4 +150,4 @@ class DroneCommon:
         }
 
 
-DRONES = [DroneCommon()(id=i, is_robot=False) for i in range(0, 2)]
+DRONES = [DroneCommon()(id=i, is_robot=False) for i in range(0, 3)]
