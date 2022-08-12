@@ -16,33 +16,6 @@ class DroneCommon:
             "mcast_port": "1511" if is_robot else "",
         }
 
-        POM = {
-            "ports": [
-                ("measure/imu", f"rotorcraft{id}/imu"),
-                ("measure/mocap", f"optitrack/bodies/QR_{id}"),
-            ]
-            if is_robot
-            else [
-                ("measure/imu", f"rotorcraft{id}/imu"),
-                ("measure/mocap", f"optitrack/bodies/QR{id}"),
-                ("measure/mag", f"rotorcraft{id}/mag"),
-            ],
-            "add_measurements": {
-                "imu": (0, 0, 0, 0, 0, 0),
-                "mocap": (0, 0, 0, 0, 0, 0),
-            }
-            if is_robot
-            else {
-                "imu": (0, 0, 0, 0, 0, 0),
-                "mocap": (0, 0, 0, 0, 0, 0),
-                "mag": (0, 0, 0, 0, 0, 0),
-            },
-            "set_mag_field": (0, 0, 0)
-            if is_robot
-            else (23.816e-6, -0.41e-6, -39.829e-6),
-            "history_length": 0.5,
-        }
-
         MANEUVER = {
             "ports": ("state", f"pom{id}/frame/robot"),
             "set_velocity_limit": (5, 2) if is_robot else (2, 1),
@@ -71,8 +44,8 @@ class DroneCommon:
         TF2 = {
             "ports": [
                 (f"Poses/drone{id}", f"pom{id}/frame/robot"),
-                (f"Poses/drone{id}_pos", f"nhfc{id}/frame/robot"),
-                (f"OccupancyGrid/og{id}", f"CT_dron{id}/OccupancyGrid"),
+                (f"Poses/drone{id}_pos", f"pom{id}/frame/robot"),
+                (f"OccupancyGrids/og{id}", f"CT_drone{id}/OccupancyGrid"),
             ],
             "dynamic_tf": {
                 "name": f"drone{id}",
@@ -129,17 +102,41 @@ class DroneCommon:
             },
         }
 
-        if id == "":
-            id = 1
-        else:
-            id += 1
-
         CT_DRONE = {
             "rgb": (5, 5, 255),
             "threshold": 40,
             "ports": ("Pose", f"pom{id}/frame/robot"),
             "image_topic": f"/quad{str(id)}/down_camera_link/down_raw_image",
             "image_info_topic": f"/quad{str(id)}/down_camera_link/down_info_camera",
+        }
+
+        # if id == "":
+        #     id = 1
+        # else:
+        #     id = int(id) + 1
+
+        POM = {
+            "ports": [
+                ("measure/imu", f"rotorcraft{id}/imu"),
+                ("measure/mocap", f"optitrack/bodies/QR_{id}"),
+            ]
+            if is_robot
+            else [
+                ("measure/imu", f"rotorcraft{id}/imu"),
+                ("measure/mocap", f"optitrack/bodies/QR{id}"),
+                ("measure/mag", f"rotorcraft{id}/mag"),
+            ],
+            "add_measurements": {"imu": (0, 0, 0, 0, 0, 0), "mocap": (0, 0, 0, 0, 0, 0)}
+            if is_robot
+            else {
+                "imu": (0, 0, 0, 0, 0, 0),
+                "mocap": (0, 0, 0, 0, 0, 0),
+                "mag": (0, 0, 0, 0, 0, 0),
+            },
+            "set_mag_field": (0, 0, 0)
+            if is_robot
+            else (23.816e-6, -0.41e-6, -39.829e-6),
+            "history_length": 0.5,
         }
 
         return {
@@ -153,4 +150,4 @@ class DroneCommon:
         }
 
 
-DRONES = [DroneCommon()(id=i, is_robot=False) for i in range(0, 1)]
+DRONES = [DroneCommon()(id=i, is_robot=False) for i in range(0, 2)]

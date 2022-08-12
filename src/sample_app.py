@@ -12,9 +12,6 @@ def main():
 
     # Start the connection and take off
     c.start()
-    # FIXME: This is a hack to get the drone to take off.
-    # input("Press Enter to continue...")
-    # Currently the takeoff and startup scripts are still handled by TCL.
 
     # Start actions
     t = Takeoff(c.components)(height=0.5)
@@ -22,6 +19,8 @@ def main():
     m = Move(c.components)(x=-0.5, y=-0.5, z=0.5, yaw=0.0)
     m = Move(c.components)(x=0.0, y=0.0, z=0.5, yaw=0.0)
     l = Land(c.components)()
+
+    c.stop()
 
     # wait until keypress
     input("Press Enter to exit...")
