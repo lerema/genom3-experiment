@@ -34,7 +34,14 @@ fi
 
 if [ "$1" == "--clean" ]; then
     echo "Cleaning the experiment"
-    # TODO: complete the cleaning
+    # Expect the experiment directory, delete all the other directories.
+    DIR=$(ls "$INSTALL_DIR")
+    for d in $DIR; do
+        if [ "$d" != "genom3-experiment" ]; then # TODO: Name of the experiment directory is expected to be the same as repo.
+            echo "Deleting $d"
+            rm -rf "$INSTALL_DIR"/"$d"
+        fi
+    done
     exit 0
 fi
 
@@ -112,7 +119,7 @@ export GENOM_TMPL_PATH=${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/
 " >>~/.bashrc
 
 # shellcheck source=/dev/null
-source ~/.bashrc
+eval "$(cat ~/.bashrc | tail -n +10)" # Hack to reload the bashrc
 
 # Install robopkg
 function install_robotpkg_modules {
@@ -150,7 +157,7 @@ fi
 # Final setup
 
 #shellcheck source=/dev/null
-source ~/.bashrc
+eval "$(cat ~/.bashrc | tail -n +10)" # Hack to reload the bashrc
 cd "$SCRIPT_DIR"/..
 
 echo "Setup started - $build_start"
