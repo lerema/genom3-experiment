@@ -36,6 +36,7 @@ class VerifyStationProblem(object):
         l2 = Object("l2", Location)
         l3 = Object("l3", Location)
         l4 = Object("l4", Location)
+        home = Object("home", Location)
 
         problem = Problem("robot")
         problem.add_fluent(robot_at)
@@ -48,12 +49,15 @@ class VerifyStationProblem(object):
         problem.add_object(l2)
         problem.add_object(l3)
         problem.add_object(l4)
+        problem.add_object(home)
 
-        problem.set_initial_value(robot_at(l1), True)
+        problem.set_initial_value(robot_at(home), True)
+        problem.set_initial_value(robot_at(l1), False)
         problem.set_initial_value(robot_at(l2), False)
         problem.set_initial_value(robot_at(l3), False)
         problem.set_initial_value(robot_at(l4), False)
 
+        problem.set_initial_value(verify_station_at(home), False)
         problem.set_initial_value(verify_station_at(l1), False)
         problem.set_initial_value(verify_station_at(l2), False)
         problem.set_initial_value(verify_station_at(l3), False)
@@ -62,6 +66,6 @@ class VerifyStationProblem(object):
         problem.add_goal(verify_station_at(l2))
         # problem.add_goal(verify_station_at(l3))
         problem.add_goal(verify_station_at(l4))
-        problem.add_goal(robot_at(l4))
+        problem.add_goal(robot_at(home))
 
         return problem

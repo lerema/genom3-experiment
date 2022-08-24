@@ -1,5 +1,6 @@
 """UP demo for the drone project"""
 import sys
+import time
 
 sys.path.append("up")
 
@@ -19,6 +20,7 @@ class UPBridge:
         "l2": {"x": -2.5, "y": 1.5, "z": 1.0, "yaw": 0.0},
         "l3": {"x": 1.5, "y": -2.5, "z": 1.0, "yaw": 0.0},
         "l4": {"x": -1.5, "y": -3.5, "z": 1.0, "yaw": 0.0},
+        "home": {"x": 0.0, "y": 0.0, "z": 0.15, "yaw": 0.0},
     }
     actions = {
         "move": Move,
@@ -63,6 +65,7 @@ def main():
             result = Land(connector.components)()
             result = Takeoff(connector.components)()
             print("*** Capturing photo ***")
+        time.sleep(1)
     print("*** End of Execution ***")
 
     input("Press enter to exit...")
