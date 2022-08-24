@@ -14,12 +14,15 @@ class Drone:
             raise Exception("Failed to connect to the drone") from e
 
         self.c.start()
+        self.action = Actions(self.c.components)
 
-        t = Takeoff(self.c.components)(height=0.5)
-        m = Move(self.c.components)(x=self.id+0.5, y=self.id+0.5, z=self.id+0.5, yaw=0.0)
-        m = Move(self.c.components)(x=-self.id+0.5, y=-self.id+0.5, z=self.id+0.5, yaw=0.0)
-        m = Move(self.c.components)(x=self.id, y=self.id, z=0.5, yaw=0.0)
-        l = Land(self.c.components)()
+        t = self.action.takeoff(height=0.5)
+        m = self.action.move(x=self.id + 0.5, y=self.id + 0.5, z=self.id + 0.5, yaw=0.0)
+        m = self.action.move(
+            x=-self.id + 0.5, y=-self.id + 0.5, z=self.id + 0.5, yaw=0.0
+        )
+        m = self.action.move(x=self.id, y=self.id, z=0.5, yaw=0.0)
+        l = self.action.land()
 
         self.c.stop()
 

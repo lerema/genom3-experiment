@@ -6,6 +6,14 @@ logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
 
+class Actions:
+    def __init__(self, components):
+        self.land = Land(components)
+        self.takeoff = Takeoff(components)
+        self.move = Move(components)
+        self.stop = Stop(components)
+
+
 class Land:
     """Land action for the drone"""
 

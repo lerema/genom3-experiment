@@ -14,22 +14,24 @@ def main():
     # Start the connection and take off
     c1.start()
     c2.start()
+    a1 = Actions(c1.components)
+    a2 = Actions(c2.components)
 
     # Start actions
-    t = Takeoff(c1.components)(height=0.5)
-    t = Takeoff(c2.components)(height=0.5)
+    t = a1.takeoff(height=0.5)
+    t = a2.takeoff(height=0.5)
 
-    m = Move(c1.components)(x=0.5, y=0.5, z=0.5, yaw=0.0)
-    m = Move(c2.components)(x=1.5, y=1.5, z=0.5, yaw=0.0)
+    m = a1.move(x=0.5, y=0.5, z=0.5, yaw=0.0)
+    m = a2.move(x=1.5, y=1.5, z=0.5, yaw=0.0)
 
-    m = Move(c1.components)(x=-0.5, y=-0.5, z=0.5, yaw=0.0)
-    m = Move(c2.components)(x=0.5, y=0.5, z=0.5, yaw=0.0)
+    m = a1.move(x=-0.5, y=-0.5, z=0.5, yaw=0.0)
+    m = a2.move(x=0.5, y=0.5, z=0.5, yaw=0.0)
 
-    m = Move(c1.components)(x=0.0, y=0.0, z=0.5, yaw=0.0)
-    m = Move(c2.components)(x=1.0, y=1.0, z=0.5, yaw=0.0)
+    m = a1.move(x=0.0, y=0.0, z=0.5, yaw=0.0)
+    m = a2.move(x=1.0, y=1.0, z=0.5, yaw=0.0)
 
-    l = Land(c1.components)()
-    l = Land(c2.components)()
+    l = a1.land()
+    l = a2.land()
 
     c1.stop()
     c2.stop()
