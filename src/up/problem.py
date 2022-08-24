@@ -3,7 +3,7 @@ import unified_planning as up
 from unified_planning.shortcuts import *
 
 
-class BatteryChargingProblem(object):
+class VerifyStationProblem(object):
     def demo_facts(self):
         """Create a list of facts for the robot to check"""
         pass
@@ -16,19 +16,16 @@ class BatteryChargingProblem(object):
         """Create a simple battery charging application"""
         Location = UserType("Location")
         robot_at = Fluent("robot_at", BoolType(), position=Location)
-        battery_charge = Fluent("battery_charge", RealType(0, 100))
         verify_station_at = Fluent("verify_station_at", BoolType(), position=Location)
 
         move = InstantaneousAction("move", l_from=Location, l_to=Location)
         l_from = move.parameter("l_from")
         l_to = move.parameter("l_to")
-        move.add_precondition(GE(battery_charge, 10))
         move.add_precondition(Not(Equals(l_from, l_to)))
         move.add_precondition(robot_at(l_from))
         move.add_precondition(Not(robot_at(l_to)))
         move.add_effect(robot_at(l_from), False)
         move.add_effect(robot_at(l_to), True)
-        move.add_effect(battery_charge, Minus(battery_charge, 90))
 
         capture_photo = InstantaneousAction("capture_photo", l=Location)
         l = capture_photo.parameter("l")
@@ -42,7 +39,6 @@ class BatteryChargingProblem(object):
 
         problem = Problem("robot")
         problem.add_fluent(robot_at)
-        problem.add_fluent(battery_charge)
         problem.add_fluent(verify_station_at)
 
         problem.add_action(move)
@@ -57,7 +53,6 @@ class BatteryChargingProblem(object):
         problem.set_initial_value(robot_at(l2), False)
         problem.set_initial_value(robot_at(l3), False)
         problem.set_initial_value(robot_at(l4), False)
-        problem.set_initial_value(battery_charge, 100)
 
         problem.set_initial_value(verify_station_at(l1), False)
         problem.set_initial_value(verify_station_at(l2), False)
