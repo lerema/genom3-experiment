@@ -13,7 +13,7 @@ class VerifyStationProblem(object):
         pass
 
     def demo_problem(self):
-        """Create a simple battery charging application"""
+        """Create a simple station verification application"""
         Location = UserType("Location")
         robot_at = Fluent("robot_at", BoolType(), position=Location)
         verify_station_at = Fluent("verify_station_at", BoolType(), position=Location)
@@ -64,7 +64,7 @@ class VerifyStationProblem(object):
         problem.set_initial_value(verify_station_at(l4), False)
 
         problem.add_goal(verify_station_at(l2))
-        # problem.add_goal(verify_station_at(l3))
+        problem.add_goal(verify_station_at(l3))
         problem.add_goal(verify_station_at(l4))
         problem.add_goal(robot_at(home))
 
