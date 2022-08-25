@@ -66,11 +66,11 @@ class Move:
         self.maneuver = components["maneuver"].component
         self.ack = True
 
-    def __call__(self, **kwargs):
-        self.x = kwargs.get("x", 0.0)
-        self.y = kwargs.get("y", 0.0)
-        self.z = kwargs.get("z", 0.15)
-        self.yaw = kwargs.get("yaw", 0.0)
+    def __call__(self, l_from: dict = None, l_to: dict = None):
+        self.x = l_to.get("x", 0.0)
+        self.y = l_to.get("y", 0.0)
+        self.z = l_to.get("z", 0.15)
+        self.yaw = l_to.get("yaw", 0.0)
 
         logger.info(f"Moving to ({self.x}, {self.y}, {self.z}, {self.yaw})")
 

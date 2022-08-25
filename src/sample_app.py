@@ -16,9 +16,9 @@ def main():
 
     # Start actions
     t = action.takeoff(height=0.5)
-    m = action.move(x=0.5, y=0.5, z=0.5, yaw=0.0)
-    m = action.move(x=-0.5, y=-0.5, z=0.5, yaw=0.0)
-    m = action.move(x=0.0, y=0.0, z=0.5, yaw=0.0)
+    m = action.move(l_from=None, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
+    m = action.move(l_from=None, l_to={"x": 0.5, "y": -0.5, "z": 0.5, "yaw": 0.0})
+    m = action.move(l_from=None, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
     l = action.land()
 
     c.stop()

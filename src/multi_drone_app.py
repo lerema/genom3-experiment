@@ -21,14 +21,14 @@ def main():
     t = a1.takeoff(height=0.5)
     t = a2.takeoff(height=0.5)
 
-    m = a1.move(x=0.5, y=0.5, z=0.5, yaw=0.0)
-    m = a2.move(x=1.5, y=1.5, z=0.5, yaw=0.0)
+    m = a1.move(l_from=None, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
+    m = a2.move(l_from=None, l_to={"x": 1.5, "y": 1.5, "z": 0.5, "yaw": 0.0})
 
-    m = a1.move(x=-0.5, y=-0.5, z=0.5, yaw=0.0)
-    m = a2.move(x=0.5, y=0.5, z=0.5, yaw=0.0)
+    m = a1.move(l_from=None, l_to={"x": -0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
+    m = a2.move(l_from=None, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
 
-    m = a1.move(x=0.0, y=0.0, z=0.5, yaw=0.0)
-    m = a2.move(x=1.0, y=1.0, z=0.5, yaw=0.0)
+    m = a1.move(l_from=None, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
+    m = a2.move(l_from=None, l_to={"x": 1.0, "y": 1.0, "z": 0.5, "yaw": 0.0})
 
     l = a1.land()
     l = a2.land()
