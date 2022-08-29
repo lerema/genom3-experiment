@@ -107,7 +107,7 @@ class DroneCommon:
             "threshold": 40,
             "ports": ("Pose", f"pom{id}/frame/robot"),
             "image_topic": f"/quad{str(id)}/down_camera_link/down_raw_image",
-            "image_info_topic": f"/quad{str(id)}/down_camera_link/down_info_camera",
+            "image_info_topic": f"/quad{str(id)}/down_camera_link/down_info_image",
         }
 
         # if id == "":
