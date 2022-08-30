@@ -138,13 +138,13 @@ class SurveyX:
         self._step_size = 1.0
         self.speed = 1.0
 
-    def __call__(self, **kwargs):
-        xmin = kwargs.get("xmin", -5)
-        ymin = kwargs.get("ymin", -5)
-        xmax = kwargs.get("xmax", 5)
-        ymax = kwargs.get("ymax", 5)
-        z = kwargs.get("z", -5)
-        yaw = kwargs.get("yaw", 0)
+    def __call__(self, area: dict = None):
+        xmin = area.get("xmin", -5)
+        ymin = area.get("ymin", -5)
+        xmax = area.get("xmax", 5)
+        ymax = area.get("ymax", 5)
+        z = area.get("z", -5)
+        yaw = area.get("yaw", 0)
         logger.info(f"Surveying from ({xmin}, {ymin}) to ({xmax}, {ymax})")
         self.ct_drone.ReadROSImageUpdateFindings(ack=self.ack)
         self.maneuver.set_bounds(

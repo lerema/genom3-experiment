@@ -16,11 +16,11 @@ class UPBridge:
 
     fluents = {}
     objects = {
-        "l1": {"x": 0.0, "y": 0.0, "z": 0.15, "yaw": 0.0},
+        "l1": {"x": 3.5, "y": 3.5, "z": 1.0, "yaw": 0.0},
         "l2": {"x": -2.5, "y": 1.5, "z": 1.0, "yaw": 0.0},
         "l3": {"x": 1.5, "y": -2.5, "z": 1.0, "yaw": 0.0},
         "l4": {"x": -1.5, "y": -3.5, "z": 1.0, "yaw": 0.0},
-        "l5": {"x": 3.5, "y": 3.5, "z": 1.0, "yaw": 0.0},
+        "l5": {"x": 0.0, "y": 0.0, "z": 0.15, "yaw": 0.0},
         "area": {
             "xmin": -5.0,
             "xmax": 5.0,
@@ -62,7 +62,7 @@ def main():
         plan = result.plan
 
     print("*** Executing plan ***")
-    result = action.move(l_from=None, l_to=bridge.objects["l1"])
+    result = action.move(l_from=None, l_to=bridge.objects["l5"])
     for timed_action in plan.timed_actions:
         action_instance = timed_action[1]
         print(action_instance)
@@ -72,7 +72,7 @@ def main():
         # TODO: Implement in a better way
         if str(action_name) == "move":
             result = drone_action(connector.components)(
-                l_from=None, l_to=bridge.objects[str(parameter[0])]
+                l_from=None, l_to=bridge.objects[str(parameter[1])]
             )
         elif str(action_name) == "capture_photo":
             parameter = bridge.objects[str(parameter[0])]
@@ -81,13 +81,15 @@ def main():
             time.sleep(3)
             result = action.takeoff(height=1.0)
         elif str(action_name) == "send_info":
+            print(f"Sharing info from {str(parameter[-1])}")
             parameter = bridge.objects[str(parameter[-1])]
-            print(f"Sending info to {parameter}")
+            result = action.move(l_from=None, l_to=bridge.objects["l5"])
         elif str(action_name) == "survey":
             parameter = bridge.objects[str(parameter[0])]
-            result = action.surveyx(**bridge.objects[str(parameter[0])])
+            result = action.surveyx(area=bridge.objects["area"])
+
         time.sleep(1)
-    result = action.move(l_from=None, l_to=bridge.objects["l1"])
+    result = action.move(l_from=None, l_to=bridge.objects["l5"])
     print("*** End of Execution ***")
 
     input("Press enter to exit...")
