@@ -11,7 +11,7 @@ from unified_planning.shortcuts import *
 from up.problem import VerifyStationProblem
 
 
-class UPBridge:
+class FactsBridge:
     """Connect UP components to the drone API components"""
 
     fluents = {}
@@ -20,7 +20,7 @@ class UPBridge:
         "l2": {"x": -2.5, "y": 1.5, "z": 1.0, "yaw": 0.0},
         "l3": {"x": 1.5, "y": -2.5, "z": 1.0, "yaw": 0.0},
         "l4": {"x": -1.5, "y": -3.5, "z": 1.0, "yaw": 0.0},
-        "l5": {"x": 0.0, "y": 0.0, "z": 0.15, "yaw": 0.0},
+        "home": {"x": 0.0, "y": 0.0, "z": 0.15, "yaw": 0.0},
         "area": {
             "xmin": -5.0,
             "xmax": 5.0,
@@ -47,7 +47,7 @@ def main():
     connector = Connector()
     problem = VerifyStationProblem().demo_problem()
     plan = None
-    bridge = UPBridge()
+    bridge = FactsBridge()
     action = Actions(connector.components)
 
     connector.start()
@@ -62,7 +62,7 @@ def main():
         plan = result.plan
 
     print("*** Executing plan ***")
-    result = action.move(l_from=None, l_to=bridge.objects["l5"])
+    result = action.move(l_from=None, l_to=bridge.objects["home"])
     for timed_action in plan.timed_actions:
         action_instance = timed_action[1]
         print(action_instance)
@@ -72,10 +72,10 @@ def main():
         # TODO: Implement in a better way
         if str(action_name) == "move":
             result = drone_action(connector.components)(
-                l_from=None, l_to=bridge.objects[str(parameter[1])]
+                l_from=None, l_to=bridge.objects[str(parameter[-1])]
             )
         elif str(action_name) == "capture_photo":
-            parameter = bridge.objects[str(parameter[0])]
+            parameter = bridge.objects[str(parameter[-1])]
             parameter["z"] = 0.15
             result = action.move(l_from=None, l_to=parameter)
             time.sleep(3)
@@ -83,13 +83,13 @@ def main():
         elif str(action_name) == "send_info":
             print(f"Sharing info from {str(parameter[-1])}")
             parameter = bridge.objects[str(parameter[-1])]
-            result = action.move(l_from=None, l_to=bridge.objects["l5"])
+            result = action.move(l_from=None, l_to=bridge.objects["home"])
         elif str(action_name) == "survey":
             parameter = bridge.objects[str(parameter[0])]
             result = action.surveyx(area=bridge.objects["area"])
 
         time.sleep(1)
-    result = action.move(l_from=None, l_to=bridge.objects["l5"])
+    result = action.move(l_from=None, l_to=bridge.objects["home"])
     print("*** End of Execution ***")
 
     input("Press enter to exit...")
