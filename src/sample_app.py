@@ -19,7 +19,16 @@ def main():
     m = action.move(l_from=None, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
     m = action.move(l_from=None, l_to={"x": 0.5, "y": -0.5, "z": 0.5, "yaw": 0.0})
     # s = action.surveyy(xmin=-5.0, xmax=5.0, ymin=-2.0, ymax=2.0, z=3.0, yaw=0.5)
-    s = action.surveyx(xmin=-5.0, xmax=5.0, ymin=-2.0, ymax=2.0, z=3.0, yaw=0.5)
+    s = action.surveyx(
+        area={
+            "xmin": -5.0,
+            "xmax": 5.0,
+            "ymin": -2.0,
+            "ymax": 2.0,
+            "z": 3.0,
+            "yaw": 0.5,
+        }
+    )
     m = action.move(l_from=None, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
     l = action.land()
     c.stop()

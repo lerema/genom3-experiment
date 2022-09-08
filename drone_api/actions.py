@@ -4,7 +4,7 @@ import math
 from drone_api import Connector
 
 logger = logging.getLogger("[Actions]")
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.INFO)
 
 
 class Actions:
@@ -37,7 +37,7 @@ class Land:
         # )
 
         result = self.maneuver.take_off(
-            {"height": 0.15 if self._is_robot else 0.05, "duration": 0}, ack=self.ack
+            {"height": 0.15 if self._is_robot else 0.05, "duration": 5}, ack=self.ack
         )
         result = self.maneuver.wait()
 
@@ -103,7 +103,7 @@ class Move:
                 "ax": 0,
                 "ay": 0,
                 "az": 0,
-                "duration": 0,
+                "duration": 5,
             },
             ack=self.ack,
         )
