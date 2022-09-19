@@ -1,7 +1,6 @@
 """Actions for the drone."""
 import logging
 import math
-from drone_api import Connector
 
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)

@@ -1,0 +1,65 @@
+import logging
+
+logger = logging.getLogger("[TF2]")
+
+
+class TF2:
+    def __init__(self, component, params):
+        """Connect to TF2 and load all pocolib modules"""
+        self.component = component
+        self.params = params[str(self)]
+        self.ack = True
+
+    def __call__(self):
+        """TF2 component"""
+
+        try:
+            for port in self.params["ports"]:
+                self.component.connect_port({"local": port[0], "remote": port[1]})
+            self.component.Init()
+            self._add_dynamic_tf(**self.params["dynamic_tf"])
+            self._add_dynamic_pos_tf(**self.params["dynamic_tf_pos"])
+            self._add_odometry(self.params["odometry"])
+
+            self.component.AddTwistFromPose(self.params["twist_from_pose"])
+            self.component.AddWrenchFromPose(self.params["wrench_from_pose"])
+            for tf in self.params["static_transform"]:
+                self._publish_static_tf(**tf)
+            self.component.AddOccupancyGrid(self.params["occupancy_grid"])
+        except Exception as e:
+            logging.error(f"Failed to connect to TF2. Throws {e}")
+            raise e
+        finally:
+            logging.info("Connected to TF2")
+
+        return self
+
+    def start(self):
+        return
+
+    def stop(self):
+        return
+
+    def __del__(self):
+        try:
+            self.component.kill()
+        except RuntimeError:
+            logger.info(f"Unloaded {str(self)}")
+
+    def __str__(self) -> str:
+        return "tf2"
+
+    def _connect_port(self, local, remote):
+        return self.component.connect_port({"local": local, "remote": remote})
+
+    def _add_odometry(self, name):
+        return self.component.AddOdometry({"name": name})
+
+    def _publish_static_tf(self, **kwargs):
+        return self.component.PublishStaticTF(kwargs, ack=self.ack)
+
+    def _add_dynamic_tf(self, **kwargs):
+        return self.component.AddDynamicTF(kwargs)
+
+    def _add_dynamic_pos_tf(self, **kwargs):
+        return self.component.AddDynamicPosTF(kwargs)
