@@ -4,7 +4,7 @@ import time
 
 sys.path.append("up")
 
-from drone_api import Connector
+from drone_api.connect import Connector
 from drone_api.actions import *
 from unified_planning.shortcuts import *
 

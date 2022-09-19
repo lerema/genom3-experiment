@@ -16,6 +16,8 @@ MODULES = {
     "common": COMMON_MODULES,
 }
 
-from .connect import Connector
 from .actions import *
 from .utils import *
+
+
+USE_ROBOT = False

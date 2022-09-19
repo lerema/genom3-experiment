@@ -1,4 +1,4 @@
-from drone_api import Connector
+from drone_api.connect import Connector
 from drone_api.actions import *
 
 
