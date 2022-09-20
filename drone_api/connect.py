@@ -48,6 +48,7 @@ class Connector:
             "nhfc": self._connect_nhfc(),
             "CT_drone": self._connect_ctdrone(),
             "tf2": self._connect_tf2(),
+            "arucotag": self._connect_arucotag(),
         }
 
     def start(self):
@@ -141,3 +142,7 @@ class Connector:
     def _connect_tf2(self) -> TF2:
         """Connect to TF2 and load all pocolib modules"""
         return TF2(self.components["tf2"], params=self.params)()
+
+    def _connect_arucotag(self) -> ArucoTag:
+        """Connect to ArucoTag and load all pocolib modules"""
+        return ArucoTag(self.components["arucotag"], params=self.params)()

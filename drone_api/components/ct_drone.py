@@ -24,10 +24,10 @@ class CTDrone:
             self.component.SetCameraImageTopicName(self.params["image_topic"])
             self.component.SetCameraInfoTopicName(self.params["image_info_topic"])
         except Exception as e:
-            logging.error(f"Failed to connect to CTDrone. Throws {e}")
+            logger.error(f"Failed to connect to CTDrone. Throws {e}")
             raise e
         finally:
-            logging.info("Connected to CTDrone")
+            logger.info("Connected to CTDrone")
 
         return self
 
