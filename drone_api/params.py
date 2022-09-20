@@ -139,6 +139,11 @@ class DroneCommon:
             "history_length": 0.5,
         }
 
+        ARUCOTAG = {
+            "length": 6,
+            "ports": ("Pose", f"pom{id}/frame/robot"),
+        }
+
         return {
             "optitrack": OPTITRACK,
             "pom": POM,
@@ -147,6 +152,7 @@ class DroneCommon:
             "nhfc": NHFC,
             "CT_drone": CT_DRONE,
             "tf2": TF2,
+            "arucotag": ARUCOTAG,
         }
 
 
