@@ -35,3 +35,10 @@ To start the sample experiment with the python api, run the following command:
 # Simple example for a single drone
 python3 src/sample_app.py
 ```
+
+
+To start the UP demo, you could run the following command:
+
+```bash
+# UP Demo script
+python3 src/up_demo.py
