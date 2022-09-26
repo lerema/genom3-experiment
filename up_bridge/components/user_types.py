@@ -32,7 +32,7 @@ class APIUserType:
         return self.parameters.values()
 
     def __getitem__(self, key: str) -> str:
-        return self.parameters[key]
+        return self
 
 
 @dataclass
