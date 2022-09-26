@@ -1,54 +1,18 @@
 """UP demo for the drone project"""
-import sys
-import time
-
-sys.path.append("up")
-
-from drone_api.connect import Connector
 from drone_api.actions import *
+from drone_api.connect import Connector
 from unified_planning.shortcuts import *
-
-from up.problem import VerifyStationProblem
-
-
-class FactsBridge:
-    """Connect UP components to the drone API components"""
-
-    fluents = {}
-    objects = {
-        "l1": {"x": 3.5, "y": 3.5, "z": 1.0, "yaw": 0.0},
-        "l2": {"x": -2.5, "y": 1.5, "z": 1.0, "yaw": 0.0},
-        "l3": {"x": 1.5, "y": -2.5, "z": 1.0, "yaw": 0.0},
-        "l4": {"x": -1.5, "y": -3.5, "z": 1.0, "yaw": 0.0},
-        "home": {"x": 0.0, "y": 0.0, "z": 0.15, "yaw": 0.0},
-        "area": {
-            "xmin": -5.0,
-            "xmax": 5.0,
-            "ymin": -5.0,
-            "ymax": 5.0,
-            "z": 3.0,
-            "yaw": 0.0,
-        },
-    }
-    actions = {
-        "move": Move,
-        "land": Land,
-        "stop": Stop,
-        "takeoff": Takeoff,
-        "capture_photo": None,  # TODO: implement this action
-        "survey": SurveyX,
-        "send_info": None,  # TODO: implement this action
-    }
+from up_bridge import Bridge, VerifyStationProblem
 
 
 def main():
     """Main function"""
 
     connector = Connector()
-    problem = VerifyStationProblem().demo_problem()
+    bridge = Bridge()
+    demo = VerifyStationProblem(bridge)
+    problem = demo.get_problem()
     plan = None
-    bridge = FactsBridge()
-    action = Actions(connector.components)
 
     connector.start()
 
@@ -62,34 +26,8 @@ def main():
         plan = result.plan
 
     print("*** Executing plan ***")
-    result = action.move(l_from=None, l_to=bridge.objects["home"])
-    for timed_action in plan.timed_actions:
-        action_instance = timed_action[1]
-        print(action_instance)
-        action_name = action_instance.action.name
-        drone_action = bridge.actions[str(action_name)]
-        parameter = action_instance.actual_parameters
-        # TODO: Implement in a better way
-        if str(action_name) == "move":
-            result = drone_action(connector.components)(
-                l_from=None, l_to=bridge.objects[str(parameter[-1])]
-            )
-        elif str(action_name) == "capture_photo":
-            parameter = bridge.objects[str(parameter[-1])]
-            parameter["z"] = 0.15
-            result = action.move(l_from=None, l_to=parameter)
-            time.sleep(3)
-            result = action.takeoff(height=1.0)
-        elif str(action_name) == "send_info":
-            print(f"Sharing info from {str(parameter[-1])}")
-            parameter = bridge.objects[str(parameter[-1])]
-            result = action.move(l_from=None, l_to=bridge.objects["home"])
-        elif str(action_name) == "survey":
-            parameter = bridge.objects[str(parameter[0])]
-            result = action.surveyx(area=bridge.objects["area"])
+    demo.start_execution()
 
-        time.sleep(1)
-    result = action.move(l_from=None, l_to=bridge.objects["home"])
     print("*** End of Execution ***")
 
     input("Press enter to exit...")

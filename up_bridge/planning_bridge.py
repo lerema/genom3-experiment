@@ -2,7 +2,7 @@ import sys
 from collections import OrderedDict
 from enum import Enum
 from functools import partial
-from typing import Callable, Dict, Iterable, List, Optional, Tuple, Type, overload
+from typing import Callable, Dict, Iterable, List, Optional, Tuple, Type
 
 from unified_planning.engines import OptimalityGuarantee
 from unified_planning.model import (
