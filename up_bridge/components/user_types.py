@@ -1,6 +1,6 @@
 """Callback functions for drone api  components"""
-from typing import Iterator
 from dataclasses import dataclass, field
+from typing import Iterator
 
 
 class APIUserType:

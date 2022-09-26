@@ -1,6 +1,6 @@
 """Fluent representation."""
-from components.user_types import Location, Area
 from drone_api.functions import get_battery_level, get_robot_pose
+from up_bridge.components.user_types import Area, Location
 
 
 class Fluents:

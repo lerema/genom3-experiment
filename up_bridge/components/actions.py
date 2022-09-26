@@ -1,8 +1,9 @@
 """Action representation for the UP project."""
 from typing import Callable
+
 from drone_api.actions import Actions
-from components.fluents import Fluents
-from components.user_types import Area, Location
+from up_bridge.components.fluents import Fluents
+from up_bridge.components.user_types import Area, Location
 
 
 class BridgeAction:
