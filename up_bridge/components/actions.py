@@ -9,9 +9,8 @@ from up_bridge.components.user_types import Area, Location
 class BridgeAction:
     """Create a Action Bridge object."""
 
-    def __init__(self, name, components, **kwargs):
+    def __init__(self, name, **kwargs):
         self.name = name
-        self.components = components # TODO: Remove this
         self.parameters = kwargs
         self.preconditions = []
         self.effects = []
@@ -57,9 +56,13 @@ class Move:
     l_to = Location
 
     def __init__(self, **kwargs):
-        self.api = BridgeAction(name="move", components=kwargs["components"], **kwargs)
+        kwargs["area"] = self.area
+        kwargs["l_from"] = self.l_from
+        kwargs["l_to"] = self.l_to
+        self.api = BridgeAction(name="move", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
+        self.components = kwargs["components"]
 
     def __call__(self, area: Area, l_from: Location, l_to: Location):
         # Preconditions
@@ -83,11 +86,11 @@ class Survey(BridgeAction):
     area = Area
 
     def __init__(self, **kwargs):
-        self.api = BridgeAction(
-            name="survey", components=kwargs["components"], area=self.rea
-        )
+        kwargs["area"] = self.area
+        self.api = BridgeAction(name="survey", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
+        self.components = kwargs["components"]
 
     def __call__(self, area: Area):
         # Preconditions
@@ -108,11 +111,12 @@ class CapturePhoto(BridgeAction):
     location = Location
 
     def __init__(self, **kwargs):
-        self.api = BridgeAction(
-            name="capture_photo", components=kwargs["components"], **kwargs
-        )
+        kwargs["area"] = self.area
+        kwargs["location"] = self.location
+        self.api = BridgeAction(name="capture_photo", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
+        self.components = kwargs["components"]
 
     def __call__(self, area: Area, location: Location):
         # Preconditions
@@ -136,11 +140,12 @@ class SendInfo(BridgeAction):
     location = Location
 
     def __init__(self, **kwargs):
-        self.api = BridgeAction(
-            name="send_info", components=kwargs["components"], **kwargs
-        )
+        kwargs["area"] = self.area
+        kwargs["location"] = self.location
+        self.api = BridgeAction(name="send_info", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
+        self.components = kwargs["components"]
 
     def __call__(self, area: Area, location: Location):
         # Preconditions
