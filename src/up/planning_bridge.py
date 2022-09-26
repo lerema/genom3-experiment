@@ -1,13 +1,8 @@
-from typing import Callable, Dict, Iterable, List, Optional, Tuple, Type
+import sys
 from collections import OrderedDict
 from enum import Enum
 from functools import partial
-import sys
-
-# FIXME: This is a temporary solution to test the planner.
-import unified_planning
-
-unified_planning.engines.factory.DEFAULT_ENGINES["aries"] = ("up_aries", "Aries")
+from typing import Callable, Dict, Iterable, List, Optional, Tuple, Type, overload
 
 from unified_planning.engines import OptimalityGuarantee
 from unified_planning.model import (
@@ -26,10 +21,10 @@ from unified_planning.shortcuts import (
     UserType,
 )
 
-"""Generic bridge between application and planning domains"""
-
 
 class Bridge:
+    """Generic bridge between application and planning domains"""
+
     def __init__(self) -> None:
         # Note: Map from type instead of str to recognize subclasses.
         self._types: Dict[type, UserType] = {
@@ -115,36 +110,47 @@ class Bridge:
         return self._fluents[name]
 
     def create_action(
-        self, function: Callable[..., object]
+        self, action: Callable[..., object]
     ) -> Tuple[InstantaneousAction, List[Parameter]]:
         """
-        Create UP InstantaneousAction based on the function's signature.
+        Create UP InstantaneousAction based on the class's signature.
         Return the InstantaneousAction with its parameters for convenient definition of its
          preconditions and effects.
         """
-        assert function.__name__ not in self._actions.keys()
+        assert action.__name__ not in self._actions.keys()
         parameters: Dict[str, UserType] = OrderedDict()
-        if "." in function.__qualname__:
-            # Add defining class of function to parameters.
-            namespace = sys.modules[function.__module__]
-            for name in function.__qualname__.split(".")[:-1]:
-                # Note: Use "context" to resolve potential relay to Python source file.
-                namespace = (
-                    namespace.__dict__["context"][name]
-                    if "context" in namespace.__dict__.keys()
-                    else namespace.__dict__[name]
-                )
-            assert isinstance(namespace, type)
-            parameters[
-                function.__qualname__.rsplit(".", maxsplit=1)[0]
-            ] = self.get_type(namespace)
-        # Add function's parameter types, without its return type.
-        for parameter_name, api_type in list(function.__annotations__.items())[:-1]:
-            parameters[parameter_name] = self.get_type(api_type)
-        action = InstantaneousAction(function.__name__, parameters)
-        self._actions[function.__name__] = action
-        self._api_actions[function.__name__] = function
-        return action, action.parameters
+
+        if isinstance(action, object):
+            # Note: For class methods, the first argument is the instance.
+            action_name = action.__qualname__.split(".")[-1]
+
+            for parameter_name, api_type in action.__call__.__annotations__.items():
+                parameters[parameter_name] = self.get_type(api_type)
+            _action = InstantaneousAction(action_name, _parameters=parameters)
+            self._actions[action_name] = _action
+            return _action, _action.parameters
+        else:
+            if "." in action.__qualname__:
+                # Add defining class of action to parameters.
+                namespace = sys.modules[action.__module__]
+                for name in action.__qualname__.split(".")[:-1]:
+                    # Note: Use "context" to resolve potential relay to Python source file.
+                    namespace = (
+                        namespace.__dict__["context"][name]
+                        if "context" in namespace.__dict__.keys()
+                        else namespace.__dict__[name]
+                    )
+                assert isinstance(namespace, type)
+                parameters[
+                    action.__qualname__.rsplit(".", maxsplit=1)[0]
+                ] = self.get_type(namespace)
+            # Add action's parameter types, without its return type.
+            for parameter_name, api_type in list(action.__annotations__.items())[:-1]:
+                parameters[parameter_name] = self.get_type(api_type)
+            _action = InstantaneousAction(_action.__name__, parameters)
+            self._actions[_action.__name__] = _action
+            self._api_actions[_action.__name__] = _action
+            return _action, _action.parameters
 
     def get_executable_action(self, action: ActionInstance) -> Callable[[], object]:
         """Return API callable action corresponding to the given UP action."""
