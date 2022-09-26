@@ -35,9 +35,13 @@ class VerifyStationProblem(Application):
         assert isinstance(bridge, Bridge), "bridge must be a Generic Bridge instance"
         self.bridge = bridge
 
-    def start_execution(self):
+    def start_execution(self, action_instances: list, **kwargs):
         self.app = Application()
-        print(type(self.app))
+
+        for action in action_instances:
+            (executor, parameters) = self.bridge.get_executable_action(action)
+            execute_action = executor(**kwargs)
+            return execute_action(*parameters)
 
     def get_problem(self):
 
@@ -120,14 +124,3 @@ class VerifyStationProblem(Application):
         problem.add_goal(f_robot_at(o_home))
 
         return problem
-
-
-bridge = Bridge()
-
-problem = VerifyStationProblem(bridge=bridge).get_problem()
-with OneshotPlanner(name="aries") as planner:
-    result = planner.solve(problem)
-    print("*** Result ***")
-    for action_instance in result.plan.timed_actions:
-        print(action_instance)
-    print("*** End Result ***")

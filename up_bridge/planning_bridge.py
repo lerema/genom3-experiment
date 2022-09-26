@@ -128,6 +128,7 @@ class Bridge:
                 parameters[parameter_name] = self.get_type(api_type)
             _action = InstantaneousAction(action_name, _parameters=parameters)
             self._actions[action_name] = _action
+            self._api_actions[action_name] = action
             return _action, _action.parameters
         else:
             if "." in action.__qualname__:
@@ -157,7 +158,7 @@ class Bridge:
         if action.action.name not in self._api_actions.keys():
             raise ValueError(f"No corresponding action defined for {action}!")
 
-        return partial(
+        return (
             self._api_actions[action.action.name],
             *[
                 self._api_objects[parameter.object().name]

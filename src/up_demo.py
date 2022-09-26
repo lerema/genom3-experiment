@@ -13,6 +13,7 @@ def main():
     demo = VerifyStationProblem(bridge)
     problem = demo.get_problem()
     plan = None
+    actions = []
 
     connector.start()
 
@@ -22,11 +23,12 @@ def main():
         print("*** Result ***")
         for action_instance in result.plan.timed_actions:
             print(action_instance)
+            actions.append(action_instance[1])
         print("*** End of result ***")
         plan = result.plan
 
     print("*** Executing plan ***")
-    demo.start_execution()
+    demo.start_execution(actions, components=connector.components)
 
     print("*** End of Execution ***")
 
