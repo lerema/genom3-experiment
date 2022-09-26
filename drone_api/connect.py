@@ -48,7 +48,7 @@ class Connector:
             "nhfc": self._connect_nhfc(),
             "CT_drone": self._connect_ctdrone(),
             "tf2": self._connect_tf2(),
-            "arucotag": self._connect_arucotag(),
+            # "arucotag": self._connect_arucotag(),
         }
 
     def start(self):
