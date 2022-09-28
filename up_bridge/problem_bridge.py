@@ -13,12 +13,12 @@ class Application:
     is_within_area = Fluents.is_within_area
 
     # Objects
-    l1 = Location("l1", 3.5, 3.5, 1.0, 0.0)
-    l2 = Location("l2", -2.5, 1.5, 1.0, 0.0)
-    l3 = Location("l3", 1.5, -2.5, 1.0, 0.0)
-    l4 = Location("l4", -1.5, -3.5, 1.0, 0.0)
-    home = Location("home", 0.0, 0.0, 0.15, 0.0)
-    area = Area("area", -5.0, 5.0, -5.0, 5.0, 3.0, 0.0)
+    l1 = Location("l1", x=3.5, y=3.5, z=1.0, yaw=0.0)
+    l2 = Location("l2", x=-2.5, y=1.5, z=1.0, yaw=0.0)
+    l3 = Location("l3", x=1.5, y=-2.5, z=1.0, yaw=0.0)
+    l4 = Location("l4", x=-1.5, y=-3.5, z=1.0, yaw=0.0)
+    home = Location("home", x=0.0, y=0.0, z=0.15, yaw=0.0)
+    area = Area("area", xmin=-4.0, xmax=4.0, ymin=-4.0, ymax=4.0, z=3.0, yaw=0.0)
 
     # Actions
     move = Move
@@ -38,10 +38,17 @@ class VerifyStationProblem(Application):
     def start_execution(self, action_instances: list, **kwargs):
         self.app = Application()
 
+        results = []
         for action in action_instances:
+            print(f"Executing {action}")
             (executor, parameters) = self.bridge.get_executable_action(action)
             execute_action = executor(**kwargs)
-            return execute_action(*parameters)
+            result = execute_action(*parameters)
+
+            results.append(result)
+
+        if all(results):
+            print("All actions executed successfully")
 
     def get_problem(self):
 

@@ -1,14 +1,13 @@
 """Callback functions for drone api  components"""
-from dataclasses import dataclass, field
 from typing import Iterator
 
 
 class APIUserType:
     """Location of the object understandable with the robot."""
 
-    def __init__(self, name: str, parameters: dict) -> None:
+    def __init__(self, name: str, **kwargs: dict) -> None:
         self.name = name
-        self.parameters = parameters
+        self.parameters = kwargs
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.name})"
@@ -31,34 +30,29 @@ class APIUserType:
     def values(self) -> Iterator[str]:
         return self.parameters.values()
 
-    def __getitem__(self, key: str) -> str:
-        return self
 
-
-@dataclass
 class Location(APIUserType):
     """Location of the object understandable with the robot."""
 
-    name: str = field(default="", compare=False)
-    x: float = field(default=0.0, compare=True)
-    y: float = field(default=0.0, compare=True)
-    z: float = field(default=0.0, compare=True)
-    yaw: float = field(default=0.0, compare=True)
+    name: str = ""
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    yaw: float = 0.0
 
     parameters = {"x": x, "y": y, "z": z, "yaw": yaw}
 
 
-@dataclass
 class Area(APIUserType):
     """Area of the object understandable with the robot."""
 
-    name: str = field(default="", compare=False)
-    xmin: float = field(default=0.0, compare=True)
-    xmax: float = field(default=0.0, compare=True)
-    ymin: float = field(default=0.0, compare=True)
-    ymax: float = field(default=0.0, compare=True)
-    z: float = field(default=0.0, compare=True)
-    yaw: float = field(default=0.0, compare=True)
+    name: str = ""
+    xmin: float = 0.0
+    xmax: float = 0.0
+    ymin: float = 0.0
+    ymax: float = 0.0
+    z: float = 0.0
+    yaw: float = 0.0
 
     parameters = {
         "xmin": xmin,
