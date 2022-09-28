@@ -14,7 +14,7 @@ def get_robot_pose(components):
     pom = components["maneuver"].component
     data = pom.get_reference()
 
-    return data["pos"]
+    return data["reference"]["pos"]
 
 
 def monitor_battery(components):

@@ -1,6 +1,7 @@
 """Actions for the drone."""
 import logging
 import math
+import time
 
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
@@ -14,6 +15,9 @@ class Actions:
         self.stop = Stop(components)
         self.surveyx = SurveyX(components)
         self.surveyy = SurveyY(components)
+        self.survey = self.surveyx
+        self.send_info = SendInfo(components)
+        self.capture_photo = CapturePhoto(components)
 
 
 class Land:
@@ -69,6 +73,15 @@ class Move:
         self.ack = True
 
     def __call__(self, l_from: dict = None, l_to: dict = None):
+
+        assert l_from is not None, "l_from is not defined"
+        assert l_to is not None, "l_to is not defined"
+
+        if not isinstance(l_from, dict):
+            l_from = l_from.__dict__()
+        if not isinstance(l_to, dict):
+            l_to = l_to.__dict__()
+
         self.x = l_to.get("x", 0.0)
         self.y = l_to.get("y", 0.0)
         self.z = l_to.get("z", 0.15)
@@ -76,19 +89,6 @@ class Move:
 
         logger.info(f"Moving to ({self.x}, {self.y}, {self.z}, {self.yaw})")
 
-        # self.maneuver.set_bounds(
-        #     {
-        #         "xmin": -20,
-        #         "xmax": 20,
-        #         "ymin": -20,
-        #         "ymax": 20,
-        #         "zmin": -2,
-        #         "zmax": 10,
-        #         "yawmin": -3.14,
-        #         "yawmax": 3.14,
-        #     },
-        #     ack=self.ack,
-        # )
         result = self.maneuver.waypoint(
             {
                 "x": self.x,
@@ -138,6 +138,12 @@ class SurveyX:
         self.speed = 1.0
 
     def __call__(self, area: dict = None):
+
+        assert area is not None, "Area is not defined"
+
+        if not isinstance(area, dict):
+            area = area.__dict__()
+
         xmin = area.get("xmin", -5)
         ymin = area.get("ymin", -5)
         xmax = area.get("xmax", 5)
@@ -303,3 +309,92 @@ class SurveyY:
 
     def callback(self, data):
         print(data.status)
+
+
+class SendInfo:
+    """Sending Info by Move action for the drone"""
+
+    def __init__(self, components):
+        self.maneuver = components["maneuver"].component
+        self.ack = True
+
+    def __call__(self, area: dict = None, location: dict = None):
+
+        assert area is not None, "area is not defined"
+        assert location is not None, "l_to is not defined"
+
+        # TODO: check if the location is in the area
+
+        if not isinstance(area, dict):
+            area = area.__dict__()
+        if not isinstance(location, dict):
+            location = location.__dict__()
+
+        self.x = location.get("x", 0.0)
+        self.y = location.get("y", 0.0)
+        self.z = location.get("z", 0.15)
+        self.yaw = location.get("yaw", 0.0)
+
+        logger.info(f"Checking Info at ({self.x}, {self.y}, {self.z}, {self.yaw})")
+
+        self.maneuver.set_bounds(
+            {
+                "xmin": area["xmin"],
+                "xmax": area["xmax"],
+                "ymin": area["ymin"],
+                "ymax": area["ymax"],
+                "zmin": -2,
+                "zmax": 10,
+                "yawmin": -3.14,
+                "yawmax": 3.14,
+            },
+        )
+
+        result = self.maneuver.waypoint(
+            {
+                "x": self.x,
+                "y": self.y,
+                "z": self.z,
+                "yaw": self.yaw,
+                "vx": 0,
+                "vy": 0,
+                "vz": 0,
+                "wz": 0,
+                "ax": 0,
+                "ay": 0,
+                "az": 0,
+                "duration": 5,
+            },
+            ack=self.ack,
+        )
+        result = self.maneuver.wait()
+
+        return result
+
+
+class CapturePhoto:
+    """Takeoff action for the drone"""
+
+    def __init__(self, components):
+        self.maneuver = components["maneuver"].component
+        self.ack = True
+
+    def __call__(self, area: dict = None, location: dict = None):
+        assert area is not None, "area is not defined"
+        assert location is not None, "l_to is not defined"
+
+        if not isinstance(area, dict):
+            area = area.__dict__()
+        if not isinstance(location, dict):
+            location = location.__dict__()
+        height = location.get("z", 0.15)
+        # TODO: check if the location is in the area
+
+        logger.info(f"Capturing photo off at {location}")
+        result = self.maneuver.take_off(height=height, duration=2)
+        result = self.maneuver.take_off(height=0.15, duration=2)
+        time.sleep(2)
+        # TODO: Capture photo
+        result = self.maneuver.take_off(height=height, duration=2, ack=self.ack)
+        result = self.maneuver.wait()
+        return result
