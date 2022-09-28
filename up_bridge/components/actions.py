@@ -6,7 +6,7 @@ from up_bridge.components.fluents import Fluents
 from up_bridge.components.user_types import Area, Location
 
 
-class BridgeAction:
+class ActionDefinition:
     """Create a Action Bridge object."""
 
     def __init__(self, name, **kwargs):
@@ -23,24 +23,37 @@ class BridgeAction:
     def add_effects(self, effects):
         self.effects = effects
 
-    def add_precondition(self, _callable: Callable, output=None):
-        self.preconditions.append({_callable: output})
+    def add_precondition(self, _callable: Callable, output=None, **kwargs):
+        self.preconditions.append((_callable, output, kwargs))
 
-    def add_effect(self, _callable: Callable):
-        self.effects.append(_callable)
+    def add_effect(self, _callable: Callable, output=None, **kwargs):
+        self.effects.append((_callable, output, kwargs))
 
     def set_duration(self, duration):
         self.duration = duration
 
     def _check_preconditions(self, preconditions=[]):
-        for (precondition, value) in preconditions:
+        ret = False
+        for condition in preconditions:
+            print(f"Checking {condition}")
+            precondition, value, args = condition
             assert (
-                precondition() == value
+                precondition(expected_value=value, **args) == value
             ), f"{precondition} != {value}. Failed precondition."
 
+            ret = True
+        return ret
+
     def _execute_effects(self, effects=[]):
+        ret = False
         for effect in effects:
-            effect()
+            eff, value, args = effect
+            result = eff(expected_value=value, **args)
+
+            assert result == value, f"{result} != {value}. Failed effect."
+            ret = True
+
+        return ret
 
     def __call__(self, *args, **kwds):
         self._check_preconditions(self.preconditions)
@@ -48,7 +61,7 @@ class BridgeAction:
         self._execute_action(*args, **kwds)
 
 
-class Move:
+class Move(ActionDefinition, Fluents):
     """Move action"""
 
     area = Area
@@ -59,52 +72,58 @@ class Move:
         kwargs["area"] = self.area
         kwargs["l_from"] = self.l_from
         kwargs["l_to"] = self.l_to
-        self.api = BridgeAction(name="move", **kwargs)
+        self.api = ActionDefinition(name="move", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
         self.components = kwargs["components"]
 
     def __call__(self, area: Area, l_from: Location, l_to: Location):
         # Preconditions
-        self.api.add_precondition(Fluents.robot_at(l_to), True)
-        self.api.add_precondition(Fluents.robot_at(l_to), False)
-        self.api.add_precondition(Fluents.is_surveyed(area), True)
-        self.api.add_precondition(Fluents.is_location_surveyed(area), True)
+        self.api.add_precondition(self.robot_at, True, location=l_from)
+        self.api.add_precondition(self.robot_at, False, location=l_to)
+        self.api.add_precondition(self.is_surveyed, True, area=area)
+        self.api.add_precondition(
+            self.is_location_surveyed, True, area=area, location=l_to
+        )
 
         # Effects
-        self.api.add_effect(Fluents.robot_at(l_to), True)
-        self.api.add_effect(Fluents.robot_at(l_from), False)
+        self.api.add_effect(self.robot_at, True, location=l_to)
+        self.api.add_effect(self.robot_at, False, location=l_from)
 
         self._check_preconditions(self.preconditions)
         Actions(components=self.components).move(area, l_from, l_to)
         self._execute_effects(self.effects)
 
 
-class Survey(BridgeAction):
+class Survey(ActionDefinition, Fluents):
     """Survey action"""
 
     area = Area
 
     def __init__(self, **kwargs):
         kwargs["area"] = self.area
-        self.api = BridgeAction(name="survey", **kwargs)
+        self.api = ActionDefinition(name="survey", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
         self.components = kwargs["components"]
 
     def __call__(self, area: Area):
+        result = False
+
         # Preconditions
-        self.api.add_precondition(Fluents.is_surveyed(area), False)
+        self.api.add_precondition(self.is_surveyed, False, area=area)
 
         # Effects
-        self.api.add_effect(Fluents.is_surveyed(area), True)
+        self.api.add_effect(self.is_surveyed, True, area=area)
 
-        self._check_preconditions(self.preconditions)
-        Actions(components=self.components).survey(area)
-        self._execute_effects(self.effects)
+        result = self._check_preconditions(self.preconditions)
+        result = Actions(components=self.components).survey(area)
+        result = self._execute_effects(self.effects)
+
+        return bool(result)
 
 
-class CapturePhoto(BridgeAction):
+class CapturePhoto(ActionDefinition, Fluents):
     """CapturePhoto action"""
 
     area = Area
@@ -113,27 +132,29 @@ class CapturePhoto(BridgeAction):
     def __init__(self, **kwargs):
         kwargs["area"] = self.area
         kwargs["location"] = self.location
-        self.api = BridgeAction(name="capture_photo", **kwargs)
+        self.api = ActionDefinition(name="capture_photo", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
         self.components = kwargs["components"]
 
     def __call__(self, area: Area, location: Location):
         # Preconditions
-        self.api.add_precondition(Fluents.robot_at(location), True)
-        self.api.add_precondition(Fluents.is_surveyed(area), True)
-        self.api.add_precondition(Fluents.is_location_surveyed(area), True)
+        self.api.add_precondition(self.robot_at, True, location=location)
+        self.api.add_precondition(self.is_surveyed, True, area=area)
+        self.api.add_precondition(
+            self.is_location_surveyed, True, area=area, location=location
+        )
 
         # Effects
-        self.api.add_effect(Fluents.verify_station_at(location), True)
-        self.api.add_effect(Fluents.robot_at(location), True)
+        self.api.add_effect(self.verify_station_at, True, location=location)
+        self.api.add_effect(self.robot_at, True, location=location)
 
         self._check_preconditions(self.preconditions)
         Actions(components=self.components).capture_photo(area, location)
         self._execute_effects(self.effects)
 
 
-class SendInfo(BridgeAction):
+class SendInfo(ActionDefinition, Fluents):
     """SendInfo action"""
 
     area = Area
@@ -142,18 +163,22 @@ class SendInfo(BridgeAction):
     def __init__(self, **kwargs):
         kwargs["area"] = self.area
         kwargs["location"] = self.location
-        self.api = BridgeAction(name="send_info", **kwargs)
+        self.api = ActionDefinition(name="send_info", **kwargs)
         self.preconditions = self.api.preconditions
         self.effects = self.api.effects
         self.components = kwargs["components"]
 
     def __call__(self, area: Area, location: Location):
         # Preconditions
-        self.api.add_precondition(Fluents.is_surveyed(area), True)
-        self.api.add_precondition(Fluents.is_within_area(area, location), True)
+        self.api.add_precondition(self.is_surveyed, True, area=area)
+        self.api.add_precondition(
+            self.is_within_area, True, area=area, location=location
+        )
 
         # Effects
-        self.api.add_effect(Fluents.is_location_surveyed(area), True)
+        self.api.add_effect(
+            self.is_location_surveyed, True, area=area, location=location
+        )
 
         self._check_preconditions(self.preconditions)
         Actions(components=self.components).send_info(area, location)

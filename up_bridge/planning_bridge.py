@@ -160,7 +160,7 @@ class Bridge:
 
         return (
             self._api_actions[action.action.name],
-            *[
+            [
                 self._api_objects[parameter.object().name]
                 for parameter in action.actual_parameters
             ],
