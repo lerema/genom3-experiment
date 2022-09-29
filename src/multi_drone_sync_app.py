@@ -17,9 +17,29 @@ class Drone:
         self.action = Actions(self.c.components)
 
         t = Takeoff(self.c.components)(height=0.5)
-        m = Move(self.c.components)(x=self.id+0.5, y=self.id+0.5, z=self.id+0.5, yaw=0.0)
-        m = Move(self.c.components)(x=-self.id+0.5, y=-self.id+0.5, z=self.id+0.5, yaw=0.0)
-        m = Move(self.c.components)(x=self.id, y=self.id, z=0.5, yaw=0.0)
+        m = Move(self.c.components)(
+            area={},
+            l_from={},
+            l_to={
+                "x": self.id + 0.5,
+                "y": self.id + 0.5,
+                "z": self.id + 0.5,
+                "yaw": 0.0,
+            },
+        )
+        m = Move(self.c.components)(
+            area={},
+            l_from={},
+            l_to={
+                "x": -self.id + 0.5,
+                "y": -self.id + 0.5,
+                "z": self.id + 0.5,
+                "yaw": 0.0,
+            },
+        )
+        m = Move(self.c.components)(
+            area={}, l_from={}, l_to={"x": self.id, "y": self.id, "z": 0.5, "yaw": 0.0}
+        )
         l = Land(self.c.components)()
 
         self.c.stop()
