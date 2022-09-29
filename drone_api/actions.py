@@ -6,7 +6,7 @@ import time
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
-
+# TODO: Add better duration estimation for each action
 class Actions:
     def __init__(self, components):
         self.land = Land(components)
@@ -16,7 +16,7 @@ class Actions:
         self.surveyx = SurveyX(components)
         self.surveyy = SurveyY(components)
         self.survey = self.surveyx
-        self.send_info = SendInfo(components)
+        self.gather_info = GatherInfo(components)
         self.capture_photo = CapturePhoto(components)
 
 
@@ -40,7 +40,7 @@ class Land:
         # )
 
         result = self.maneuver.take_off(
-            {"height": 0.15 if self._is_robot else 0.05, "duration": 5}, ack=self.ack
+            {"height": 0.15 if self._is_robot else 0.05, "duration": 0}, ack=self.ack
         )
         result = self.maneuver.wait()
 
@@ -72,10 +72,13 @@ class Move:
         self.maneuver = components["maneuver"].component
         self.ack = True
 
-    def __call__(self, l_from: dict = None, l_to: dict = None):
+    def __call__(self, area: dict = None, l_from: dict = None, l_to: dict = None):
 
+        assert area is not None, "Area is not defined"
         assert l_from is not None, "l_from is not defined"
         assert l_to is not None, "l_to is not defined"
+
+        # TODO: Check if the drone is in the area and warn if not
 
         if not isinstance(l_from, dict):
             l_from = l_from.__dict__()
@@ -102,7 +105,7 @@ class Move:
                 "ax": 0,
                 "ay": 0,
                 "az": 0,
-                "duration": 5,
+                "duration": 0,
             },
             ack=self.ack,
         )
@@ -127,6 +130,8 @@ class Takeoff:
         return result
 
 
+# FIXME: The survey action is not continuous and waits at some point for the drone to reach the next waypoint
+# Possibly due to duration argument
 class SurveyX:
     """Survey action along x-axis for the drone"""
 
@@ -148,7 +153,7 @@ class SurveyX:
         ymin = area.get("ymin", -5)
         xmax = area.get("xmax", 5)
         ymax = area.get("ymax", 5)
-        z = area.get("z", -5)
+        z = area.get("z", 1)
         yaw = area.get("yaw", 0)
         logger.info(f"Surveying from ({xmin}, {ymin}) to ({xmax}, {ymax})")
         self.ct_drone.ReadROSImageUpdateFindings(ack=self.ack)
@@ -311,7 +316,7 @@ class SurveyY:
         print(data.status)
 
 
-class SendInfo:
+class GatherInfo:
     """Sending Info by Move action for the drone"""
 
     def __init__(self, components):
@@ -335,7 +340,9 @@ class SendInfo:
         self.z = location.get("z", 0.15)
         self.yaw = location.get("yaw", 0.0)
 
-        logger.info(f"Checking Info at ({self.x}, {self.y}, {self.z}, {self.yaw})")
+        logger.info(
+            f"Send Gathered Info from ({self.x}, {self.y}, {self.z}, {self.yaw})"
+        )
 
         self.maneuver.set_bounds(
             {
@@ -350,24 +357,18 @@ class SendInfo:
             },
         )
 
-        result = self.maneuver.waypoint(
+        result = self.maneuver.goto(
             {
-                "x": self.x,
-                "y": self.y,
+                "x": 0.0,
+                "y": 0.0,
                 "z": self.z,
                 "yaw": self.yaw,
-                "vx": 0,
-                "vy": 0,
-                "vz": 0,
-                "wz": 0,
-                "ax": 0,
-                "ay": 0,
-                "az": 0,
-                "duration": 5,
+                "duration": 0,
             },
-            ack=self.ack,
         )
-        result = self.maneuver.wait()
+        time.sleep(
+            1
+        )  # TODO: Remove this once actual image is being sent or as simulated
 
         return result
 
@@ -391,10 +392,10 @@ class CapturePhoto:
         # TODO: check if the location is in the area
 
         logger.info(f"Capturing photo off at {location}")
-        result = self.maneuver.take_off(height=height, duration=2)
-        result = self.maneuver.take_off(height=0.15, duration=2)
+        result = self.maneuver.take_off(height=height, duration=0)
+        result = self.maneuver.take_off(height=0.15, duration=0)
         time.sleep(2)
         # TODO: Capture photo
-        result = self.maneuver.take_off(height=height, duration=2, ack=self.ack)
+        result = self.maneuver.take_off(height=height, duration=0, ack=self.ack)
         result = self.maneuver.wait()
         return result
