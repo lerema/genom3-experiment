@@ -17,14 +17,14 @@ class Application:
     l2 = Location("l2", x=-2.5, y=1.5, z=1.0, yaw=0.0)
     l3 = Location("l3", x=1.5, y=-2.5, z=1.0, yaw=0.0)
     l4 = Location("l4", x=-1.5, y=-3.5, z=1.0, yaw=0.0)
-    home = Location("home", x=0.0, y=0.0, z=0.15, yaw=0.0)
+    home = Location("home", x=0.0, y=0.0, z=1.0, yaw=0.0)
     area = Area("area", xmin=-4.0, xmax=4.0, ymin=-4.0, ymax=4.0, z=3.0, yaw=0.0)
 
     # Actions
     move = Move
     capture_photo = CapturePhoto
     survey = Survey
-    send_info = SendInfo
+    gather_info = GatherInfo
 
     def __init__(self) -> None:
         self.instance = self
@@ -89,10 +89,10 @@ class VerifyStationProblem(Application):
         survey.add_precondition(Not(f_is_surveyed(a)))
         survey.add_effect(f_is_surveyed(a), True)
 
-        send_info, (a, l) = self.bridge.create_action(self.send_info)
-        send_info.add_precondition(f_is_surveyed(a))
-        send_info.add_precondition(f_is_within_area(a, l))
-        send_info.add_effect(f_is_location_surveyed(a, l), True)
+        gather_info, (a, l) = self.bridge.create_action(self.gather_info)
+        gather_info.add_precondition(f_is_surveyed(a))
+        gather_info.add_precondition(f_is_within_area(a, l))
+        gather_info.add_effect(f_is_location_surveyed(a, l), True)
 
         problem = self.bridge.define_problem()
         problem.set_initial_value(f_robot_at(o_home), True)
