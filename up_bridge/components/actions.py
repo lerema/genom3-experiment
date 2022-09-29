@@ -35,7 +35,6 @@ class ActionDefinition:
     def _check_preconditions(self, preconditions=[]):
         ret = False
         for condition in preconditions:
-            print(f"Checking {condition}")
             precondition, value, args = condition
             assert (
                 precondition(expected_value=value, **args) == value
@@ -154,8 +153,8 @@ class CapturePhoto(ActionDefinition, Fluents):
         self._execute_effects(self.effects)
 
 
-class SendInfo(ActionDefinition, Fluents):
-    """SendInfo action"""
+class GatherInfo(ActionDefinition, Fluents):
+    """GatherInfo action"""
 
     area = Area
     location = Location
@@ -181,5 +180,5 @@ class SendInfo(ActionDefinition, Fluents):
         )
 
         self._check_preconditions(self.preconditions)
-        Actions(components=self.components).send_info(area, location)
+        Actions(components=self.components).gather_info(area, location)
         self._execute_effects(self.effects)

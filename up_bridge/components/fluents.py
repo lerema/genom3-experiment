@@ -16,8 +16,17 @@ class Fluents:
     def robot_at(self, location: Location, **kwargs) -> bool:
         assert isinstance(location, Location), f"{location} is not a Location"
         result = get_robot_pose(self.components)
+        if not isinstance(location, dict):
+            location = location.__dict__()
 
-        return bool(result == dict(location))
+        def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+            return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+        for key in location:
+            if key in ["x", "y", "z"] and not isclose(result[key], location[key]):
+                return False
+
+        return True
 
     def verify_station_at(self, location: Location, **kwargs) -> bool:
         assert isinstance(location, Location), f"{location} is not a Location"
@@ -28,6 +37,7 @@ class Fluents:
         return self.robot_at(location)
 
     def is_surveyed(self, area: Area, **kwargs) -> bool:
+        # TODO: Implement this function with actual validataion
         assert isinstance(area, Area), f"{area} is not a Area"
         Facts.is_surveyed[area] = (
             kwargs["expected_value"] if kwargs["expected_value"] else False
@@ -35,6 +45,7 @@ class Fluents:
         return Facts.is_surveyed[area]
 
     def is_location_surveyed(self, area: Area, location: Location, **kwargs) -> bool:
+        # TODO: Implement this function with actual validataion
         assert isinstance(area, Area), f"{area} is not a Area"
         assert isinstance(location, Location), f"{location} is not a Location"
         Facts.is_location_surveyed[location] = (
