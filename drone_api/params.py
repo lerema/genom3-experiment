@@ -154,8 +154,34 @@ class DroneCommon:
         }
 
         ARUCOTAG = {
-            "length": 6,
-            "ports": ("Pose", f"pom{id}/frame/robot"),
+            "length": 0.2,
+            "ports": [
+                ("frame", "camgazebo/frame/raw"),
+                ("intrinsics", "camgazebo/intrinsics"),
+                ("extrinsics", "camgazebo/extrinsics"),
+            ],
+            "length": 0.2,
+            "output_frame": 0,
+            "markers": [1],
+        }
+
+        CAM_GAZEBO = {
+            "hfov": 2,
+            "x_resolution": 640,
+            "y_resolution": 480,
+            "port": f"~/quad{id}/down_camera_link/down_camera/image",
+            "extrinsics": {"ext_values": [0, 0, 1, 0, 2, 1]},  # , 3, 0, 4, 0, 5, 0]},
+        }
+
+        CAM_VIZ = {
+            "pixel_size": 3,
+            "ports": [
+                # TODO: Add multiple ports
+                ("frame/camgazebo", f"camgazebo/frame/raw"),
+                # ("pixel/tag1", "arucotag/pixel_pose/1"),
+            ],
+            "camera": "camgazebo",
+            "pixel_display": "tag1",
         }
 
         return {
@@ -167,6 +193,8 @@ class DroneCommon:
             "CT_drone": CT_DRONE,
             "tf2": TF2,
             "arucotag": ARUCOTAG,
+            "camgazebo": CAM_GAZEBO,
+            "camviz": CAM_VIZ,
         }
 
 

@@ -20,7 +20,9 @@ EXPECTED_MODULES = [
     "nhfc",
     "CT_drone",
     "tf2",
-    # "arucotag",
+    "camgazebo",
+    "camviz",
+    "arucotag",
 ]
 
 COMMON_MODULES = ["tf2", "optitrack"]

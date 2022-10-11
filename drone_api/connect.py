@@ -23,7 +23,18 @@ from drone_api.params import DRONES
 import genomix
 
 from drone_api import MODULES, USE_ROBOT
-from drone_api.components import *
+from drone_api.components import (
+    Optitrack,
+    POM,
+    Maneuver,
+    RotorCraft,
+    NHFC,
+    CTDrone,
+    TF2,
+    ArucoTag,
+    CamGazebo,
+    CamViz,
+)
 
 USE_CAM = True
 
@@ -62,7 +73,9 @@ class Connector:
             "nhfc": self._connect_nhfc(),
             "CT_drone": self._connect_ctdrone(),
             "tf2": self._connect_tf2(),
-            # "arucotag": self._connect_arucotag(),
+            "camgazebo": self._connect_camgazebo(),
+            "arucotag": self._connect_arucotag(),
+            "camviz": self._connect_camviz(),
         }
 
     def start(self):
@@ -160,3 +173,11 @@ class Connector:
     def _connect_arucotag(self) -> ArucoTag:
         """Connect to ArucoTag and load all pocolib modules"""
         return ArucoTag(self.components["arucotag"], params=self.params)()
+
+    def _connect_camgazebo(self) -> CamGazebo:
+        """Connect to CamGazebo and load all pocolib modules"""
+        return CamGazebo(self.components["camgazebo"], params=self.params)()
+
+    def _connect_camviz(self) -> CamViz:
+        """Connect to CamViz and load all pocolib modules"""
+        return CamViz(self.components["camviz"], params=self.params)()

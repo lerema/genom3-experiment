@@ -20,6 +20,8 @@ from .pom import POM
 from .rotorcraft import RotorCraft
 from .tf2 import TF2
 from .arucotag import ArucoTag
+from .camgazebo import CamGazebo
+from .camviz import CamViz
 
 __all__ = [
     "CTDrone",
@@ -30,4 +32,6 @@ __all__ = [
     "RotorCraft",
     "TF2",
     "ArucoTag",
+    "CamGazebo",
+    "CamViz",
 ]

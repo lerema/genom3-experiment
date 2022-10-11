@@ -28,8 +28,11 @@ class ArucoTag:
         """Aruco Tag component"""
 
         try:
-
-            self.component
+            for (local, remote) in self.params["ports"]:
+                self.component.connect_port({"local": local, "remote": remote})
+            self.component.set_length(self.params["length"])
+            self.component.output_frame(self.params["output_frame"])
+            self.component.add_marker(self.params["markers"])
         except Exception as e:
             logger.error(f"Failed to connect to ArucoTag. Throws {e}")
             raise e
@@ -39,3 +42,6 @@ class ArucoTag:
     def stop(self):
         """Stop the ArucoTag component"""
         self.component.stop()
+
+    def __str__(self) -> str:
+        return "arucotag"
