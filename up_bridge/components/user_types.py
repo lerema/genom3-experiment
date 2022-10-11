@@ -16,7 +16,7 @@
 from typing import Iterator
 
 
-class APIUserType:
+class UserTypeDefinition:
     """Location of the object understandable with the robot."""
 
     def __init__(self, name: str, **kwargs: dict) -> None:
@@ -45,7 +45,7 @@ class APIUserType:
         return self.parameters.values()
 
 
-class Location(APIUserType):
+class Location(UserTypeDefinition):
     """Location of the object understandable with the robot."""
 
     name: str = ""
@@ -57,7 +57,7 @@ class Location(APIUserType):
     parameters = {"x": x, "y": y, "z": z, "yaw": yaw}
 
 
-class Area(APIUserType):
+class Area(UserTypeDefinition):
     """Area of the object understandable with the robot."""
 
     name: str = ""

@@ -145,3 +145,23 @@ class VerifyStationProblem(Application):
         problem.add_goal(f_robot_at(o_home))
 
         return problem
+
+
+def main():
+    """Main function"""
+    actions = []
+    bridge = Bridge()
+    demo = VerifyStationProblem(bridge)
+    problem = demo.get_problem()
+    with OneshotPlanner(name="aries") as planner:
+        result = planner.solve(problem)
+        print("*** Result ***")
+        for action_instance in result.plan.timed_actions:
+            print(action_instance)
+            actions.append(action_instance[1])
+        print("*** End of result ***")
+        plan = result.plan
+
+
+if __name__ == "__main__":
+    main()
