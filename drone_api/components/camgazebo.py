@@ -1,4 +1,4 @@
-# Copyright 2022 Selvakumar H S
+# Copyright 2022 Selvakumar H S, LAAS-CNRS
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

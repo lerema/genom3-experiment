@@ -1,4 +1,4 @@
-# Copyright 2022 Selvakumar H S
+# Copyright 2022 Selvakumar H S, LAAS-CNRS
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ setup(
     name="drone_api",
     version="0.0.1",
     description="Python bridge for Drone API through Genomix",
-    author="Selvakumar H S",
+    author="Selvakumar H S, LAAS-CNRS",
     author_email="selvakumar.h-s@laas.com",
     url="",
-    packages=find_packages(include=["drone_api", "drone_api.*", "up_demo", "up_demo.*"]),
+    packages=find_packages(
+        include=["drone_api", "drone_api.*", "up_demo", "up_demo.*"]
+    ),
     install_requires=[],
     license="MIT",
     extras_require={"unified_planning": ["unified_planning", "up_aries"]},
