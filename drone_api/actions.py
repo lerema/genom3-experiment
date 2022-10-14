@@ -32,6 +32,7 @@ class Actions:
         self.survey = self.surveyx
         self.gather_info = GatherInfo(components)
         self.capture_photo = CapturePhoto(components)
+        self.localize_plates = LocalizePlates(components)
 
 
 class Land:
@@ -413,3 +414,23 @@ class CapturePhoto:
         result = self.maneuver.take_off(height=height, duration=0, ack=self.ack)
         result = self.maneuver.wait()
         return result
+
+
+class LocalizePlates:
+    """Localize coloured plates"""
+
+    def __init__(self, components):
+        self.ct_drone = components["CT_drone"].component
+        self.ack = True
+
+    def __call__(self, **kwargs):
+        logger.info("Localizing plates")
+        self.ct_drone.ReadROSImageFindTarget(z=1.0, ack=self.ack)
+        return True
+
+    def monitor(self, **kwargs):
+        try:
+            pose = self.ct_drone.TargetPose()
+            return pose.pos
+        except Exception as e:
+            return {}
