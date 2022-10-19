@@ -16,7 +16,8 @@
 from drone_api.actions import *
 from drone_api.connect import Connector
 from unified_planning.shortcuts import *
-from up_bridge import Bridge, VerifyStationProblem
+from up_bridge import Bridge
+from problem_bridge import VerifyStationProblem
 
 
 def main():

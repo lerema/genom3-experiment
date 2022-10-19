@@ -12,6 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from up_bridge.components.actions import CapturePhoto, Move, GatherInfo, Survey
-from up_bridge.components.fluents import Fluents
-from up_bridge.components.user_types import Area, Location
+from up_bridge.components.actions import ActionDefinition
+from up_bridge.components.user_types import UserTypeDefinition
