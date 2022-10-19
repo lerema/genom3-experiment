@@ -36,3 +36,35 @@ def monitor_battery(components):
 
     data = components["rotorcraft"].component.get_battery()
     return data["level"] > 1
+
+
+def plate_found(components):
+    """Return True if the plate is found."""
+
+    try:
+        _ = components["CT_drone"].component.TargetPose()
+        return True
+    except Exception:
+        return False
+
+
+def detect_aruco_marker(components, marker):
+    """Return True if the aruco marker is found."""
+
+    data = components["arucotag"].pose(str(marker))
+
+    if (
+        data["pos"]["x"] is not None
+        and data["pos"]["y"] is not None
+        and data["pos"]["z"] is not None
+    ):
+        return True
+    else:
+        return False
+
+
+def get_aruco_pose(components, marker):
+    """Return the aruco marker pose."""
+
+    data = components["arucotag"].pose(str(marker))
+    return data["pos"]
