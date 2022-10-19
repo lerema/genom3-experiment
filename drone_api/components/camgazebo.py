@@ -41,6 +41,8 @@ class CamGazebo:
         finally:
             logger.info("Connected to CamGazebo")
 
+        return self
+
     def stop(self):
         """Stop the CamGazebo component"""
         self.component.stop()

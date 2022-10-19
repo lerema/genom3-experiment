@@ -32,12 +32,15 @@ class ArucoTag:
                 self.component.connect_port({"local": local, "remote": remote})
             self.component.set_length(self.params["length"])
             self.component.output_frame(self.params["output_frame"])
-            self.component.add_marker(self.params["markers"])
+            for marker in self.params["markers"]:
+                self.component.add_marker(str(marker))
         except Exception as e:
             logger.error(f"Failed to connect to ArucoTag. Throws {e}")
             raise e
         finally:
             logger.info("Connected to ArucoTag")
+
+        return self
 
     def stop(self):
         """Stop the ArucoTag component"""

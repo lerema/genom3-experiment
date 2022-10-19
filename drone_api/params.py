@@ -160,9 +160,9 @@ class DroneCommon:
                 ("intrinsics", "camgazebo/intrinsics"),
                 ("extrinsics", "camgazebo/extrinsics"),
             ],
-            "length": 0.2,
+            "length": 0.08,
             "output_frame": 0,
-            "markers": [1],
+            "markers": [10, 11, 12, 13],
         }
 
         CAM_GAZEBO = {

@@ -43,6 +43,8 @@ class CamViz:
         finally:
             logger.info("Connected to CamViz")
 
+        return self
+
     def stop(self):
         """Stop the CamViz component"""
         self.component.stop()
