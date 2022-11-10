@@ -1,0 +1,2 @@
+git+https://github.com/aiplan4eu/unified-planning-bridge.git
+git+https://github.com/aiplan4eu/up-aries.git

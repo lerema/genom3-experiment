@@ -26,7 +26,7 @@ setup(
     ),
     install_requires=[],
     license="MIT",
-    extras_require={"unified_planning": ["unified_planning", "up_aries"]},
+    extras_require={"unified_planning": ["unified_planning", "up_aries", "up_bridge"]},
     tests_require=["pytest"],
     # package_data={"exampleproject": ["data/schema.json"]},
 )

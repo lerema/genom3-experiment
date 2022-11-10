@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from unified_planning.shortcuts import *
-from up_bridge.planning_bridge import Bridge
+from up_bridge.bridge import Bridge
 
 from up_components import *
 

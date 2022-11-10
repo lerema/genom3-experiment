@@ -36,9 +36,12 @@ To start the sample experiment with the python api, run the following command:
 python3 src/sample_app.py
 ```
 
-
 To start the UP demo, you could run the following command:
 
 ```bash
+# Install requirements
+pip install -r requirements.txt
+
 # UP Demo script
 python3 src/up_demo.py
+```
