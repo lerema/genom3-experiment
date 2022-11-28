@@ -16,11 +16,11 @@ genomixd -v -v >"$logdir"/genomixd.log &
 tmux \
     new-session  "roslaunch quad-cam_gazebo quad-cam.launch" \; \
     split-window -p 66 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
-    split-window -p 50 "CT_drone-pocolibs -f -p |& tee -i $logdir/CT_drone.log" \; \
-    new-window "optitrack-pocolibs -f -p |& tee -i $logdir/optitrack.log" \; \
-    split-window -p 66 "maneuver-pocolibs -f -p  |& tee -i $logdir/maneuver.log" \; \
+    split-window -p 50 "CT_drone-pocolibs -f |& tee -i $logdir/CT_drone.log" \; \
+    new-window "optitrack-pocolibs -f |& tee -i $logdir/optitrack.log" \; \
+    split-window -p 66 "maneuver-pocolibs -f |& tee -i $logdir/maneuver.log" \; \
     split-window -p 50 "script -f -c \"eltclsh -simu -cam -tf; ${SCRIPT_DIR}/end.sh; sleep 1\" $logdir/eltclsh.log" \; \
-    split-window -h -t 0 "nhfc-pocolibs -f -p |& tee -i $logdir/nhfc.log" \; \
-    split-window -h -t 2 "pom-pocolibs -f -p |& tee -i $logdir/pom.log" \; \
-    split-window -h -t 4 "rotorcraft-pocolibs -f -p |& tee -i $logdir/rotorcraft.log" \; \
+    split-window -h -t 0 "nhfc-pocolibs -f |& tee -i $logdir/nhfc.log" \; \
+    split-window -h -t 2 "pom-pocolibs -f |& tee -i $logdir/pom.log" \; \
+    split-window -h -t 4 "rotorcraft-pocolibs -f |& tee -i $logdir/rotorcraft.log" \; \
     selectp -t 4
