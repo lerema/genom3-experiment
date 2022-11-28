@@ -157,11 +157,12 @@ class DroneCommon:
             "length": 0.2,
             "ports": [
                 ("frame", "camgazebo/frame/raw"),
+                ("drone", "pom/frame/robot"),
                 ("intrinsics", "camgazebo/intrinsics"),
                 ("extrinsics", "camgazebo/extrinsics"),
             ],
             "length": 0.08,
-            "output_frame": 0,
+            "output_frame": 2, # 0: camera, 1: drone, 2: world
             "markers": [10, 11, 12, 13],
         }
 

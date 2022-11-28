@@ -69,9 +69,13 @@ class VerifyStationProblem(Application):
         self.bridge.create_types([Location, Area])
 
         f_robot_at = self.bridge.create_fluent_from_function(self.robot_at)
-        f_verified_station_at = self.bridge.create_fluent_from_function(self.verify_station_at)
+        f_verified_station_at = self.bridge.create_fluent_from_function(
+            self.verify_station_at
+        )
         f_is_surveyed = self.bridge.create_fluent_from_function(self.is_surveyed)
-        f_is_location_surveyed = self.bridge.create_fluent_from_function(self.is_location_surveyed)
+        f_is_location_surveyed = self.bridge.create_fluent_from_function(
+            self.is_location_surveyed
+        )
         f_is_within_area = self.bridge.create_fluent_from_function(self.is_within_area)
 
         o_l1 = self.bridge.create_object(str(self.l1), self.l1)
@@ -81,7 +85,9 @@ class VerifyStationProblem(Application):
         o_home = self.bridge.create_object(str(self.home), self.home)
         o_area = self.bridge.create_object(str(self.area), self.area)
 
-        move, (a, l_from, l_to) = self.bridge.create_action("Move", callable=self.move, area=Area, l_from=Location, l_to=Location)
+        move, (a, l_from, l_to) = self.bridge.create_action(
+            "Move", callable=self.move, area=Area, l_from=Location, l_to=Location
+        )
         move.add_precondition(f_is_surveyed(a))
         move.add_precondition(f_is_location_surveyed(a, l_to))
         move.add_precondition(Not(Equals(l_from, l_to)))
@@ -90,7 +96,9 @@ class VerifyStationProblem(Application):
         move.add_effect(f_robot_at(l_from), False)
         move.add_effect(f_robot_at(l_to), True)
 
-        capture_photo, (a, l) = self.bridge.create_action("CapturePhoto", callable=self.capture_photo, area=Area, l=Location)
+        capture_photo, (a, l) = self.bridge.create_action(
+            "CapturePhoto", callable=self.capture_photo, area=Area, l=Location
+        )
         capture_photo.add_precondition(f_is_surveyed(a))
         capture_photo.add_precondition(f_is_location_surveyed(a, l))
         capture_photo.add_precondition(f_robot_at(l))
@@ -103,7 +111,9 @@ class VerifyStationProblem(Application):
         survey.add_precondition(Not(f_is_surveyed(a)))
         survey.add_effect(f_is_surveyed(a), True)
 
-        gather_info, (a, l) = self.bridge.create_action("GatherInfo", callable=self.gather_info, area=Area, l=Location)
+        gather_info, (a, l) = self.bridge.create_action(
+            "GatherInfo", callable=self.gather_info, area=Area, l=Location
+        )
         gather_info.add_precondition(f_is_surveyed(a))
         gather_info.add_precondition(f_is_within_area(a, l))
         gather_info.add_effect(f_is_location_surveyed(a, l), True)
