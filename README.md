@@ -44,7 +44,7 @@ Usage: bash install-scripts/setup-experiment.sh [--help] [--clean] [--genom] [--
   --update: update the experiment
 ```
 
-> Note: `setup-experiment.sh --clean` will remove the installed modules related to the experiment. But the environment variables in `~/.bashrc` will not be removed. So, we need to remove the environment variables manually.
+> **Note: `setup-experiment.sh --clean` will remove the installed modules related to the experiment. But the environment variables in `~/.bashrc` will not be removed. So, we need to remove the environment variables manually.**
 
 ### Python
 The experiment depends on Python3 by default. To install the python api, we can use the following command:
@@ -54,7 +54,7 @@ The experiment depends on Python3 by default. To install the python api, we can 
 python3 -m pip install .
 ```
 
-> Note: Once the setup is finished, we can relaunch the terminal or run `source ~/.bashrc` to update the environment variables.
+> **Note: Once the setup is finished, we can relaunch the terminal or run `source ~/.bashrc` to update the environment variables.**
 
 
 ## Usage
