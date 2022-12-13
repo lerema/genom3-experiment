@@ -62,9 +62,6 @@ python3 -m pip install .
 To start the experiment, you need to launch the files from `run/` directory. For example, the following command starts the experiment with a single drone:
 
 ```bash
-# To start the world with single drone equipped with camera
-bash run/start-simu-cam.sh --python # --python/--tcl. --python is optional
-
 # To start the world with single drone equipped with camera and AR marker based environment
 bash run/start-simu-ar.sh --python # --python/--tcl. --python is optional
 ```
