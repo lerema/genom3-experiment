@@ -13,6 +13,14 @@ h2 init
 
 genomixd -v -v >"$logdir"/genomixd.log &
 
+if [ $# -eq 0 ] || [ "$1" == "--python" ]; then
+    # Start Gazebo
+    user_cmd="echo \"Use this terminal to access the Python script\"; bash ; ${SCRIPT_DIR}/end.sh; sleep 1"
+elif [ "$1" == "--tcl" ]; then
+    # Start Gazebo
+    user_cmd="script -f -c \"eltclsh -simu -cam -tf; ${SCRIPT_DIR}/end.sh; sleep 1\" $logdir/eltclsh.log"
+fi
+
 tmux \
     new-session "roslaunch quad-cam_gazebo quad-cam.launch world_name:=quad-cam-ar.world" \; \
     split-window -p 66 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
@@ -22,7 +30,7 @@ tmux \
     split-window -h -t 4 "camviz-pocolibs -f |& tee -i $logdir/arucotag.log" \; \
     new-window "optitrack-pocolibs -f |& tee -i $logdir/optitrack.log" \; \
     split-window -p 66 "maneuver-pocolibs -f |& tee -i $logdir/maneuver.log" \; \
-    split-window -p 50 "script -f -c \"eltclsh -simu -cam -tf; ${SCRIPT_DIR}/end.sh; sleep 1\" $logdir/eltclsh.log" \; \
+    split-window -p 50 "$user_cmd" \; \
     split-window -h -t 0 "nhfc-pocolibs -f |& tee -i $logdir/nhfc.log" \; \
     split-window -h -t 2 "pom-pocolibs -f |& tee -i $logdir/pom.log" \; \
     split-window -h -t 4 "rotorcraft-pocolibs -f |& tee -i $logdir/rotorcraft.log" \; \
