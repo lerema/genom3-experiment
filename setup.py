@@ -14,13 +14,19 @@
 
 from setuptools import find_packages, setup
 
+# Read requirements.txt
+with open("requirements.txt", "r", encoding="utf-8") as f:
+    requirements = f.read().splitlines()
+
 setup(
     name="drone_api",
     version="0.0.1",
-    description="Python bridge for Drone API through Genomix",
+    description="Python bridge for Drone API through Genomix. \
+        An experimental integration of Genom framework with Unified Planning framework.",
     author="Selvakumar H S, LAAS-CNRS",
     author_email="selvakumar.h-s@laas.com",
-    url="",
+    url="https://github.com/franklinselva/genom3-experiment.git",
+    requires= requirements,
     packages=find_packages(
         include=["drone_api", "drone_api.*", "up_demo", "up_demo.*"]
     ),
