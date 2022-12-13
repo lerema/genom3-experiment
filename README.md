@@ -8,6 +8,7 @@ This is a Genom3 based experiment for drones in search and survey application. T
 - ROS Noetic
 - Gazebo 11
 - Python 3.8
+- OpenCV4
 
 The experiment has been tested on Ubuntu 20.04 with ROS Noetic and Gazebo 11. But it should work on other versions of Ubuntu, ROS1 and Gazebo.
 
@@ -19,7 +20,7 @@ To setup the experiment workspace, we can use the following commands:
 
 ```bash
 # Setup the workspace
-mkdir -p drone-experiment-ws && cd drone-experiment
+mkdir -p drone-experiment && cd drone-experiment
 git clone https://github.com/franklinselva/genom3-experiment.git
 ```
 
@@ -43,6 +44,8 @@ Usage: bash install-scripts/setup-experiment.sh [--help] [--clean] [--genom] [--
   --update: update the experiment
 ```
 
+> Note: `setup-experiment.sh --clean` will remove the installed modules related to the experiment. But the environment variables in `~/.bashrc` will not be removed. So, we need to remove the environment variables manually.
+
 ### Python
 The experiment depends on Python3 by default. To install the python api, we can use the following command:
 
@@ -51,7 +54,7 @@ The experiment depends on Python3 by default. To install the python api, we can 
 python3 -m pip install .
 ```
 
->  Once the setup is finished, we can relaunch the terminal or run `source ~/.bashrc` to update the environment variables.
+> Note: Once the setup is finished, we can relaunch the terminal or run `source ~/.bashrc` to update the environment variables.
 
 
 ## Usage
