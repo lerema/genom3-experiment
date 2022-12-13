@@ -94,14 +94,14 @@ class Connector:
         print("Stopped")
 
     def __del__(self):
-        # self._unload_modules()
-        del self.components
-        self.genomix_process.kill()
-        subprocess.call(["pkill", "gzserver"])
-        subprocess.call(["pkill", "gzclient"])
-        subprocess.call(["h2", "end"])
-        subprocess.call(["pkill", "genomixd"])
-        subprocess.call(["pkill", "-f", "\-pocolibs"])
+        self._unload_modules()
+        # del self.components
+        # self.genomix_process.kill()
+        # subprocess.call(["pkill", "gzserver"])
+        # subprocess.call(["pkill", "gzclient"])
+        # subprocess.call(["h2", "end"])
+        # subprocess.call(["pkill", "genomixd"])
+        # subprocess.call(["pkill", "-f", "\-pocolibs"])
 
     def _load_modules(self) -> None:
         """Load all pocolib modules"""

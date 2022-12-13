@@ -163,12 +163,12 @@ def main():
     bridge = Bridge()
     demo = VerifyStationProblem(bridge)
     problem = demo.get_problem()
-    with OneshotPlanner(name="aries") as planner:
+    with OneshotPlanner(name="tamer") as planner:
         result = planner.solve(problem)
         print("*** Result ***")
-        for action_instance in result.plan.timed_actions:
+        for action_instance in result.plan.actions:
             print(action_instance)
-            actions.append(action_instance[1])
+            actions.append(action_instance)
         print("*** End of result ***")
 
 
