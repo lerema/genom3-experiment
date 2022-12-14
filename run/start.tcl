@@ -219,7 +219,7 @@ proc init {} {
         tf2::connect_port Poses/drone_pos pom/frame/robot
         tf2::connect_port OccupancyGrids/og CT_drone/OccupancyGrid
 
-        tf2::Init
+        # tf2::Init
 
         tf2::PublishStaticTF -- base drone 0 0 0 0 0 0
         # f2::PublishStaticTF -- down_camera_link drone 0 0 0 0 1.5708 0

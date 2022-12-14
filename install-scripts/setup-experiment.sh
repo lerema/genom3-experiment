@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 # Order preserved.
-ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs shell/eltclsh net/genomix supervision/tcl-genomix interfaces/openrobots2-idl simulation/mrsim-gazebo simulation/optitrack-gazebo path/libkdtp"
-GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils ct_drone minnie-tf2 python-genomix"
+ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs architecture/genom3-ros shell/eltclsh net/genomix supervision/tcl-genomix interfaces/openrobots2-idl simulation/mrsim-gazebo simulation/optitrack-gazebo path/libkdtp"
+GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils python-genomix"
+GENOM_ROS_MODULES="ct_drone minnie-tf2"
+
 # Get python version similar to 3.8.
 PYTHON_VERSION=$(python -c 'import sys; print(sys.version_info[0])').$(python -c 'import sys; print(sys.version_info[1])')
 
@@ -66,7 +68,7 @@ if [ "$1" == "--update" ]; then
     echo "Updating the experiment"
 fi
 
-readonly SCRIPT_DIR INSTALL_DIR ROBOTPKG_MODULES GENOM_MODULES
+readonly SCRIPT_DIR INSTALL_DIR ROBOTPKG_MODULES GENOM_MODULES GENOM_ROS_MODULES PYTHON_VERSION
 build_start="$(date)"
 
 # Check if ros, gazebo and rviz are installed
@@ -85,7 +87,8 @@ fi
 
 # Install dependencies
 sudo apt-get install -y bison python3-vcstool libudev-dev tmux \
-    ros-"$ROS_DISTRO"-jsk-rviz-plugins asciidoctor
+    ros-"$ROS_DISTRO"-jsk-rviz-plugins asciidoctor \
+    ros-"$ROS_DISTRO"-ros-comm ros-"$ROS_DISTRO"-ros ros-"$ROS_DISTRO"-common-msgs
 
 # Finally build ros simulation package
 cd "${SCRIPT_DIR}"/../catkin_ws
@@ -135,7 +138,11 @@ function install_genom_modules {
     autoreconf -vif
     mkdir -p build
     cd build
-    ../configure --prefix="$INSTALL_DIR" --with-templates=pocolibs/server,pocolibs/client/c
+    if [ "$2" == "ros-template" ]; then
+        ../configure --prefix="$INSTALL_DIR" --with-templates=ros/server,ros/client/c,ros/client/ros,pocolibs/server,pocolibs/client/c --disable-dependency-tracking
+    else
+        ../configure --prefix="$INSTALL_DIR" --with-templates=pocolibs/server,pocolibs/client/c
+    fi
     make install
 }
 
@@ -151,6 +158,13 @@ fi
 if [ "$INSTALL_GENOM" = true ]; then
     for module in $GENOM_MODULES; do
         install_genom_modules "$module"
+    done
+fi
+
+# Install genom ros modules
+if [ "$INSTALL_GENOM" = true ]; then
+    for module in $GENOM_ROS_MODULES; do
+        install_genom_modules "$module" "ros-template"
     done
 fi
 

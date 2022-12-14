@@ -30,7 +30,7 @@ class TF2:
         try:
             for port in self.params["ports"]:
                 self.component.connect_port({"local": port[0], "remote": port[1]})
-            self.component.Init()
+            # self.component.Init()
             self._add_dynamic_tf(**self.params["dynamic_tf"])
             self._add_dynamic_pos_tf(**self.params["dynamic_tf_pos"])
             self._add_odometry(self.params["odometry"])
