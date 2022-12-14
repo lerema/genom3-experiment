@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 
-# Order preserved.
-ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs architecture/genom3-ros shell/eltclsh net/genomix supervision/tcl-genomix interfaces/openrobots2-idl simulation/mrsim-gazebo simulation/optitrack-gazebo path/libkdtp"
-GENOM_MODULES="maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils python-genomix"
-GENOM_ROS_MODULES="ct_drone minnie-tf2"
+set -e
+
+# Get ubuntu codename
+UBUNTU_CODENAME=$(lsb_release -cs)
 
 # Get python version similar to 3.8.
 PYTHON_VERSION=$(python -c 'import sys; print(sys.version_info[0])').$(python -c 'import sys; print(sys.version_info[1])')
 
-set -e
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"/..
 INSTALL_DIR=$(realpath "$INSTALL_DIR")
+
+GENOM_MODULES="felix-idl vision-idl felix-g3utils arucotag-genom3 camviz-genom3 camgazebo-genom3"
+GENOM_ROS_MODULES="ct_drone minnie-tf2"
+DEPENDENCIES_FILE="$SCRIPT_DIR"/drone-genom3.repos
+
+readonly SCRIPT_DIR INSTALL_DIR GENOM_MODULES GENOM_ROS_MODULES PYTHON_VERSION
 
 function show_help {
     echo "Usage: setup-experiment.sh [--help] [--clean] [--genom] [--robotpkg] [--all] [--update]"
@@ -25,9 +29,53 @@ function show_help {
     exit 0
 }
 
+function install_robotpkg_apt {
+    # TODO: Fix ubuntu version
+    printf "Setting up robotpkg source list...\n"
+    sudo tee /etc/apt/sources.list.d/robotpkg.list <<EOF
+deb [arch=amd64] http://robotpkg.openrobots.org/packages/debian/pub focal robotpkg
+EOF
+
+    curl http://robotpkg.openrobots.org/packages/debian/robotpkg.key |
+        sudo apt-key add -
+
+    sudo apt-get update
+    printf "Installing robot-pkg modules...\n"
+    sudo apt-get install -y \
+        robotpkg-rotorcraft-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
+        robotpkg-pom-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
+        robotpkg-nhfc-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
+        robotpkg-maneuver-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
+        robotpkg-optitrack-gazebo \
+        robotpkg-optitrack-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
+        robotpkg-genom3-ros \
+        robotpkg-genom3-pocolibs \
+        robotpkg-genomix \
+        robotpkg-tcl-genomix \
+        robotpkg-openrobots2-idl \
+        robotpkg-mrsim-gazebo \
+        robotpkg-libkdtp \
+        robotpkg-eltclsh \
+        robotpkg-py38-python-genomix
+}
+
+# Create function to build and install GeNoM modules
+function install_genom_modules {
+    printf "Installing GeNoM module - %s...\n", "$1"
+    cd "$INSTALL_DIR"/"$1"
+    autoreconf -vif
+    mkdir -p build
+    cd build
+    if [ "$2" == "ros-template" ]; then
+        ../configure --prefix="$INSTALL_DIR" --with-templates=ros/server,ros/client/c,ros/client/ros,pocolibs/server,pocolibs/client/c --disable-dependency-tracking
+    else
+        ../configure --prefix="$INSTALL_DIR" --with-templates=pocolibs/server,pocolibs/client/c
+    fi
+    make install
+}
+
 if [ $# -eq 0 ]; then
     show_help
-    exit 0
 fi
 
 if [ "$1" == "--help" ]; then
@@ -37,6 +85,7 @@ fi
 if [ "$1" == "--clean" ]; then
     echo "Cleaning the experiment"
     # Expect the experiment directory, delete all the other directories.
+    sudo apt-get remove -y robotpkg-* # Remove robotpkg modules
     DIR=$(ls "$INSTALL_DIR")
     for d in $DIR; do
         if [ "$d" != "genom3-experiment" ]; then # TODO: Name of the experiment directory is expected to be the same as repo.
@@ -68,7 +117,6 @@ if [ "$1" == "--update" ]; then
     echo "Updating the experiment"
 fi
 
-readonly SCRIPT_DIR INSTALL_DIR ROBOTPKG_MODULES GENOM_MODULES GENOM_ROS_MODULES PYTHON_VERSION
 build_start="$(date)"
 
 # Check if ros, gazebo and rviz are installed
@@ -94,64 +142,30 @@ sudo apt-get install -y bison python3-vcstool libudev-dev tmux \
 cd "${SCRIPT_DIR}"/../catkin_ws
 catkin_make
 
-# Pull dependencies
-cd "$INSTALL_DIR"
-vcs import -w 1 <"$SCRIPT_DIR"/drone-genom3.repos
-
-# Install robot-pkg
-if [ "$INSTALL_ROBOTPKG" = true ]; then
-    printf "Installing robot-pkg...\n"
-    # Remove existing installation of robot-pkg
-    rm -rf "$INSTALL_DIR"/openrobots/etc/robotpkg.conf
-    cd "$INSTALL_DIR"/robotpkg/bootstrap
-    ./bootstrap --prefix="$INSTALL_DIR"/openrobots
-fi
-
 # EXPORT PACKAGE PATH
 # TODO: add sed comparison to check if the path is already exported
 echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>~/.bashrc
-echo "export PATH=${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
-export PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
+echo "export PATH=/opt/openrobots/bin:${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
+export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
 
-export PYTHONPATH=${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
+export PYTHONPATH=/opt/openrobots/lib/python:${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
 
-export GAZEBO_PLUGIN_PATH=${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
-export GAZEBO_MODEL_PATH=${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models):${GAZEBO_MODEL_PATH}
+export GAZEBO_PLUGIN_PATH=/opt/openrobots/lib/gazebo:${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
+export GAZEBO_MODEL_PATH=/opt/openrobots/share/gazebo/models:${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models):${GAZEBO_MODEL_PATH}
 
-export GENOM_TMPL_PATH=${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
+export GENOM_TMPL_PATH=/opt/openrobots/share/genom/site-templates:${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
 " >>~/.bashrc
 
 # shellcheck source=/dev/null
 eval "$(cat ~/.bashrc | tail -n +10)" # Hack to reload the bashrc
 
-# Install robopkg
-function install_robotpkg_modules {
-    printf "Installing robot-pkg modules...\n"
-    cd "$INSTALL_DIR"/robotpkg/"$1"
-    make update confirm
-}
-
-# Create function to build and install GeNoM modules
-function install_genom_modules {
-    printf "Installing GeNoM module - %s...\n", "$1"
-    cd "$INSTALL_DIR"/"$1"
-    autoreconf -vif
-    mkdir -p build
-    cd build
-    if [ "$2" == "ros-template" ]; then
-        ../configure --prefix="$INSTALL_DIR" --with-templates=ros/server,ros/client/c,ros/client/ros,pocolibs/server,pocolibs/client/c --disable-dependency-tracking
-    else
-        ../configure --prefix="$INSTALL_DIR" --with-templates=pocolibs/server,pocolibs/client/c
-    fi
-    make install
-}
-
 # TODO: automatically detect the base directory of the robot-pkg repository
+# Pull dependencies
+cd "$INSTALL_DIR"
+vcs import -w 1 <"$DEPENDENCIES_FILE"
 
 if [ "$INSTALL_ROBOTPKG" = true ]; then
-    for module in $ROBOTPKG_MODULES; do
-        install_robotpkg_modules "$module"
-    done
+    install_robotpkg_apt
 fi
 
 # Install genom modules

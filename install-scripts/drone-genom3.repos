@@ -1,4 +1,16 @@
 repositories:
+  arucotag-genom3:
+    type: git
+    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision/arucotag-genom3.git
+    version: master
+  camgazebo-genom3:
+    type: git
+    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision/camgazebo-genom3.git
+    version: master
+  camviz-genom3:
+    type: git
+    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision/camviz-genom3.git
+    version: master
   ct_drone:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/ct_drone.git
@@ -11,43 +23,11 @@ repositories:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-idl.git
     version: master
-  hippo-genom3:
-    type: git
-    url: git://redmine.laas.fr/laas/users/felix/vandv/genom3-hippo.git
-    version: master
-  maneuver-genom3:
-    type: git
-    url: git://git.openrobots.org/robots/telekyb3/maneuver-genom3.git
-    version: master
   minnie-tf2:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/minnie-tf2.git
     version: master
-  nhfc-genom3:
+  vision-idl:
     type: git
-    url: git://git.openrobots.org/robots/telekyb3/nhfc-genom3.git
-    version: master
-  optitrack-genom3:
-    type: git
-    url: git://git.openrobots.org/robots/optitrack-genom3.git
-    version: master
-  pom-genom3:
-    type: git
-    url: git://git.openrobots.org/robots/pom-genom3.git
-    version: master
-  python-genomix:
-    type: git
-    url: https://git.openrobots.org/robots/genomix/python-genomix.git
-    version: master
-  robotpkg:
-    type: git
-    url: git://git.openrobots.org/robots/robotpkg
-    version: master
-  rotorcraft-genom3:
-    type: git
-    url: git://git.openrobots.org/robots/telekyb3/rotorcraft-genom3.git
-    version: master
-  vv:
-    type: git
-    url: git://redmine.laas.fr/laas/users/felix/drone-v-v.git
+    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision-idl.git
     version: master

@@ -63,7 +63,9 @@ class Connector:
 
         self._load_modules()
         if not set(MODULES["expected"]).issubset({*self.components}):
-            raise ModuleNotFoundError(f"Failed to load all expected modules")
+            raise ModuleNotFoundError(
+                f"Failed to find all expected modules. Expected {MODULES['expected']}, found {[*self.components]}"
+            )
 
         self.components = {
             "optitrack": self._connect_optitrack(),
@@ -108,6 +110,11 @@ class Connector:
 
         assert os.path.isdir(LIB_PATH)
         modules = glob.glob(f"{LIB_PATH}/genom/*/plugins/*.so")
+        try:
+            modules.extend(glob.glob(f"/opt/openrobots/lib/genom/*/plugins/*.so"))
+        except Exception:
+            pass
+
         if self.id == 0:
             id = ""
         else:
