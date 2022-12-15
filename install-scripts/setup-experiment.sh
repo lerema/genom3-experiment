@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"/..
 INSTALL_DIR=$(realpath "$INSTALL_DIR")
 
-GENOM_MODULES="felix-idl vision-idl felix-g3utils arucotag-genom3 camviz-genom3 camgazebo-genom3"
+GENOM_MODULES="felix-idl vision-idl felix-g3utils rotorcraft-genom3 arucotag-genom3 camviz-genom3 camgazebo-genom3"
 GENOM_ROS_MODULES="ct_drone minnie-tf2"
 DEPENDENCIES_FILE="$SCRIPT_DIR"/drone-genom3.repos
 
@@ -42,7 +42,6 @@ EOF
     sudo apt-get update
     printf "Installing robot-pkg modules...\n"
     sudo apt-get install -y \
-        robotpkg-rotorcraft-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
         robotpkg-pom-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
         robotpkg-nhfc-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
         robotpkg-maneuver-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
@@ -148,7 +147,7 @@ echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>~/.bashrc
 echo "export PATH=/opt/openrobots/bin:${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
 export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
 
-export PYTHONPATH=/opt/openrobots/lib/python:${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
+export PYTHONPATH=/opt/openrobots/lib/python3.8/site-packages:${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
 
 export GAZEBO_PLUGIN_PATH=/opt/openrobots/lib/gazebo:${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
 export GAZEBO_MODEL_PATH=/opt/openrobots/share/gazebo/models:${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models):${GAZEBO_MODEL_PATH}

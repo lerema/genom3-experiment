@@ -27,6 +27,10 @@ repositories:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/minnie-tf2.git
     version: master
+  rotorcraft-genom3:
+    type: git
+    url: https://github.com/franklinselva/rotorcraft-genom3.git
+    version: master
   vision-idl:
     type: git
     url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision-idl.git
