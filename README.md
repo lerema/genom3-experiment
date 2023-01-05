@@ -19,6 +19,9 @@ To setup the experiment, we should already have ROS and Gazebo installed. If not
 To setup the experiment workspace, we can use the following commands:
 
 ```bash
+# Source the ROS environment
+source /opt/ros/noetic/setup.bash
+
 # Setup the workspace
 mkdir -p drone-experiment && cd drone-experiment
 git clone https://github.com/franklinselva/genom3-experiment.git
@@ -29,9 +32,14 @@ git clone https://github.com/franklinselva/genom3-experiment.git
 The easier way to install genom3 and robotpkg modules is to launch the following commands:
 
 ```bash
+# Move to the root of the repository
+cd genom3-experiment
+
 # Setup the experiment
 bash install-scripts/setup-experiment.sh --all
 ```
+
+> **Note: The setup script asks for `su` permission to install robotpkg and ros packages using system package manager**
 
 The `setup-experiment.sh` script has the following options:
 ```bash
