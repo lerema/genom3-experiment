@@ -8,6 +8,7 @@ This is a Genom3 based experiment for drones in search and survey application. T
 - ROS Noetic
 - Gazebo 11
 - Python 3.8
+- Pip >= 22.3
 - OpenCV4
 
 The experiment has been tested on Python3.8, Ubuntu 20.04 with ROS Noetic and Gazebo 11 with the system architecture x86_64/AMD64. But it should work on other versions of Ubuntu, ROS1 and Gazebo.
@@ -59,6 +60,8 @@ The experiment depends on Python3 by default. To install the python api, we can 
 
 ```bash
 # In the root of the repository
+python3 -m pip install -U pip
+python3 -m pip install -r requirements.txt
 python3 -m pip install .
 ```
 

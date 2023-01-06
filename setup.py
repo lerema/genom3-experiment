@@ -15,8 +15,9 @@
 from setuptools import find_packages, setup
 
 # Read requirements.txt
-with open("requirements.txt", "r", encoding="utf-8") as f:
-    requirements = f.read().splitlines()
+# with open("requirements.txt", "r", encoding="utf-8") as f:
+#     requirements = f.read().splitlines()
+requirements = []
 
 setup(
     name="drone_api",
