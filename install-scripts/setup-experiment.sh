@@ -12,8 +12,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"/..
 INSTALL_DIR=$(realpath "$INSTALL_DIR")
 
-GENOM_MODULES="felix-idl vision-idl felix-g3utils rotorcraft-genom3 arucotag-genom3 camviz-genom3 camgazebo-genom3"
-GENOM_ROS_MODULES="ct_drone minnie-tf2"
+GENOM_MODULES="felix-idl vision-idl felix-g3utils rotorcraft-genom3 arucotag-genom3 camviz-genom3 camgazebo-genom3 ct_drone minnie-tf2"
+GENOM_ROS_MODULES=""
 DEPENDENCIES_FILE="$SCRIPT_DIR"/drone-genom3.repos
 
 readonly SCRIPT_DIR INSTALL_DIR GENOM_MODULES GENOM_ROS_MODULES PYTHON_VERSION
@@ -134,6 +134,7 @@ fi
 
 # Install dependencies
 sudo apt-get install -y bison python3-vcstool libudev-dev tmux \
+    python3-rospkg \
     ros-"$ROS_DISTRO"-jsk-rviz-plugins asciidoctor \
     ros-"$ROS_DISTRO"-ros-comm ros-"$ROS_DISTRO"-ros ros-"$ROS_DISTRO"-common-msgs
 
