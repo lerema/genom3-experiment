@@ -83,6 +83,7 @@ To start the sample experiment with the python api, run the following command:
 
 ```bash
 # Simple example for a single drone
+# From the root of the repository
 python3 src/sample_app.py
 ```
 
@@ -90,6 +91,7 @@ To start the UP demo, you could run the following command:
 
 ```bash
 # UP Demo script
+# From the root of the repository
 python3 src/up_demo.py
 ```
 
