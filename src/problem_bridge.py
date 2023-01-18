@@ -14,8 +14,17 @@
 
 from unified_planning.shortcuts import *
 from up_bridge.bridge import Bridge
+import time
 
-from up_components import *
+from up_components import (
+    Fluents,
+    Move,
+    CapturePhoto,
+    Survey,
+    GatherInfo,
+    Location,
+    Area,
+)
 
 
 class Application:
@@ -55,9 +64,10 @@ class VerifyStationProblem(Application):
         results = []
         for action in action_instances:
             print(f"Executing {action}")
-            (executor, parameters) = self.bridge.get_executable_action(action)
+            (executor, parameters) = self.bridge.get_executable_action(action[1])
             execute_action = executor(**kwargs)
             result = execute_action(*parameters)
+            time.sleep(1)
 
             results.append(result)
 
@@ -107,7 +117,9 @@ class VerifyStationProblem(Application):
             f_robot_at(l), True
         )  # Since using instantaneous actions
 
-        survey, a = self.bridge.create_action("Survey", callable=self.survey, area=Area)
+        survey, [a] = self.bridge.create_action(
+            "Survey", callable=self.survey, area=Area
+        )
         survey.add_precondition(Not(f_is_surveyed(a)))
         survey.add_effect(f_is_surveyed(a), True)
 
@@ -163,10 +175,10 @@ def main():
     bridge = Bridge()
     demo = VerifyStationProblem(bridge)
     problem = demo.get_problem()
-    with OneshotPlanner(name="tamer") as planner:
+    with OneshotPlanner(name="aries") as planner:
         result = planner.solve(problem)
         print("*** Result ***")
-        for action_instance in result.plan.actions:
+        for action_instance in result.plan.timed_actions:
             print(action_instance)
             actions.append(action_instance)
         print("*** End of result ***")

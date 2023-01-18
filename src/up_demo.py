@@ -33,10 +33,10 @@ def main():
     connector.start()
 
     print("*** Planning ***")
-    with OneshotPlanner(name="tamer") as planner:
+    with OneshotPlanner(name="aries") as planner:
         result = planner.solve(problem)
         print("*** Result ***")
-        for action_instance in result.plan.actions:
+        for action_instance in result.plan.timed_actions:
             print(action_instance)
             actions.append(action_instance)
         print("*** End of result ***")

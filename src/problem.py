@@ -142,10 +142,10 @@ class VerifyStationProblem(object):
 
 problem = VerifyStationProblem().demo_problem()
 print("*** Planning ***")
-with OneshotPlanner(name="tamer", optimality_guarantee=up.engines.PlanGenerationResultStatus.SOLVED_OPTIMALLY) as planner:
+with OneshotPlanner(name="aries", optimality_guarantee=up.engines.PlanGenerationResultStatus.SOLVED_OPTIMALLY) as planner:
     result = planner.solve(problem)
     print("*** Result ***")
-    for action_instance in result.plan.actions:
+    for action_instance in result.plan.timed_actions:
         print(action_instance)
     print("*** End of result ***")
     plan = result.plan
