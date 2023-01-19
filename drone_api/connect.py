@@ -23,7 +23,7 @@ from drone_api.params import DRONES
 import genomix
 
 from drone_api import MODULES, USE_ROBOT
-from drone_api.components import (
+from drone_api.genom3 import (
     Optitrack,
     POM,
     Maneuver,
