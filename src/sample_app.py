@@ -11,10 +11,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import threading
 from drone_api.connect import Connector
 from drone_api.actions import *
+from drone_api.state import RobotState
 
+def sample_actions(action):
+    """Test run of the available actions."""
+    # Start actions
+    t = action.takeoff(height=0.5)
+    m = action.move(area={}, l_from={}, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
+    m = action.move(
+        area={}, l_from={}, l_to={"x": 0.5, "y": -0.5, "z": 0.5, "yaw": 0.0}
+    )
+    # s = action.survey(
+    #     area={
+    #         "xmin": -5.0,
+    #         "xmax": 5.0,
+    #         "ymin": -2.0,
+    #         "ymax": 2.0,
+    #         "z": 3.0,
+    #         "yaw": 0.5,
+    #     }
+    # )
+    m = action.move(area={}, l_from={}, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
+    l = action.land()
 
 def main():
     """Main function"""
@@ -27,25 +48,17 @@ def main():
     # Start the connection and take off
     c.start()
     action = Actions(c.components)
+    robot_state = RobotState(c.components, c.id)
 
-    # Start actions
-    t = action.takeoff(height=0.5)
-    m = action.move(area={}, l_from={}, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
-    m = action.move(
-        area={}, l_from={}, l_to={"x": 0.5, "y": -0.5, "z": 0.5, "yaw": 0.0}
-    )
-    s = action.survey(
-        area={
-            "xmin": -5.0,
-            "xmax": 5.0,
-            "ymin": -2.0,
-            "ymax": 2.0,
-            "z": 3.0,
-            "yaw": 0.5,
-        }
-    )
-    m = action.move(area={}, l_from={}, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
-    l = action.land()
+    thread_actions = threading.Thread(target=sample_actions, args=(action,))
+    thread_state = threading.Thread(target=robot_state.run)
+
+    thread_actions.start()
+    thread_state.start()
+
+    thread_state.join()
+    thread_state.join()
+
     c.stop()
 
     # wait until keypress

@@ -103,19 +103,16 @@ class JSONSerializer:
             data = json.load(f)
 
         # If key has a dot, then it is a nested key
-        data_copy = data
-        if "." in key:
-            keys = key.split(".")
-            data_copy = self.get(keys[0])
+        def update(data, key, value):
+            if "." in key:
+                key, rest = key.split(".", 1)
+                data[key] = update(data.get(key, {}), rest, value)
+            else:
+                data[key] = value
 
-            for k in keys[1:-1]:
-                data_copy = data_copy[k]
+            return data
 
-            data_copy[keys[-1]] = value
-            data[keys[0]] = data_copy
-        else:
-            data[key] = value
-
+        data = update(data, key, value)
         with open(self.filename, "w") as f:
             json.dump(data, f, indent=4)
 

@@ -48,6 +48,5 @@ class Move:
             },
             ack=self.ack,
         )
-        result = self.maneuver.wait()
 
         return result
