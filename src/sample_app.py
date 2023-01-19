@@ -34,7 +34,7 @@ def main():
     m = action.move(
         area={}, l_from={}, l_to={"x": 0.5, "y": -0.5, "z": 0.5, "yaw": 0.0}
     )
-    s = action.surveyx(
+    s = action.survey(
         area={
             "xmin": -5.0,
             "xmax": 5.0,
