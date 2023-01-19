@@ -3,8 +3,6 @@
 import os
 import json
 
-from typing import Tuple
-
 
 class Robot:
     def __init__(
