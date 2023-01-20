@@ -60,8 +60,11 @@ The experiment depends on Python3 by default. To install the python api, we can 
 
 ```bash
 # In the root of the repository
+# Upgrade pip to the latest version. One of the dependency uses `pyproject.toml` which is supported by pip >= 22.3
 python3 -m pip install -U pip
+# Install dependencies for the experiment
 python3 -m pip install -r requirements.txt
+# Install the drone python api
 python3 -m pip install .
 ```
 
