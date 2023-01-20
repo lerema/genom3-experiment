@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from genomix.event import GenoMError
 import logging
 
 logger = logging.getLogger("[CamViz]")
@@ -37,6 +37,9 @@ class CamViz:
                 self.params["pixel_display"], self.params["camera"]
             )
             self.component.show(ratio=2, ack=self.ack)
+        except GenoMError as e:
+            if "already" in str(e):
+                logger.warning("CamViz already defined")
         except Exception as e:
             logger.error(f"Failed to connect to CamViz. Throws {e}")
             raise e

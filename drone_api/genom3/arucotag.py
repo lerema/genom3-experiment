@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from genomix.event import GenoMError
 import logging
 
 logger = logging.getLogger("[ArucoTag]")
@@ -34,6 +34,9 @@ class ArucoTag:
             self.component.output_frame(self.params["output_frame"])
             for marker in self.params["markers"]:
                 self.component.add_marker(str(marker))
+        except GenoMError as e:
+            if "already tracked" in str(e):
+                logger.warning("ArucoTag already defined")
         except Exception as e:
             logger.error(f"Failed to connect to ArucoTag. Throws {e}")
             raise e

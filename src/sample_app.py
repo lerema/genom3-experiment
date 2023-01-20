@@ -25,16 +25,16 @@ def sample_actions(action):
     m = action.move(
         area={}, l_from={}, l_to={"x": 0.5, "y": -0.5, "z": 0.5, "yaw": 0.0}
     )
-    # s = action.survey(
-    #     area={
-    #         "xmin": -5.0,
-    #         "xmax": 5.0,
-    #         "ymin": -2.0,
-    #         "ymax": 2.0,
-    #         "z": 3.0,
-    #         "yaw": 0.5,
-    #     }
-    # )
+    s = action.survey(
+        area={
+            "xmin": -5.0,
+            "xmax": 5.0,
+            "ymin": -2.0,
+            "ymax": 2.0,
+            "z": 3.0,
+            "yaw": 0.5,
+        }
+    )
     m = action.move(area={}, l_from={}, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
     l = action.land()
 
@@ -43,14 +43,15 @@ def main():
     """Main function"""
 
     try:
-        c = Connector()
+        action_handler = Connector()
+        data_handler = Connector()
     except Exception as e:
         raise Exception("Failed to connect to the drone") from e
 
     # Start the connection and take off
-    c.start()
-    action = Actions(c.components)
-    robot_state = RobotState(c.components, c.id)
+    action_handler.start()
+    action = Actions(action_handler.components)
+    robot_state = RobotState(data_handler.components, data_handler.id)
 
     thread_actions = threading.Thread(target=sample_actions, args=(action,))
     thread_state = threading.Thread(target=robot_state.run)
@@ -61,7 +62,7 @@ def main():
     thread_state.join()
     thread_state.join()
 
-    c.stop()
+    action_handler.stop()
 
     # wait until keypress
     input("Press Enter to exit...")

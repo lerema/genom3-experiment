@@ -14,13 +14,13 @@ class RobotState:
 
     def robot_pose(self):
         """Return the robot pose."""
-        pom = self.components["maneuver"].component
-        data = pom.get_reference()
+        pom = self.components["pom"].component
+        data = pom.frame("robot")
 
         return [
-            data["reference"]["pos"]["x"],
-            data["reference"]["pos"]["y"],
-            data["reference"]["pos"]["z"],
+            data["frame"]["pos"]["x"],
+            data["frame"]["pos"]["y"],
+            data["frame"]["pos"]["z"],
         ]
 
     def get_battery_level(self):
@@ -38,7 +38,6 @@ class RobotState:
         while True:
             with data_lock:
                 data = Robot(self.id, self.robot_pose(), self.get_battery_level())
-                print(data.__dict__())
                 JSONSerializer().update(f"ROBOT.{self.id}", data.__dict__())
 
 
