@@ -70,10 +70,7 @@ class DataRepresentation:
         for i in range(self.ENV.NO_ROBOTS):
             ROBOTS[i] = self.ROBOTS[i].__dict__()
 
-        return {
-            "ROBOTS": ROBOTS,
-            "ENV": self.ENV.__dict__(),
-        }
+        return {"ROBOTS": ROBOTS, "ENV": self.ENV.__dict__()}
 
 
 class JSONSerializer:

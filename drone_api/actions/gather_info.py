@@ -8,6 +8,7 @@ import time
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
+
 class GatherInfo:
     """Sending Info by Move action for the drone"""
 
@@ -46,17 +47,11 @@ class GatherInfo:
                 "zmax": 10,
                 "yawmin": -3.14,
                 "yawmax": 3.14,
-            },
+            }
         )
 
         result = self.maneuver.goto(
-            {
-                "x": 0.0,
-                "y": 0.0,
-                "z": self.z,
-                "yaw": self.yaw,
-                "duration": 0,
-            },
+            {"x": 0.0, "y": 0.0, "z": self.z, "yaw": self.yaw, "duration": 0}
         )
         time.sleep(
             1

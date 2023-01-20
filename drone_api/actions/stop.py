@@ -7,6 +7,7 @@ import logging
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
+
 class Stop:
     """Stop action for the drone"""
 

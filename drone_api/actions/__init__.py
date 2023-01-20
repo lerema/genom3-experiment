@@ -9,7 +9,6 @@ from .stop import Stop
 from .survey import SurveyX
 
 
-
 class Actions:
     def __init__(self, components):
         self.land = Land(components)

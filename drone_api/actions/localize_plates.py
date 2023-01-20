@@ -7,6 +7,7 @@ import logging
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
+
 class LocalizePlates:
     """Localize coloured plates"""
 

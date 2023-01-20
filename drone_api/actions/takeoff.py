@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
+
 class Takeoff:
     """Takeoff action for the drone"""
 
