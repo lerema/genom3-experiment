@@ -8,6 +8,7 @@ import time
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
+
 class CapturePhoto:
     """Takeoff action for the drone"""
 

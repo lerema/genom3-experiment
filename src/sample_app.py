@@ -16,6 +16,7 @@ from drone_api.connect import Connector
 from drone_api.actions import *
 from drone_api.state import RobotState
 
+
 def sample_actions(action):
     """Test run of the available actions."""
     # Start actions
@@ -36,6 +37,7 @@ def sample_actions(action):
     # )
     m = action.move(area={}, l_from={}, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
     l = action.land()
+
 
 def main():
     """Main function"""

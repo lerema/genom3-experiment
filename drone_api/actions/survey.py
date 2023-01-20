@@ -68,13 +68,7 @@ class SurveyX:
             y += self._step_size
             yaw = math.pi
             result = self.maneuver.goto(
-                {
-                    "x": xmax,
-                    "y": y,
-                    "z": z,
-                    "yaw": yaw,
-                    "duration": 0,
-                }
+                {"x": xmax, "y": y, "z": z, "yaw": yaw, "duration": 0}
             )
             result = self.maneuver.goto(
                 {
@@ -88,13 +82,7 @@ class SurveyX:
             y += self._step_size
             yaw = 0.0
             result = self.maneuver.goto(
-                {
-                    "x": xmin,
-                    "y": y,
-                    "z": z,
-                    "yaw": yaw,
-                    "duration": 0,
-                }
+                {"x": xmin, "y": y, "z": z, "yaw": yaw, "duration": 0}
             )
         return result
 
@@ -158,13 +146,7 @@ class SurveyY:
             )
             x += self._step_size
             result = self.maneuver.goto(
-                {
-                    "x": x,
-                    "y": ymax,
-                    "z": z,
-                    "yaw": -yaw,
-                    "duration": 0,
-                }
+                {"x": x, "y": ymax, "z": z, "yaw": -yaw, "duration": 0}
             )
             result = self.maneuver.goto(
                 {
@@ -177,13 +159,7 @@ class SurveyY:
             )
             x += self._step_size
             result = self.maneuver.goto(
-                {
-                    "x": x,
-                    "y": ymin,
-                    "z": z,
-                    "yaw": yaw,
-                    "duration": 0,
-                }
+                {"x": x, "y": ymin, "z": z, "yaw": yaw, "duration": 0}
             )
         return result
 
