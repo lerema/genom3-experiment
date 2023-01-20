@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from genomix.event import GenoMError
 import logging
 
 logger = logging.getLogger("[TF2]")
@@ -40,6 +40,9 @@ class TF2:
             for tf in self.params["static_transform"]:
                 self._publish_static_tf(**tf)
             self.component.AddOccupancyGrid(self.params["occupancy_grid"])
+        except GenoMError as e:
+            if "already_defined" in str(e):
+                logging.warning("TF2 already defined")
         except Exception as e:
             logging.error(f"Failed to connect to TF2. Throws {e}")
             raise e

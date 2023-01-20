@@ -121,7 +121,7 @@ class Connector:
             id = str(self.id)
 
         for module in modules:
-            logger.info(f"Loading module {os.path.basename(module)}")
+            logger.debug(f"Loading module {os.path.basename(module)}")
             tag = os.path.basename(module).split(".")[0]
             try:
 
@@ -141,13 +141,11 @@ class Connector:
         modules = glob.glob(f"{LIB_PATH}/genom/*/plugins/*.so")
 
         for module in modules:
-            logger.info(f"Unloading module {os.path.basename(module)}")
+            logger.debug(f"Unloading module {os.path.basename(module)}")
             try:
                 self.handle.unload(module)
             except Exception as e:
-                logger.error(
-                    f"Failed to unload module {os.path.basename(module)}. Throws {e}"
-                )
+                pass # Unloading is an execption
 
     def _connect_optitrack(self) -> Optitrack:
         """Connect to Optitrack and load all pocolib modules"""
