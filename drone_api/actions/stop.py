@@ -13,14 +13,23 @@ class Stop:
 
     logger.info("Stopping the controller")
 
-    def __init__(self, components, **kwargs):
+    def __init__(self, components):
         self.rotorcraft = components["rotorcraft"].component
         self.ack = True
+        self._status = None
 
-    def __call__(self):
+    def __call__(self, **kwargs):
         self.rotorcraft.set_velocity(
-            {"desired": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, ack=self.ack
+            {"desired": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            ack=self.ack if "ack" not in kwargs else kwargs["ack"],
+            callback=self.callback if "callback" not in kwargs else kwargs["callback"],
         )
-        result = self.rotorcraft.stop()
+        result = self.rotorcraft.stop(
+            ack=self.ack if "ack" not in kwargs else kwargs["ack"],
+            callback=self.callback if "callback" not in kwargs else kwargs["callback"],
+        )
 
         return result
+
+    def callback(self, request):
+        self._status = request.status

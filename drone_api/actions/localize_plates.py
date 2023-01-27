@@ -14,15 +14,22 @@ class LocalizePlates:
     def __init__(self, components):
         self.ct_drone = components["CT_drone"].component
         self.ack = True
+        self._status = None
 
     def __call__(self, **kwargs):
         logger.info("Localizing plates")
-        self.ct_drone.ReadROSImageFindTarget(z=1.0, ack=self.ack)
-        return True
+        result = self.ct_drone.ReadROSImageFindTarget(
+            z=1.0,
+            ack=self.ack if "ack" not in kwargs else kwargs["ack"],
+            callback=self.callback if "callback" not in kwargs else kwargs["callback"],
+        )
 
-    def monitor(self, **kwargs):
-        try:
-            pose = self.ct_drone.TargetPose()
-            return pose.pos
-        except Exception as e:
-            return {}
+        result = self.ct_drone.ReadROSImageUpdateFindings(
+            ack=self.ack if "ack" not in kwargs else kwargs["ack"],
+            callback=self.callback if "callback" not in kwargs else kwargs["callback"],
+        )
+
+        return result
+
+    def callback(self, request):
+        self._status = request.status
