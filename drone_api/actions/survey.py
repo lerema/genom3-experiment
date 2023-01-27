@@ -5,8 +5,7 @@ import math
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
-# FIXME: The survey action is not continuous and waits at some point for the drone to reach the next waypoint
-# Possibly due to duration argument
+# FIXME:  Survey action is not asynchrounous as it should be
 class SurveyX:
     """Survey action along x-axis for the drone"""
 
@@ -31,7 +30,6 @@ class SurveyX:
         z = area.get("z", 1)
         yaw = area.get("yaw", 0)
         logger.info(f"Surveying from ({xmin}, {ymin}) to ({xmax}, {ymax})")
-        self.ct_drone.ReadROSImageUpdateFindings(ack=self.ack)
         self.maneuver.set_bounds(
             {
                 "xmin": -100,

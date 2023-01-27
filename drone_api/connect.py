@@ -93,10 +93,10 @@ class Connector:
 
     def stop(self):
         self.components["rotorcraft"].stop()
-        print("Stopped")
 
     def __del__(self):
-        self._unload_modules()
+        pass
+        # self._unload_modules()
         # del self.components
         # self.genomix_process.kill()
         # subprocess.call(["pkill", "gzserver"])
@@ -145,7 +145,7 @@ class Connector:
             try:
                 self.handle.unload(module)
             except Exception as e:
-                pass # Unloading is an execption
+                pass  # Unloading is an execption
 
     def _connect_optitrack(self) -> Optitrack:
         """Connect to Optitrack and load all pocolib modules"""

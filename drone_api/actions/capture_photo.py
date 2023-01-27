@@ -33,5 +33,5 @@ class CapturePhoto:
         time.sleep(2)
         # TODO: Capture photo
         result = self.maneuver.take_off(height=height, duration=0, ack=self.ack)
-        result = self.maneuver.wait()
+
         return result

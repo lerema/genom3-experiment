@@ -15,6 +15,7 @@ import threading
 from drone_api.connect import Connector
 from drone_api.actions import *
 from drone_api.state import RobotState
+import genomix
 
 
 def sample_actions(action):
@@ -38,29 +39,25 @@ def sample_actions(action):
     m = action.move(area={}, l_from={}, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
     l = action.land()
 
+def callback(request):
+    print(request.status)
 
 def main():
     """Main function"""
 
     try:
         action_handler = Connector()
-        data_handler = Connector()
     except Exception as e:
         raise Exception("Failed to connect to the drone") from e
 
     # Start the connection and take off
     action_handler.start()
     action = Actions(action_handler.components)
-    robot_state = RobotState(data_handler.components, data_handler.id)
 
-    thread_actions = threading.Thread(target=sample_actions, args=(action,))
-    thread_state = threading.Thread(target=robot_state.run)
+    result = action.move(area={}, l_from={}, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0}, ack=True, callback=callback)
 
-    thread_actions.start()
-    thread_state.start()
-
-    thread_state.join()
-    thread_state.join()
+    while not genomix.update():
+        print(result.status)
 
     action_handler.stop()
 

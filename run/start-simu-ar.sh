@@ -22,7 +22,7 @@ elif [ "$1" == "--tcl" ]; then
 fi
 
 tmux \
-    new-session "roslaunch quad-cam_gazebo quad-cam.launch world_name:=quad-cam-ar.world" \; \
+    new-session "roslaunch quad-cam_gazebo quad-cam.launch" \; \
     split-window -p 66 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
     split-window -p 50 "CT_drone-pocolibs -f |& tee -i $logdir/CT_drone.log" \; \
     split-window -p 50 "arucotag-pocolibs -f |& tee -i $logdir/arucotag.log" \; \

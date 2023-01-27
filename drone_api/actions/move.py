@@ -11,8 +11,11 @@ class Move:
     def __init__(self, components):
         self.maneuver = components["maneuver"].component
         self.ack = True
+        self._status = None
 
-    def __call__(self, area: dict = None, l_from: dict = None, l_to: dict = None):
+    def __call__(
+        self, area: dict = None, l_from: dict = None, l_to: dict = None, **kwargs
+    ):
 
         assert area is not None, "Area is not defined"
         assert l_from is not None, "l_from is not defined"
@@ -32,22 +35,13 @@ class Move:
 
         logger.info(f"Moving to ({self.x}, {self.y}, {self.z}, {self.yaw})")
 
-        result = self.maneuver.waypoint(
-            {
-                "x": self.x,
-                "y": self.y,
-                "z": self.z,
-                "yaw": self.yaw,
-                "vx": 0,
-                "vy": 0,
-                "vz": 0,
-                "wz": 0,
-                "ax": 0,
-                "ay": 0,
-                "az": 0,
-                "duration": 0,
-            },
-            ack=self.ack,
+        result = self.maneuver.goto(
+            {"x": self.x, "y": self.y, "z": self.z, "yaw": self.yaw, "duration": 0},
+            ack=self.ack if "ack" not in kwargs else kwargs["ack"],
+            callback=self.callback if "callback" not in kwargs else kwargs["callback"],
         )
 
         return result
+
+    def callback(self, request):
+        self._status = request.status
