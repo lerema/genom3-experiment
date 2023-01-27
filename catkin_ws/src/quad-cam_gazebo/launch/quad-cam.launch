@@ -1,5 +1,5 @@
 <launch>
-  <arg name="world_name" default="quad-cam.world"/>
+  <arg name="world_name" default="city.world"/>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -8,4 +8,8 @@
     <!-- more default parameters can be changed here -->
   </include>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find quad-cam_gazebo)/rviz/drone.rviz"/>
+  <node name="load_plates" pkg="quad-cam_gazebo" type="load_plates.py" output="screen">
+    <param name="no_plates" value="5" />
+  </node>
+  <!-- <node name="spawn_drone" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-file $(find quad-cam_gazebo)/models/mrsim-quadrotor-cam/model.sdf -sdf -model quad -x 0 -y 0 -z 0.5 -Y 0 -R 0 -P 0"/> -->
 </launch>
