@@ -11,10 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import threading
 from drone_api.connect import Connector
 from drone_api.actions import *
-from drone_api.state import RobotState
 import genomix
 
 

@@ -16,7 +16,7 @@ class SurveyX:
         self._step_size = 1.0
         self.speed = 1.0
 
-    def __call__(self, area: dict = None):
+    def __call__(self, area: dict = None, **kwargs):
 
         assert area is not None, "Area is not defined"
 
