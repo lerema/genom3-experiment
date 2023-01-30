@@ -17,8 +17,7 @@ class Takeoff:
         height = kwargs.get("height", 0.15)
         duration = kwargs.get("duration", 0)
         logger.info(f"Taking off to {height}")
-        result = self.maneuver.take_off(height=height, duration=duration, ack=self.ack if "ack" not in kwargs else kwargs["ack"], callback=self.callback if "callback" not in kwargs else kwargs["callback"],
-                                        callback=self.callback if "callback" not in kwargs else kwargs["callback"])
+        result = self.maneuver.take_off(height=height, duration=duration, ack=self.ack if "ack" not in kwargs else kwargs["ack"], callback=self.callback if "callback" not in kwargs else kwargs["callback"])
 
         return result
 
