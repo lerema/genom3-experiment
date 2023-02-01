@@ -10,11 +10,15 @@ class SurveyX:
     """Survey action along x-axis for the drone"""
 
     def __init__(self, components):
+        self._components = ["maneuver"]
         self.maneuver = components["maneuver"].component
-        self.ct_drone = components["CT_drone"].component
         self.ack = True
         self._step_size = 1.0
         self.speed = 1.0
+
+    @property
+    def components(self):
+        return self._components
 
     def __call__(self, area: dict = None, **kwargs):
 

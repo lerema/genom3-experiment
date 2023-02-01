@@ -13,8 +13,13 @@ class CapturePhoto:
     """Takeoff action for the drone"""
 
     def __init__(self, components):
+        self._components = ["maneuver"]
         self.maneuver = components["maneuver"].component
         self.ack = True
+
+    @property
+    def components(self):
+        return self._components
 
     def __call__(self, area: dict = None, location: dict = None):
         assert area is not None, "area is not defined"

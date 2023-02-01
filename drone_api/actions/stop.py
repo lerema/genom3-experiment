@@ -14,9 +14,14 @@ class Stop:
     logger.info("Stopping the controller")
 
     def __init__(self, components):
+        self._components = ["rotorcraft"]
         self.rotorcraft = components["rotorcraft"].component
         self.ack = True
         self._status = None
+
+    @property
+    def components(self):
+        return self._components
 
     def __call__(self, **kwargs):
         self.rotorcraft.set_velocity(

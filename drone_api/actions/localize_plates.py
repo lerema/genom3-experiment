@@ -12,9 +12,14 @@ class LocalizePlates:
     """Localize coloured plates"""
 
     def __init__(self, components):
+        self._components = ["CT_drone"]
         self.ct_drone = components["CT_drone"].component
         self.ack = True
         self._status = None
+
+    @property
+    def components(self):
+        return self._components
 
     def __call__(self, **kwargs):
         logger.info("Localizing plates")
