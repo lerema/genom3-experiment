@@ -9,9 +9,14 @@ class Move:
     """Move action for the drone"""
 
     def __init__(self, components):
+        self._components = ["maneuver"]
         self.maneuver = components["maneuver"].component
         self.ack = True
         self._status = None
+
+    @property
+    def components(self):
+        return self._components
 
     def __call__(
         self, area: dict = None, l_from: dict = None, l_to: dict = None, **kwargs

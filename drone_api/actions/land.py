@@ -11,12 +11,17 @@ class Land:
     _is_robot = False
 
     def __init__(self, components):
+        self._components = ["rotorcraft", "maneuver"]
         self.rotorcraft, self.maneuver = (
             components["rotorcraft"].component,
             components["maneuver"].component,
         )
         self.ack = True
         self._status = None
+
+    @property
+    def components(self):
+        return self._components
 
     def __call__(self, **kwargs):
         logger.info("Landing")

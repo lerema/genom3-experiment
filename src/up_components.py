@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from drone_api.actions import Actions
-from drone_api.functions import get_battery_level, get_robot_pose
+from drone_api.up.functions import get_battery_level, get_robot_pose
 from drone_api.utils import Singleton
 from up_bridge.components import ActionDefinition, UserTypeDefinition
 
