@@ -1,15 +1,15 @@
 repositories:
   arucotag-genom3:
     type: git
-    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision/arucotag-genom3.git
+    url: https://github.com/franklinselva/arucotag-genom3.git
     version: master
   camgazebo-genom3:
     type: git
-    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision/camgazebo-genom3.git
+    url: https://github.com/franklinselva/camgazebo-genom3.git
     version: master
   camviz-genom3:
     type: git
-    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision/camviz-genom3.git
+    url: https://github.com/franklinselva/camviz-genom3.git
     version: master
   ct_drone:
     type: git
@@ -33,5 +33,5 @@ repositories:
     version: master
   vision-idl:
     type: git
-    url: ssh://git@redmine.laas.fr/laas/users/afranchi/art/art-documentation/dom-software/vision-idl.git
+    url: https://github.com/franklinselva/vision-idl.git
     version: master
