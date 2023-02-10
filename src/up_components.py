@@ -1,14 +1,68 @@
-from typing import Any, Dict
+from typing import Any, Dict, Callable
 
 from drone_api.actions import Actions
 from drone_api.up.functions import get_battery_level, get_robot_pose
 from drone_api.utils import Singleton
-from up_bridge.components import ActionDefinition, UserTypeDefinition
+from up_bridge.components import UserTypeDefinition
 
 
 class Facts(Singleton):
     is_surveyed: Dict[Any, bool] = {}
     is_location_surveyed: Dict[Any, bool] = {}
+
+
+class ActionDefinition:
+    """Action Definition bridge between Unified Planning and Application."""
+
+    def __init__(self, name, **kwargs):
+        self.name = name
+        self.parameters = kwargs
+        self.preconditions = []
+        self.effects = []
+        self.duration = 0
+        self._execute_action: Callable = None
+
+    def add_preconditions(self, preconditions):
+        self.preconditions = preconditions
+
+    def add_effects(self, effects):
+        self.effects = effects
+
+    def add_precondition(self, _callable: Callable, output=None, **kwargs):
+        self.preconditions.append((_callable, output, kwargs))
+
+    def add_effect(self, _callable: Callable, output=None, **kwargs):
+        self.effects.append((_callable, output, kwargs))
+
+    def set_duration(self, duration):
+        self.duration = duration
+
+    def _check_preconditions(self, preconditions=[]):
+        ret = False
+        for condition in preconditions:
+            precondition, value, args = condition
+            assert (
+                precondition(expected_value=value, **args) == value
+            ), f"{precondition} != {value}. Failed precondition."
+
+            ret = True
+        return ret
+
+    def _execute_effects(self, effects=[]):
+        ret = False
+        for effect in effects:
+            eff, value, args = effect
+            result = eff(expected_value=value, **args)
+
+            assert result == value, f"{result} != {value}. Failed effect."
+            ret = True
+
+        return ret
+
+    def __call__(self, *args, **kwds):
+        self._check_preconditions(self.preconditions)
+        self._execute_effects(self.effects)
+        self._execute_action(*args, **kwds)
 
 
 ####################################################################################################
