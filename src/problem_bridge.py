@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from unified_planning.shortcuts import *
+from unified_planning.shortcuts import Not, Equals, OneshotPlanner
 from up_bridge.bridge import Bridge
 import time
 
@@ -27,14 +27,7 @@ from up_components import (
 )
 
 
-class Application:
-    # Fluents
-    robot_at = Fluents.robot_at
-    verify_station_at = Fluents.verify_station_at
-    is_surveyed = Fluents.is_surveyed
-    is_location_surveyed = Fluents.is_location_surveyed
-    is_within_area = Fluents.is_within_area
-
+class Objects:
     # Objects
     l1 = Location("l1", x=3.5, y=3.5, z=1.0, yaw=0.0)
     l2 = Location("l2", x=-2.5, y=1.5, z=1.0, yaw=0.0)
@@ -43,24 +36,14 @@ class Application:
     home = Location("home", x=0.0, y=0.0, z=1.0, yaw=0.0)
     area = Area("area", xmin=-4.0, xmax=4.0, ymin=-4.0, ymax=4.0, z=3.0, yaw=0.0)
 
-    # Actions
-    move = Move
-    capture_photo = CapturePhoto
-    survey = Survey
-    gather_info = GatherInfo
 
-    def __init__(self) -> None:
-        self.instance = self
-
-
-class VerifyStationProblem(Application):
+class VerifyStationProblem:
     def __init__(self, bridge: Bridge) -> None:
         assert isinstance(bridge, Bridge), "bridge must be a Generic Bridge instance"
         self.bridge = bridge
+        self.objects = Objects()
 
     def start_execution(self, action_instances: list, **kwargs):
-        self.app = Application()
-
         results = []
         for action in action_instances:
             print(f"Executing {action}")
@@ -74,29 +57,34 @@ class VerifyStationProblem(Application):
         if all(results):
             print("All actions executed successfully")
 
-    def get_problem(self):
+    def get_problem(self, no_drones: int = 1):
+        if no_drones == 1:
+            return self._get_single_drone_problem()
 
+    def _get_single_drone_problem(self):
         self.bridge.create_types([Location, Area])
 
-        f_robot_at = self.bridge.create_fluent_from_function(self.robot_at)
+        f_robot_at = self.bridge.create_fluent_from_function(Fluents.robot_at)
         f_verified_station_at = self.bridge.create_fluent_from_function(
-            self.verify_station_at
+            Fluents.verify_station_at
         )
-        f_is_surveyed = self.bridge.create_fluent_from_function(self.is_surveyed)
+        f_is_surveyed = self.bridge.create_fluent_from_function(Fluents.is_surveyed)
         f_is_location_surveyed = self.bridge.create_fluent_from_function(
-            self.is_location_surveyed
+            Fluents.is_location_surveyed
         )
-        f_is_within_area = self.bridge.create_fluent_from_function(self.is_within_area)
+        f_is_within_area = self.bridge.create_fluent_from_function(
+            Fluents.is_within_area
+        )
 
-        o_l1 = self.bridge.create_object(str(self.l1), self.l1)
-        o_l2 = self.bridge.create_object(str(self.l2), self.l2)
-        o_l3 = self.bridge.create_object(str(self.l3), self.l3)
-        o_l4 = self.bridge.create_object(str(self.l4), self.l4)
-        o_home = self.bridge.create_object(str(self.home), self.home)
-        o_area = self.bridge.create_object(str(self.area), self.area)
+        o_l1 = self.bridge.create_object(str(self.objects.l1), self.objects.l1)
+        o_l2 = self.bridge.create_object(str(self.objects.l2), self.objects.l2)
+        o_l3 = self.bridge.create_object(str(self.objects.l3), self.objects.l3)
+        o_l4 = self.bridge.create_object(str(self.objects.l4), self.objects.l4)
+        o_home = self.bridge.create_object(str(self.objects.home), self.objects.home)
+        o_area = self.bridge.create_object(str(self.objects.area), self.objects.area)
 
         move, (a, l_from, l_to) = self.bridge.create_action(
-            "Move", _callable=self.move, area=Area, l_from=Location, l_to=Location
+            "Move", _callable=Move, area=Area, l_from=Location, l_to=Location
         )
         move.add_precondition(f_is_surveyed(a))
         move.add_precondition(f_is_location_surveyed(a, l_to))
@@ -107,7 +95,7 @@ class VerifyStationProblem(Application):
         move.add_effect(f_robot_at(l_to), True)
 
         capture_photo, (a, l) = self.bridge.create_action(
-            "CapturePhoto", _callable=self.capture_photo, area=Area, l=Location
+            "CapturePhoto", _callable=CapturePhoto, area=Area, l=Location
         )
         capture_photo.add_precondition(f_is_surveyed(a))
         capture_photo.add_precondition(f_is_location_surveyed(a, l))
@@ -117,14 +105,12 @@ class VerifyStationProblem(Application):
             f_robot_at(l), True
         )  # Since using instantaneous actions
 
-        survey, [a] = self.bridge.create_action(
-            "Survey", _callable=self.survey, area=Area
-        )
+        survey, [a] = self.bridge.create_action("Survey", _callable=Survey, area=Area)
         survey.add_precondition(Not(f_is_surveyed(a)))
         survey.add_effect(f_is_surveyed(a), True)
 
         gather_info, (a, l) = self.bridge.create_action(
-            "GatherInfo", _callable=self.gather_info, area=Area, l=Location
+            "GatherInfo", _callable=GatherInfo, area=Area, l=Location
         )
         gather_info.add_precondition(f_is_surveyed(a))
         gather_info.add_precondition(f_is_within_area(a, l))
