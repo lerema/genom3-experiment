@@ -14,7 +14,6 @@
 
 from unified_planning.shortcuts import Not, Equals, OneshotPlanner
 from up_bridge.bridge import Bridge
-import time
 
 from up_components import (
     Fluents,
@@ -42,20 +41,6 @@ class VerifyStationProblem:
         assert isinstance(bridge, Bridge), "bridge must be a Generic Bridge instance"
         self.bridge = bridge
         self.objects = Objects()
-
-    def start_execution(self, action_instances: list, **kwargs):
-        results = []
-        for action in action_instances:
-            print(f"Executing {action}")
-            (executor, parameters) = self.bridge.get_executable_action(action[1])
-            execute_action = executor(**kwargs)
-            result = execute_action(*parameters)
-            time.sleep(1)
-
-            results.append(result)
-
-        if all(results):
-            print("All actions executed successfully")
 
     def get_problem(self, no_drones: int = 1):
         if no_drones == 1:
