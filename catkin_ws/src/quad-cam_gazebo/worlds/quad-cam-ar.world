@@ -1139,7 +1139,7 @@
         </link>
         <link name='rotor-1::propeller'>
           <pose>0.23 -0 0.03 0 -0 2.03551</pose>
-          <velocity>-0 -0 0 -0 -0 -0</velocity> {plate}
+          <velocity>-0 -0 0 -0 -0 -0</velocity>
           <acceleration>0 0 -0 0 -0 0</acceleration>
           <wrench>0 0 -0 0 -0 0</wrench>
         </link>
