@@ -25,7 +25,6 @@ class NHFC:
         self.params = params[str(self)]
 
     def __call__(self):
-
         try:
             self.component.set_gtmrp_geom({})
             self._servo_gain(

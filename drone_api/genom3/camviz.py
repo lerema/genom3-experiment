@@ -30,7 +30,7 @@ class CamViz:
         try:
             self.component.set_pix_size(self.params["pixel_size"])
             self.component.add_camera(self.params["camera"], ack=self.ack)
-            for (local, remote) in self.params["ports"]:
+            for local, remote in self.params["ports"]:
                 print(f"Connecting to {local} on {remote}")
                 self.component.connect_port({"local": local, "remote": remote})
             # self.component.add_pixel_display(

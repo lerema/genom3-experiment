@@ -12,7 +12,7 @@ logger.setLevel(logging.INFO)
 class CapturePhoto:
     """Takeoff action for the drone"""
 
-    def __init__(self, components):
+    def __init__(self, components, robot_id=0):
         self._components = ["maneuver"]
         self.maneuver = components["maneuver"].component
         self.ack = True
@@ -21,12 +21,9 @@ class CapturePhoto:
     def components(self):
         return self._components
 
-    def __call__(self, area: dict = None, location: dict = None):
-        assert area is not None, "area is not defined"
+    def __call__(self, location: dict = None):
         assert location is not None, "l_to is not defined"
 
-        if not isinstance(area, dict):
-            area = area.__dict__()
         if not isinstance(location, dict):
             location = location.__dict__()
         height = location.get("z", 0.15)

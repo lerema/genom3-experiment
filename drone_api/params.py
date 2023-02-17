@@ -19,7 +19,6 @@
 
 class DroneCommon:
     def __call__(self, id=0, is_robot=False):
-
         # To access both experiments
         id = "" if id == 0 else str(id)
 

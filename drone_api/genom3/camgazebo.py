@@ -28,7 +28,6 @@ class CamGazebo:
         """Camgazebo component"""
 
         try:
-
             self.component.set_hfov(self.params["hfov"])
             self.component.set_format(
                 self.params["x_resolution"], self.params["y_resolution"]
