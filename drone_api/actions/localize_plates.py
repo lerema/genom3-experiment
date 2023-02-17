@@ -8,10 +8,11 @@ logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
 
+# This class is not used in the current version. The behavior is integrated in the Survey action.
 class LocalizePlates:
     """Localize coloured plates"""
 
-    def __init__(self, components):
+    def __init__(self, components, robot_id=0):
         self._components = ["CT_drone"]
         self.ct_drone = components["CT_drone"].component
         self.ack = True

@@ -13,7 +13,7 @@ class Stop:
 
     logger.info("Stopping the controller")
 
-    def __init__(self, components):
+    def __init__(self, components, robot_id=0):
         self._components = ["rotorcraft"]
         self.rotorcraft = components["rotorcraft"].component
         self.ack = True
