@@ -3,6 +3,8 @@
 import os
 import json
 
+from drone_api import DATA_PATH
+
 
 class Robot:
     def __init__(
@@ -29,8 +31,8 @@ class Environment:
         self.NO_PLATES = no_plates
         self.NO_ARUCOS = no_arucos
 
-        self.ARUCO_POSES = [None for _ in range(self.NO_ARUCOS)]
-        self.PLATE_POSES = [None for _ in range(self.NO_PLATES)]
+        self.ARUCO_POSES = []
+        self.PLATE_POSES = []
 
         self.HOME = (0.0, 0.0, 0.0)
         self.SURVEY_AREA = (-4.0, 4.0, -4.0, 4.0, 3.0, 0.0)
@@ -62,8 +64,8 @@ class DataRepresentation:
         self.ENV.NO_ARUCOS = no_arucos
         self.ENV.NO_PLATES = no_plates
         self.ENV.NO_ROBOTS = no_robots
-        self.ENV.ARUCO_POSES = [None for _ in range(no_arucos)]
-        self.ENV.PLATE_POSES = [None for _ in range(no_plates)]
+        self.ENV.ARUCO_POSES = []
+        self.ENV.PLATE_POSES = []
 
     def __dict__(self):
         ROBOTS = {}
@@ -79,7 +81,7 @@ class JSONSerializer:
     This class stores the data in a JSON file and reads from it during runtime.
     """
 
-    filename = "genom3-experiment-data.json"
+    filename = os.path.join(DATA_PATH, "genom3-experiment-data.json")
 
     def __init__(cls) -> None:
         cls.data = DataRepresentation()
@@ -91,6 +93,9 @@ class JSONSerializer:
         """Create a JSON file for storing robot and environment state."""
         if os.path.exists(cls.filename):
             return
+
+        if not os.path.exists(DATA_PATH):
+            os.makedirs(DATA_PATH)
 
         with open(cls.filename, "w") as f:
             json.dump(cls.data.__dict__(), f, indent=4)
@@ -144,4 +149,3 @@ class JSONSerializer:
             data = json.load(f)
 
         return data
-

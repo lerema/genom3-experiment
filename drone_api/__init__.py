@@ -21,8 +21,8 @@ EXPECTED_MODULES = [
     "CT_drone",
     "tf2",
     "camgazebo",
-    "camviz",
     "arucotag",
+    "camviz",
 ]
 
 COMMON_MODULES = ["tf2", "optitrack"]
@@ -32,6 +32,7 @@ MODULES = {
     "dedicated": set(EXPECTED_MODULES) - set(COMMON_MODULES),
     "common": COMMON_MODULES,
 }
+DATA_PATH = "./data"
 
 from .actions import *
 from .utils import *
