@@ -19,6 +19,9 @@ from drone_api.actions import *
 def main():
     """Main function"""
 
+    print("Current version is not compatible with multiple drones.")
+    return
+
     try:
         c1 = Connector(id=1)
         c2 = Connector(id=2)
