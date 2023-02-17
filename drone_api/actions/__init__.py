@@ -6,7 +6,7 @@ from .land import Land
 from .localize_plates import LocalizePlates
 from .move import Move
 from .stop import Stop
-from .survey import SurveyX
+from .survey import Survey
 
 
 class Actions:
@@ -15,7 +15,7 @@ class Actions:
         self._takeoff = Takeoff(components, robot_id)
         self._move = Move(components, robot_id)
         self._stop = Stop(components, robot_id)
-        self._survey = SurveyX(components, robot_id)
+        self._survey = Survey(components, robot_id)
         self._gather_info = GatherInfo(components, robot_id)
         self._capture_photo = CapturePhoto(components, robot_id)
         self._localize_plates = LocalizePlates(components, robot_id)
