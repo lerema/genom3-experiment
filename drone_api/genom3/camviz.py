@@ -33,10 +33,10 @@ class CamViz:
             for (local, remote) in self.params["ports"]:
                 print(f"Connecting to {local} on {remote}")
                 self.component.connect_port({"local": local, "remote": remote})
-            self.component.add_pixel_display(
-                self.params["pixel_display"], self.params["camera"]
-            )
-            self.component.show(ratio=2, ack=self.ack)
+            # self.component.add_pixel_display(
+            #     self.params["pixel_display"], self.params["camera"]
+            # )
+            # self.component.show(ratio=2, ack=self.ack)
         except GenoMError as e:
             if "already" in str(e):
                 logger.warning("CamViz already defined")
