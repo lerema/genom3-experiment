@@ -79,24 +79,26 @@ class JSONSerializer:
     This class stores the data in a JSON file and reads from it during runtime.
     """
 
-    def __init__(self, filename: str = "genom3-experiment-data.json") -> None:
-        self.filename = filename
-        self.data = DataRepresentation()
+    filename = "genom3-experiment-data.json"
+
+    def __init__(cls) -> None:
+        cls.data = DataRepresentation()
 
         # Create the file if it doesn't exist
-        self._create_file()
+        cls._create_file()
 
-    def _create_file(self) -> None:
+    def _create_file(cls) -> None:
         """Create a JSON file for storing robot and environment state."""
-        if os.path.exists(self.filename):
+        if os.path.exists(cls.filename):
             return
 
-        with open(self.filename, "w") as f:
-            json.dump(self.data.__dict__(), f, indent=4)
+        with open(cls.filename, "w") as f:
+            json.dump(cls.data.__dict__(), f, indent=4)
 
-    def _update_key(self, key: str, value) -> None:
+    @classmethod
+    def _update_key(cls, key: str, value) -> None:
         """Update a key in the JSON file."""
-        with open(self.filename, "r") as f:
+        with open(cls.filename, "r") as f:
             data = json.load(f)
 
         # If key has a dot, then it is a nested key
@@ -110,12 +112,13 @@ class JSONSerializer:
             return data
 
         data = update(data, key, value)
-        with open(self.filename, "w") as f:
+        with open(cls.filename, "w") as f:
             json.dump(data, f, indent=4)
 
-    def update(self, key: str, value) -> None:
+    @classmethod
+    def update(cls, key: str, value) -> None:
         """Update a key in the JSON file."""
-        self._update_key(key, value)
+        cls._update_key(key, value)
 
     def get(self, key: str):
         """Get a key from the JSON file."""
@@ -142,6 +145,3 @@ class JSONSerializer:
 
         return data
 
-    def __del__(self) -> None:
-        """Delete the JSON file."""
-        os.remove(self.filename)
