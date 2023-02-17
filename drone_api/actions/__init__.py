@@ -10,12 +10,36 @@ from .survey import SurveyX
 
 
 class Actions:
-    def __init__(self, components):
-        self.land = Land(components)
-        self.takeoff = Takeoff(components)
-        self.move = Move(components)
-        self.stop = Stop(components)
-        self.survey = SurveyX(components)
-        self.gather_info = GatherInfo(components)
-        self.capture_photo = CapturePhoto(components)
-        self.localize_plates = LocalizePlates(components)
+    def __init__(self, components, robot_id=0):
+        self._land = Land(components, robot_id)
+        self._takeoff = Takeoff(components, robot_id)
+        self._move = Move(components, robot_id)
+        self._stop = Stop(components, robot_id)
+        self._survey = SurveyX(components, robot_id)
+        self._gather_info = GatherInfo(components, robot_id)
+        self._capture_photo = CapturePhoto(components, robot_id)
+        self._localize_plates = LocalizePlates(components, robot_id)
+
+    def land(self, **kwargs):
+        return self._land(**kwargs)
+
+    def takeoff(self, **kwargs):
+        return self._takeoff(**kwargs)
+
+    def move(self, **kwargs):
+        return self._move(**kwargs)
+
+    def stop(self, **kwargs):
+        return self._stop(**kwargs)
+
+    def survey(self, **kwargs):
+        return self._survey(**kwargs)
+
+    def gather_info(self, **kwargs):
+        return self._gather_info(**kwargs)
+
+    def capture_photo(self, **kwargs):
+        return self._capture_photo(**kwargs)
+
+    def localize_plates(self, **kwargs):
+        return self._localize_plates(**kwargs)

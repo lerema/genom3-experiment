@@ -3,7 +3,10 @@
 Basically moves to the home station and sends the info to the server.
 """
 import logging
-import time
+
+from genomix import Status
+
+from drone_api.core.data import JSONSerializer
 
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
@@ -12,54 +15,63 @@ logger.setLevel(logging.INFO)
 class GatherInfo:
     """Sending Info by Move action for the drone"""
 
-    def __init__(self, components):
-        self._components = ["maneuver"]
+    def __init__(self, components, robot_id=0):
+        self._components = ["maneuver", "CT_drone"]
         self.maneuver = components["maneuver"].component
+        self.ct_drone = components["CT_drone"].component
         self.ack = True
+
+        self._status = None
+        self._id = robot_id
+
+        self._data = JSONSerializer()
+
+        self.x = 0.0
+        self.y = 0.0
+        self.z = 0.15
+        self.yaw = 0.0
+
+        self._plates_info = []
 
     @property
     def components(self):
         return self._components
 
-    def __call__(self, area: dict = None, location: dict = None):
+    def __call__(self, **kwargs):
+        logger.info(f"Gathering info for robot {self._id}")
 
-        assert area is not None, "area is not defined"
-        assert location is not None, "l_to is not defined"
+        self.ct_drone.MakeBlobMap()
+        self.ct_drone.LocalizeBlob()
 
-        # TODO: check if the location is in the area
-
-        if not isinstance(area, dict):
-            area = area.__dict__()
-        if not isinstance(location, dict):
-            location = location.__dict__()
-
-        self.x = location.get("x", 0.0)
-        self.y = location.get("y", 0.0)
-        self.z = location.get("z", 0.15)
-        self.yaw = location.get("yaw", 0.0)
-
-        logger.info(
-            f"Send Gathered Info from ({self.x}, {self.y}, {self.z}, {self.yaw})"
-        )
-
-        self.maneuver.set_bounds(
-            {
-                "xmin": area["xmin"],
-                "xmax": area["xmax"],
-                "ymin": area["ymin"],
-                "ymax": area["ymax"],
-                "zmin": -2,
-                "zmax": 10,
-                "yawmin": -3.14,
-                "yawmax": 3.14,
-            }
-        )
+        result = self.ct_drone.Get_plates()
+        print(result)
+        self._plates_info = self._prepare_plates_info(result)
 
         result = self.maneuver.goto(
-            {"x": 0.0, "y": 0.0, "z": self.z, "yaw": self.yaw, "duration": 0}
+            {"x": 0.0, "y": 0.0, "z": self.z, "yaw": self.yaw, "duration": 0},
+            ack=self.ack if "ack" not in kwargs else kwargs["ack"],
+            callback=self.callback if "callback" not in kwargs else kwargs["callback"],
         )
-        time.sleep(
-            1
-        )  # TODO: Remove this once actual image is being sent or as simulated
+
+        if self._plates_info:
+            self.ct_drone.ClearFindings(ack=self.ack)
 
         return result
+
+    def callback(self, request):
+        self._status = request.status
+
+        if self._status == Status.done:
+            self._data.update(f"ROBOTS.{self._id}.pose", [self.x, self.y, self.z])
+            self._data.update(f"ENV.PLATE_POSES", self._plates_info)
+
+    def _prepare_plates_info(self, result):
+        plates_info = []
+
+        for plate in result["plates"]["seq"]:
+            x = plate["coord"]["x"]
+            y = plate["coord"]["y"]
+            z = plate["coord"]["z"]
+            plates_info.append([x, y, z])
+
+        return plates_info

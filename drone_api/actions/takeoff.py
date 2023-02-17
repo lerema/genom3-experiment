@@ -8,7 +8,7 @@ logger.setLevel(logging.INFO)
 class Takeoff:
     """Takeoff action for the drone"""
 
-    def __init__(self, components):
+    def __init__(self, components, robot_id=0):
         self._components = ["maneuver"]
         self.maneuver = components["maneuver"].component
         self.ack = True

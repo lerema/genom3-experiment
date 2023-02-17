@@ -1,6 +1,10 @@
 """Land action."""
 import logging
 
+from genomix import Status
+
+from drone_api.core.data import JSONSerializer
+
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
@@ -10,7 +14,7 @@ class Land:
 
     _is_robot = False
 
-    def __init__(self, components):
+    def __init__(self, components, robot_id=0):
         self._components = ["rotorcraft", "maneuver"]
         self.rotorcraft, self.maneuver = (
             components["rotorcraft"].component,
@@ -18,6 +22,9 @@ class Land:
         )
         self.ack = True
         self._status = None
+        self._id = robot_id
+
+        self._data = JSONSerializer()
 
     @property
     def components(self):
@@ -37,9 +44,12 @@ class Land:
             ack=self.ack if "ack" not in kwargs else kwargs["ack"],
             callback=self.callback if "callback" not in kwargs else kwargs["callback"],
         )
-        result = self.maneuver.wait()
 
         return result
 
     def callback(self, request):
         self._status = request.status
+
+        if self._status == Status.done:
+            # TODO: Add data to the database
+            pass

@@ -1,6 +1,10 @@
 """Move action."""
 import logging
 
+from genomix import Status
+
+from drone_api.core.data import JSONSerializer
+
 logger = logging.getLogger("[Actions]")
 logger.setLevel(logging.INFO)
 
@@ -8,25 +12,21 @@ logger.setLevel(logging.INFO)
 class Move:
     """Move action for the drone"""
 
-    def __init__(self, components):
+    def __init__(self, components, robot_id=0):
         self._components = ["maneuver"]
         self.maneuver = components["maneuver"].component
         self.ack = True
         self._status = None
+        self._id = robot_id
+        self._data = JSONSerializer()
 
     @property
     def components(self):
         return self._components
 
-    def __call__(
-        self, area: dict = None, l_from: dict = None, l_to: dict = None, **kwargs
-    ):
-
-        assert area is not None, "Area is not defined"
+    def __call__(self, l_from: dict = None, l_to: dict = None, **kwargs):
         assert l_from is not None, "l_from is not defined"
         assert l_to is not None, "l_to is not defined"
-
-        # TODO: Check if the drone is in the area and warn if not
 
         if not isinstance(l_from, dict):
             l_from = l_from.__dict__()
@@ -50,3 +50,6 @@ class Move:
 
     def callback(self, request):
         self._status = request.status
+
+        if self._status == Status.done:
+            self._data.update(f"ROBOTS.{self._id}.pose", [self.x, self.y, self.z])
