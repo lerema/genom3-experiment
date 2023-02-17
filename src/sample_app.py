@@ -11,34 +11,48 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from drone_api.connect import Connector
-from drone_api.actions import *
 import genomix
 
+from drone_api.actions import Actions
+from drone_api.connect import Connector
 
-def sample_actions(action):
+
+def sample_actions(action: Actions):
     """Test run of the available actions."""
     # Start actions
-    t = action.takeoff(height=0.5)
-    m = action.move(area={}, l_from={}, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
-    m = action.move(
-        area={}, l_from={}, l_to={"x": 0.5, "y": -0.5, "z": 0.5, "yaw": 0.0}
+    function_map = []
+    function_map.append((action.takeoff, {"height": 0.5}))
+    function_map.append(
+        (
+            action.move,
+            {"l_from": {}, "l_to": {"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0}},
+        )
     )
-    s = action.survey(
-        area={
-            "xmin": -5.0,
-            "xmax": 5.0,
-            "ymin": -2.0,
-            "ymax": 2.0,
-            "z": 3.0,
-            "yaw": 0.5,
-        }
+    function_map.append(
+        (
+            action.survey,
+            {
+                "area": {
+                    "xmin": -2.0,
+                    "xmax": 2.0,
+                    "ymin": -2.0,
+                    "ymax": 2.0,
+                    "z": 1.5,
+                    "yaw": 0.0,
+                }
+            },
+        )
     )
-    m = action.move(area={}, l_from={}, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
-    l = action.land()
+    function_map.append(
+        (
+            action.move,
+            {"l_from": {}, "l_to": {"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0}},
+        )
+    )
+    function_map.append((action.land, {}))
 
-def callback(request):
-    print(request.status)
+    return function_map
+
 
 def main():
     """Main function"""
@@ -52,10 +66,14 @@ def main():
     action_handler.start()
     action = Actions(action_handler.components)
 
-    result = action.move(area={}, l_from={}, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0}, ack=True, callback=callback)
+    functions = sample_actions(action)
 
-    while not genomix.update():
-        print(result.status)
+    for function, kwargs in functions:
+        result = function(**kwargs)
+        while True:
+            if genomix.update() or str(result.status) == "done":
+                print(f"Action {function.__name__} completed")
+                break
 
     action_handler.stop()
 
