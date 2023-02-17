@@ -4,6 +4,7 @@ from drone_api.core import JSONSerializer, Robot, Environment
 
 data_lock = threading.RLock()  # Locks the file access to the state file.
 
+
 # FIXME: possible uncertainty in receiving the data from the components.
 class RobotState:
     """Pushes the robot state to the serializer."""

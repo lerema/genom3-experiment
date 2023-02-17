@@ -28,7 +28,7 @@ class ArucoTag:
         """Aruco Tag component"""
 
         try:
-            for (local, remote) in self.params["ports"]:
+            for local, remote in self.params["ports"]:
                 self.component.connect_port({"local": local, "remote": remote})
             self.component.set_length(self.params["length"])
             self.component.output_frame(self.params["output_frame"])

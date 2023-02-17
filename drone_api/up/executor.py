@@ -54,4 +54,3 @@ def _time_triggered_plan_to_dependency_graph(plan: TimeTriggeredPlan) -> nx.DiGr
     dependency_graph.add_node("end")
     dependency_graph.add_edge(edge, "end")
     return dependency_graph
-

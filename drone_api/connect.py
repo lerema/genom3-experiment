@@ -124,7 +124,6 @@ class Connector:
             logger.debug(f"Loading module {os.path.basename(module)}")
             tag = os.path.basename(module).split(".")[0]
             try:
-
                 if tag in MODULES["dedicated"]:
                     self.components[tag] = self.handle.load(module, "-i", f"{tag}{id}")
                 elif tag in MODULES["common"]:

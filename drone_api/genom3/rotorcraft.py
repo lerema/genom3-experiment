@@ -28,7 +28,6 @@ class RotorCraft:
         self.params = params[str(self)]
 
     def __call__(self):
-
         try:
             self._connect(self.params["connect"][0], self.params["connect"][1])
             self._set_sensor_rate(
