@@ -31,8 +31,8 @@ class Environment:
         self.NO_PLATES = no_plates
         self.NO_ARUCOS = no_arucos
 
-        self.ARUCO_POSES = []
-        self.PLATE_POSES = []
+        self.ARUCOS = {}
+        self.PLATES = {}
 
         self.HOME = (0.0, 0.0, 0.0)
         self.SURVEY_AREA = (-4.0, 4.0, -4.0, 4.0, 3.0, 0.0)
@@ -45,8 +45,8 @@ class Environment:
                 "NO_ARUCOS": self.NO_ARUCOS,
                 "HOME": self.HOME,
                 "SURVEY_AREA": self.SURVEY_AREA,
-                "ARUCO_POSES": self.ARUCO_POSES,
-                "PLATE_POSES": self.PLATE_POSES,
+                "ARUCOS": self.ARUCOS,
+                "PLATES": self.PLATES,
             }
         except AttributeError:
             raise ValueError("Environment object not initialized.")
