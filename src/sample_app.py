@@ -13,7 +13,7 @@
 # limitations under the License.
 import genomix
 
-from drone_api.up.actions import Actions
+from drone_api.actions import Actions
 from drone_api.connect import Connector
 from drone_api.utils import setup_logging
 

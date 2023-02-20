@@ -9,9 +9,9 @@ class Move:
     """UP Action Representation for the Move action"""
 
     def __init__(self, ack=False, **kwargs):
-        self._robot = kwargs["robot"]
-        self._l_from = kwargs["l_from"]
-        self._l_to = kwargs["l_to"]
+        self._robot = kwargs.get("robot", None)
+        self._l_from = kwargs.get("l_from", None)
+        self._l_to = kwargs.get("l_to", None)
         self._ack = ack
 
     def __call__(self, robot: Robot, l_from: Location, l_to: Location):
@@ -24,7 +24,9 @@ class Move:
         ):
             return False  # Robot is not in the right location to start the action
 
-        result = self._robot.actions.move(l_from=l_from, l_to=l_to)
+        result = self._robot.actions.move(
+            l_from=self._process_location(l_from), l_to=self._process_location(l_to)
+        )
 
         if self._ack:
             return result
@@ -42,14 +44,25 @@ class Move:
             elif handle.status == genomix.Status.error:
                 return False
 
+    def _process_location(self, location: Location):
+        return {
+            "x": location.x,
+            "y": location.y,
+            "z": location.z,
+            "yaw": 0.0,
+        }
+
 
 class Survey:
     """UP Action Representation for the Survey action"""
 
     def __init__(self, ack=False, **kwargs):
-        self._robot = kwargs["robot"]
-        self._l_from = kwargs["l_from"]
-        self._area = self._process_area(kwargs["area"])
+        self._robot = kwargs.get("robot", None)
+        self._l_from = kwargs.get("l_from", None)
+        if "area" in kwargs:
+            self._area = self._process_area(kwargs["area"])
+        else:
+            self._area = None
         self._ack = ack
 
     def __call__(self, robot: Robot, area: Area, l_from: Location):
@@ -62,7 +75,16 @@ class Survey:
         ):
             return False  # Robot is not in the right location to start the action
 
-        result = self._robot.actions.survey(area=area)
+        result = self._robot.actions.survey(area=self._area)
+
+        surveyed = self.wait_for_completion(result)
+
+        # Move back to the original location
+        if surveyed:
+            result = self._robot.actions.move(
+                l_from=self._process_location(l_from),
+                l_to=self._process_location(l_from),
+            )
 
         if self._ack:
             return result
@@ -87,14 +109,24 @@ class Survey:
             "yaw": 0,
         }
 
+    def _process_location(self, location: Location):
+        return {
+            "x": location.x,
+            "y": location.y,
+            "z": location.z,
+            "yaw": 0.0,
+        }
+
 
 class GatherInfo:
     """UP Action Representation for the GatherInfo action"""
 
     def __init__(self, ack=False, **kwargs):
+        self._robot = kwargs.get("robot", None)
         self._ack = ack
 
-    def __call__(self):
+    def __call__(self, robot: Robot):
+        self._robot = robot
         result = self._robot.actions.gather_info()
 
         if self._ack:
