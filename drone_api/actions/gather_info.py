@@ -68,6 +68,9 @@ class GatherInfo:
                 for info in self._plates_info:
                     self._data.update(f"ENV.PLATES.{info['id']}.ID", info["id"])
                     self._data.update(f"ENV.PLATES.{info['id']}.POSE", info["pose"])
+                    self._data.update(
+                        f"ENV.PLATES.{info['id']}.NAME", f"plate_{info['id']}"
+                    )
                 self._data.update(f"ENV.NO_PLATES", len(self._plates_info))
             else:
                 self._data.update(f"ENV.NO_PLATES", 0)
