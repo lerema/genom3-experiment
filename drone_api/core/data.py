@@ -19,6 +19,7 @@ class Robot:
             return {
                 "ID": self.ID,
                 "pose": self.pose,
+                "location_name": "",
                 "battery_level": self.battery_level,
             }
         except AttributeError:
@@ -35,7 +36,7 @@ class Environment:
         self.PLATES = {}
 
         self.HOME = (0.0, 0.0, 0.0)
-        self.SURVEY_AREA = (-4.0, 4.0, -4.0, 4.0, 3.0, 0.0)
+        self.SURVEY_AREA = []
 
     def __dict__(self):
         try:
@@ -56,7 +57,7 @@ class DataRepresentation:
     """Data representation class."""
 
     def __init__(
-        self, no_robots: int = 1, no_plates: int = 1, no_arucos: int = 1
+        self, no_robots: int = 1, no_plates: int = 0, no_arucos: int = 0
     ) -> None:
         self.ROBOTS = [Robot()] * no_robots
         self.ENV = Environment()
