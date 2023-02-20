@@ -63,7 +63,18 @@ class GatherInfo:
 
         if self._status == Status.done:
             self._data.update(f"ROBOTS.{self._id}.pose", [self.x, self.y, self.z])
-            self._data.update(f"ENV.PLATE_POSES", self._plates_info)
+
+            if self._plates_info:
+                for info in self._plates_info:
+                    self._data.update(f"ENV.PLATES.{info['id']}.ID", info["id"])
+                    self._data.update(f"ENV.PLATES.{info['id']}.POSE", info["pose"])
+                self._data.update(f"ENV.NO_PLATES", len(self._plates_info))
+            else:
+                self._data.update(f"ENV.NO_PLATES", 0)
+                self._data.update("ENV.PLATES", {})
+
+            # All color plates have ARUCO markers
+            self._data.update(f"ENV.NO_ARUCOS", len(self._plates_info))
 
     def _prepare_plates_info(self, result):
         plates_info = []
@@ -72,6 +83,6 @@ class GatherInfo:
             x = plate["coord"]["x"]
             y = plate["coord"]["y"]
             z = plate["coord"]["z"]
-            plates_info.append([x, y, z])
+            plates_info.append({"pose": [x, y, z], "id": plate["index"]})
 
         return plates_info
