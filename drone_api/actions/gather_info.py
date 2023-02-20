@@ -44,7 +44,6 @@ class GatherInfo:
         self.ct_drone.LocalizeBlob()
 
         result = self.ct_drone.Get_plates()
-        print(result)
         self._plates_info = self._prepare_plates_info(result)
 
         result = self.maneuver.goto(

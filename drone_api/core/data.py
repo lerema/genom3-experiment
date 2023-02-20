@@ -19,7 +19,7 @@ class Robot:
             return {
                 "ID": self.ID,
                 "pose": self.pose,
-                "location_name": "",
+                "location_name": "base_station",
                 "battery_level": self.battery_level,
             }
         except AttributeError:
