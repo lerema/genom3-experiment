@@ -1,6 +1,7 @@
 *.out
 *build*
 *devel*
+*logs/*
 *.egg-info
 *.pyc
 

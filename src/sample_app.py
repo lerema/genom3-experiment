@@ -15,6 +15,10 @@ import genomix
 
 from drone_api.actions import Actions
 from drone_api.connect import Connector
+from drone_api.utils import setup_logging
+
+# Setup logging to file
+setup_logging(__file__)
 
 
 def sample_actions(action: Actions):
