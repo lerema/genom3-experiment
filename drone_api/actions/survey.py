@@ -91,6 +91,7 @@ class Survey:
             x += self._step_size
 
         self.robot_x, self.robot_y, self.robot_z = xmax, ymax, z
+        self._survey_coordinates = [xmin, ymin, xmax, ymax, z, yaw]
 
         return self.maneuver.wait(ack=self.ack, callback=self.callback)
 
@@ -105,6 +106,7 @@ class Survey:
                     self.robot_z,
                 ],
             )
+            self._data.update("ENV.SURVEY_AREA", self._survey_coordinates)
 
 
 class SurveyX:
