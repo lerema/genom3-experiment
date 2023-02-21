@@ -41,9 +41,108 @@ class ProblemDefinition:
 
     def __init__(self) -> None:
         self._bridge = Bridge()
+
+        self._setup_experiment()
+        self._setup_domain()
+
+    def _setup_experiment(self):
         self._drone_1 = Connector(id=0)
         self._action_1 = Actions(self._drone_1.components, robot_id=0)
         self._drone_1.start()
+
+    def _setup_domain(self):
+        self.base_station = Location("base_station", z=1.0)
+        self.charging_station = Location("charging_station", x=1.0, z=1.0)
+
+        self.robot = Robot("drone_1", actions=self._action_1)
+
+        self.survey_area = Area("area_1", survey_size=4.0)
+
+        self.objects = [
+            self.base_station,
+            self.charging_station,
+            self.robot,
+            self.survey_area,
+        ]
+
+    @staticmethod
+    def solve(problem: Problem):
+        """Solve the problem"""
+
+        with OneshotPlanner(
+            name="aries",
+            optimality_guarantee=up.engines.PlanGenerationResultStatus.SOLVED_OPTIMALLY,
+        ) as planner:
+            result = planner.solve(problem)
+            print("*** Result ***")
+            for action_instance in result.plan.timed_actions:
+                print(action_instance)
+            print("*** End of result ***")
+            return result.plan
+
+    def plan(self, problem: Problem):
+        """Plan the problem"""
+        print("*** Planning ***")
+        plan = ProblemDefinition.solve(problem)
+        return plan
+
+    def replan(self, problem: Problem, plan):
+        """Replan the problem"""
+        print("*** Replanning ***")
+        problem = self.replan_rule_1(problem)  # add plates to the problem
+        plan = ProblemDefinition.solve(problem)
+        return plan
+
+    def replan_rule_1(self, problem: Problem):
+        """First replan rule is to add plates to the problem"""
+        print("*** Applying Replan Rule 1 ***")
+        objects = []
+        if has_plates():
+            # Add plate locations to the problem as object locations
+            for plate_id in range(get_plates_no()):
+                plate_info = get_plate_info(plate_id)
+                plate = Location(
+                    plate_info["NAME"],
+                    x=plate_info["POSE"][0],
+                    y=plate_info["POSE"][1],
+                    z=1.0,
+                )
+                objects.append(plate)
+
+        is_location_inspected = problem.fluent("is_location_inspected")
+        for obj_def in objects:
+            obj = self._bridge.create_object(obj_def.name, obj_def)
+            problem.add_object(obj)
+            problem.add_goal(is_location_inspected(obj))
+            # TODO: based on goals, update initial states
+
+        return problem
+
+    @staticmethod
+    def execute_graph(graph: nx.DiGraph):
+        for node in graph.nodes(data=True):
+            if node[0] in ["start", "end"]:
+                continue
+            print(f"Executing {node[0]}")
+            parameters = node[1]["parameters"]
+            result = node[1]["executor"]()(*parameters)
+            print(f"Result: {result}")
+            time.sleep(1)
+
+    @staticmethod
+    def show_graph(graph: nx.DiGraph):
+        plt.figure(figsize=(10, 10))
+
+        pos = nx.nx_pydot.pydot_layout(graph, prog="dot")
+        nx.draw(
+            graph,
+            pos,
+            with_labels=True,
+            node_size=1000,
+            node_color="skyblue",
+            font_size=20,
+        )
+        plt.show()
 
     @property
     def bridge(self):
@@ -59,16 +158,17 @@ class ProblemDefinition:
         f_is_surveyed = self._bridge.create_fluent_from_function(is_surveyed)
         f_has_plates = self._bridge.create_fluent_from_function(has_plates)
         f_is_base_station = self._bridge.create_fluent_from_function(is_base_station)
+        f_is_location_inspected = self._bridge.create_fluent_from_function(
+            is_location_inspected
+        )
 
         # Default objects
-        base = Location("base_station", z=1.0)
-        base_station = self._bridge.create_object("base_station", base)
-        r = Robot("drone_1", actions=self._action_1)
-        robot = self._bridge.create_object("robot_1", r)
-        charge = Location("charging_station", x=1.0, z=1.0)
-        charging_station = self._bridge.create_object("charging_station", charge)
-        first_area = Area("area_1", survey_size=4.0)
-        area = self._bridge.create_object("area", first_area)
+        base_station = self._bridge.create_object("base_station", self.base_station)
+        robot = self._bridge.create_object("robot_1", self.robot)
+        charging_station = self._bridge.create_object(
+            "charging_station", self.charging_station
+        )
+        area = self._bridge.create_object("area", self.survey_area)
 
         # Action definitions
         survey, [r, _, l] = self._bridge.create_action(
@@ -104,12 +204,14 @@ class ProblemDefinition:
         move.add_condition(StartTiming(), f_has_plates())
         move.add_effect(EndTiming(), f_robot_at(r, l_to), True)
         move.add_effect(StartTiming(), f_robot_at(r, l_from), False)
+        move.add_effect(EndTiming(), f_is_location_inspected(l_to), True)
 
         # Problem definition
         problem.add_fluent(f_robot_at, default_initial_value=False)
         problem.add_fluent(f_is_surveyed, default_initial_value=False)
         problem.add_fluent(f_has_plates, default_initial_value=False)
         problem.add_fluent(f_is_base_station, default_initial_value=False)
+        problem.add_fluent(f_is_location_inspected, default_initial_value=False)
 
         problem.add_objects([robot, base_station, charging_station, area])
 
@@ -120,7 +222,7 @@ class ProblemDefinition:
 
         problem.add_goal(f_is_surveyed())
         problem.add_goal(f_has_plates())
-        problem.add_goal(f_robot_at(robot, charging_station))
+        problem.add_goal(f_robot_at(robot, base_station))
 
         return problem
 
@@ -136,49 +238,26 @@ def main():
     problem = problem_def.setup_problem()
     bridge = problem_def.bridge
 
-    print("*** Planning ***")
-    with OneshotPlanner(
-        name="aries",
-        optimality_guarantee=up.engines.PlanGenerationResultStatus.SOLVED_OPTIMALLY,
-    ) as planner:
-        result = planner.solve(problem)
-        print("*** Result ***")
-        for action_instance in result.plan.timed_actions:
-            print(action_instance)
-        print("*** End of result ***")
-        plan = result.plan
-
+    # Obtain plan
+    plan = problem_def.plan(problem)
     executable_graph = bridge.get_executable_graph(plan)
+    print("Close the graph to start execution")
+    problem_def.show_graph(executable_graph)
+    problem_def.execute_graph(executable_graph)
+
+    plan = problem_def.replan(problem, plan)
+    executable_graph = bridge.get_executable_graph(plan)
+    print("Close the graph to start execution")
+    problem_def.show_graph(executable_graph)
+    problem_def.execute_graph(executable_graph)
+
     # draw graph
     plt.figure(figsize=(10, 10))
-
-    pos = nx.nx_pydot.pydot_layout(executable_graph, prog="dot")
-    nx.draw(
-        executable_graph,
-        pos,
-        with_labels=True,
-        node_size=1000,
-        node_color="skyblue",
-        font_size=20,
-    )
-    plt.show(block=False)
-
-    # Execute plan
-    # Setup initial states for the experiment
-
-    for node in executable_graph.nodes(data=True):
-        if node[0] in ["start", "end"]:
-            continue
-        print(f"Executing {node[0]}")
-        parameters = node[1]["parameters"]
-        result = node[1]["executor"]()(*parameters)
-        print(f"Result: {result}")
-        time.sleep(1)
 
     input("Press enter to exit...")
 
     # Remove data files created by the experiment
-    os.remove(os.path.join(os.getcwd(), "data", "genom3-experiment-data.json"))
+    # os.remove(os.path.join(os.getcwd(), "data", "genom3-experiment-data.json"))
 
 
 if __name__ == "__main__":

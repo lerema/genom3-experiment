@@ -31,12 +31,19 @@ def demo_problem():
     is_base_station = Fluent(
         "is_base_station", BoolType(), robot=Robot, position=Location
     )
+    is_location_inspected = Fluent(
+        "is_location_inspected", BoolType(), position=Location
+    )
 
     # Default objects
     robot = Object("robot", Robot)
     base_station = Object("base_station", Location)
     charging_station = Object("charging_station", Location)
     area = Object("area", Area)
+    l1 = Object("l1", Location)
+    l2 = Object("l2", Location)
+    l3 = Object("l3", Location)
+    l4 = Object("l4", Location)
 
     survey = DurativeAction("survey", robot=Robot, area=Area, From=Location)
     l_from = survey.parameter("From")
@@ -63,15 +70,16 @@ def demo_problem():
     move.add_condition(StartTiming(), is_distance_optimized())
     move.add_effect(StartTiming(), robot_at(r, l_from), False)
     move.add_effect(EndTiming(), robot_at(r, l_to), True)
+    move.add_effect(EndTiming(), is_location_inspected(l_to), True)
 
-    acquire_plan_order = InstantaneousAction(
-        "acquire_plan_order", robot=Robot, location=Location
+    acquire_plates_order = InstantaneousAction(
+        "acquire_plates_order", robot=Robot, location=Location
     )
-    location = acquire_plan_order.parameter("location")
-    r = acquire_plan_order.parameter("robot")
-    acquire_plan_order.add_precondition(is_base_station(r, location))
-    acquire_plan_order.add_precondition(has_plates())
-    acquire_plan_order.add_effect(is_distance_optimized(), True)
+    location = acquire_plates_order.parameter("location")
+    r = acquire_plates_order.parameter("robot")
+    acquire_plates_order.add_precondition(is_base_station(r, location))
+    acquire_plates_order.add_precondition(has_plates())
+    acquire_plates_order.add_effect(is_distance_optimized(), True)
 
     problem = Problem()
 
@@ -80,16 +88,22 @@ def demo_problem():
     problem.add_fluent(is_distance_optimized, default_initial_value=False)
     problem.add_fluent(robot_at, default_initial_value=False)
     problem.add_fluent(is_base_station, default_initial_value=False)
+    problem.add_fluent(is_location_inspected, default_initial_value=False)
 
-    problem.add_objects([robot, base_station, charging_station, area])
+    problem.add_objects([robot, base_station, charging_station, area, l1, l2, l3, l4])
 
-    problem.add_actions([survey, gather_info, move, acquire_plan_order])
+    problem.add_actions([survey, gather_info, move, acquire_plates_order])
     problem.set_initial_value(robot_at(robot, base_station), True)
     problem.set_initial_value(is_base_station(robot, base_station), True)
+
 
     problem.add_goal(is_surveyed())
     problem.add_goal(has_plates())
     problem.add_goal(is_distance_optimized())
+    problem.add_goal(is_location_inspected(l1))
+    problem.add_goal(is_location_inspected(l2))
+    problem.add_goal(is_location_inspected(l3))
+    problem.add_goal(is_location_inspected(l4))
     problem.add_goal(robot_at(robot, charging_station))
 
     return problem

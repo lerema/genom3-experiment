@@ -48,3 +48,24 @@ def is_base_station(robot: Robot, location: Location = ""):
     data = JSONSerializer().get(f"ROBOTS.{robot.id}.location_name")
     logger.info(f"Checking if the location is the base station {location.name}")
     return bool(data == location.name)
+
+
+def get_plates_no():
+    """Get the number of plates collected."""
+    data = JSONSerializer().get(f"ENV.NO_PLATES")
+    logger.info("Getting the number of plates collected")
+    return data
+
+
+def get_plate_info(plate_id: int):
+    """Get the plate information."""
+    data = JSONSerializer().get(f"ENV.PLATES.{plate_id}")
+    logger.info(f"Getting the plate information {plate_id}")
+    return data
+
+
+def is_location_inspected(location: Location):
+    """Check if the location is inspected."""
+    data = JSONSerializer().get(f"ENV.LOCATIONS.{location.name}.inspected")
+    logger.info(f"Checking if the location is inspected {location.name}")
+    return bool(data)
