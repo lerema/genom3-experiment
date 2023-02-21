@@ -124,6 +124,9 @@ class ProblemDefinition:
 
         return problem
 
+    def __del__(self):
+        self._drone_1.stop()
+
 
 def main():
     """Main function"""
