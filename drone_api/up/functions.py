@@ -13,29 +13,38 @@
 # limitations under the License.
 
 """Functions to be called for estimating the drone and environment state."""
+import logging
+
 from drone_api.up.user_types import Area, Location, Robot
 from drone_api.core.data import JSONSerializer
+
+logger = logging.getLogger("[UP]")
+logger.setLevel(logging.INFO)
 
 
 def is_surveyed():
     """Check if the survey is completed."""
     data = JSONSerializer().get("ENV.SURVEY_AREA")
+    logger.info("Checking if the survey is completed")
     return bool(data)
 
 
 def has_plates():
     """Check if the plate is collected."""
     data = JSONSerializer().get("ENV.NO_PLATES")
+    logger.info("Checking if the plate is collected")
     return bool(data)
 
 
 def robot_at(robot: Robot, location: Location = ""):
     """Check if the robot is at the location."""
     data = JSONSerializer().get(f"ROBOTS.{robot.id}.location_name")
+    logger.info(f"Checking if the robot is at the location {location.name}")
     return bool(data == location.name)
 
 
 def is_base_station(robot: Robot, location: Location = ""):
     """Check if the location is the base station."""
     data = JSONSerializer().get(f"ROBOTS.{robot.id}.location_name")
+    logger.info(f"Checking if the location is the base station {location.name}")
     return bool(data == location.name)

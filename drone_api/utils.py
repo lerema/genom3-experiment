@@ -26,7 +26,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-def setup_logging(file_name: str):
+def setup_logging(file_name: str, level: int = logging.INFO):
     """Setup logging to file."""
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../logs")
 
@@ -39,9 +39,9 @@ def setup_logging(file_name: str):
         os.remove(os.path.join(log_dir, f"{file_name}.log"))
 
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=level,
         format="%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
-        datefmt="%m-%d %H:%M",
+        datefmt="%m-%d %H:%M:%S",
         filename=os.path.join(log_dir, f"{file_name}.log"),
         filemode="w",
     )

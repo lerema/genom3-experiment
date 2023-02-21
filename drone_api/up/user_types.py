@@ -1,4 +1,10 @@
+import logging
+
 from drone_api.actions import Actions
+
+
+logger = logging.getLogger("[UP]")
+logger.setLevel(logging.INFO)
 
 
 class Location:
@@ -9,6 +15,8 @@ class Location:
         self.x = x
         self.y = y
         self.z = z
+
+        logger.info(f"Location {self.name} created")
 
     def __repr__(self):
         return f"{self.name}"
@@ -23,6 +31,8 @@ class Area:
         self.name = name
         self.survey_size = survey_size
         self.survey_height = survey_height
+
+        logger.info(f"Area {self.name} created")
 
     def __repr__(self):
         return f"{self.name}-{self.survey_size}"
@@ -44,6 +54,8 @@ class Robot:
         self.pose = pose
         self.battery_level = battery_level
         self.actions = actions
+
+        logger.info(f"Robot {self.name} created")
 
     def __repr__(self):
         return f"{self.name}-{self.id}"

@@ -1,8 +1,12 @@
 import genomix
+import logging
 
 from drone_api.core.data import JSONSerializer
 
 from .user_types import Area, Location, Robot
+
+logger = logging.getLogger("[UP]")
+logger.setLevel(logging.INFO)
 
 
 class Move:
@@ -22,6 +26,9 @@ class Move:
         if JSONSerializer().get(f"ROBOTS.{self._robot.id}.location_name") != str(
             self._l_from
         ):
+            logger.error(
+                f"Robot is not in the right location to start the move action. Acquired location: {JSONSerializer().get(f'ROBOTS.{self._robot.id}.location_name') != str(self._l_from)}"
+            )
             return False  # Robot is not in the right location to start the action
 
         result = self._robot.actions.move(
@@ -40,8 +47,10 @@ class Move:
                 JSONSerializer().update(
                     f"ROBOTS.{self._robot.id}.location_name", str(self._l_to)
                 )
+                logger.info(f"Move action completed")
                 return True
             elif handle.status == genomix.Status.error:
+                logger.error(f"Move action failed")
                 return False
 
     def _process_location(self, location: Location):
@@ -73,6 +82,9 @@ class Survey:
         if JSONSerializer().get(f"ROBOTS.{self._robot.id}.location_name") != str(
             self._l_from
         ):
+            logger.error(
+                f"Robot is not in the right location to start the move action. Acquired location: {JSONSerializer().get(f'ROBOTS.{self._robot.id}.location_name') != str(self._l_from)}"
+            )
             return False  # Robot is not in the right location to start the action
 
         result = self._robot.actions.survey(area=self._area)
@@ -95,8 +107,10 @@ class Survey:
         while True:
             genomix.update()
             if handle.status == genomix.Status.done:
+                logger.info(f"Survey action completed")
                 return True
             elif handle.status == genomix.Status.error:
+                logger.error(f"Survey action failed")
                 return False
 
     def _process_area(self, area: Area):
@@ -138,6 +152,8 @@ class GatherInfo:
         while True:
             genomix.update()
             if handle.status == genomix.Status.done:
+                logger.info(f"GatherInfo action completed")
                 return True
             elif handle.status == genomix.Status.error:
+                logger.error(f"GatherInfo action failed")
                 return False
