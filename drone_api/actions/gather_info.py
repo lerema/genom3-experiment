@@ -28,7 +28,7 @@ class GatherInfo:
 
         self.x = 0.0
         self.y = 0.0
-        self.z = 0.15
+        self.z = 1.0
         self.yaw = 0.0
 
         self._plates_info = []
@@ -52,8 +52,9 @@ class GatherInfo:
             callback=self.callback if "callback" not in kwargs else kwargs["callback"],
         )
 
-        if self._plates_info:
-            self.ct_drone.ClearFindings(ack=self.ack)
+        # TODO: Creates problem during replanning
+        # if self._plates_info:
+        #     self.ct_drone.ClearFindings(ack=self.ack)
 
         return result
 

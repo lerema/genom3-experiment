@@ -119,9 +119,12 @@ class ProblemDefinition:
         return problem
 
     @staticmethod
-    def execute_graph(graph: nx.DiGraph):
+    def execute_graph(graph: nx.DiGraph, replan=False):
         for node in graph.nodes(data=True):
             if node[0] in ["start", "end"]:
+                continue
+            if replan and "survey" in node[0]:
+                # TODO: Remove this hack
                 continue
             print(f"Executing {node[0]}")
             parameters = node[1]["parameters"]
@@ -249,7 +252,7 @@ def main():
     executable_graph = bridge.get_executable_graph(plan)
     print("Close the graph to start execution")
     problem_def.show_graph(executable_graph)
-    problem_def.execute_graph(executable_graph)
+    problem_def.execute_graph(executable_graph, replan=True)
 
     # draw graph
     plt.figure(figsize=(10, 10))
@@ -257,7 +260,7 @@ def main():
     input("Press enter to exit...")
 
     # Remove data files created by the experiment
-    # os.remove(os.path.join(os.getcwd(), "data", "genom3-experiment-data.json"))
+    os.remove(os.path.join(os.getcwd(), "data", "genom3-experiment-data.json"))
 
 
 if __name__ == "__main__":
