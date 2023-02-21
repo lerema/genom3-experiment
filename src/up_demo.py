@@ -13,17 +13,27 @@
 # limitations under the License.
 
 """UP demo for the drone project"""
+import os
+import time
+
 import matplotlib.pyplot as plt
 import networkx as nx
 import unified_planning as up
-from unified_planning.shortcuts import (EndTiming, Not, OneshotPlanner,
-                                        Problem, StartTiming)
+from unified_planning.shortcuts import (
+    EndTiming,
+    Not,
+    OneshotPlanner,
+    Problem,
+    StartTiming,
+)
 from up_bridge import Bridge
-from up_bridge.plexmo import PlanDispatcher
 
 from drone_api.actions import Actions
 from drone_api.connect import Connector
 from drone_api.up import *
+from drone_api.utils import setup_logging
+
+setup_logging(__file__)
 
 
 class ProblemDefinition:
@@ -33,6 +43,7 @@ class ProblemDefinition:
         self._bridge = Bridge()
         self._drone_1 = Connector(id=0)
         self._action_1 = Actions(self._drone_1.components, robot_id=0)
+        self._drone_1.start()
 
     @property
     def bridge(self):
@@ -147,13 +158,24 @@ def main():
         node_color="skyblue",
         font_size=20,
     )
-    plt.show()
+    plt.show(block=False)
 
     # Execute plan
-    dispatcher = PlanDispatcher()
-    dispatcher.execute_plan(executable_graph)
+    # Setup initial states for the experiment
+
+    for node in executable_graph.nodes(data=True):
+        if node[0] in ["start", "end"]:
+            continue
+        print(f"Executing {node[0]}")
+        parameters = node[1]["parameters"]
+        result = node[1]["executor"]()(*parameters)
+        print(f"Result: {result}")
+        time.sleep(1)
 
     input("Press enter to exit...")
+
+    # Remove data files created by the experiment
+    os.remove(os.path.join(os.getcwd(), "data", "genom3-experiment-data.json"))
 
 
 if __name__ == "__main__":
