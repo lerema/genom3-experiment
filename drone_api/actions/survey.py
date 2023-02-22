@@ -18,7 +18,8 @@ class Survey:
         self.maneuver = components["maneuver"].component
         self.ct_drone = components["CT_drone"].component
         self.ack = True
-        self._step_size = 1
+        self._x_step_size = 1
+        self._y_step_size = 1
         self.speed = 1.0
 
         self._status = None
@@ -82,13 +83,14 @@ class Survey:
         }
 
         x = xmin
+        self._y_step_size = ymax - ymin
         while x <= xmax:
             y = ymin
             while y <= ymax:
                 input_dict.update({"x": x, "y": y, "z": z, "yaw": yaw})
                 self.maneuver.waypoint(input_dict)
-                y += self._step_size
-            x += self._step_size
+                y += self._y_step_size
+            x += self._x_step_size
 
         self.robot_x, self.robot_y, self.robot_z = xmax, ymax, z
         self._survey_coordinates = [xmin, ymin, xmax, ymax, z, yaw]
