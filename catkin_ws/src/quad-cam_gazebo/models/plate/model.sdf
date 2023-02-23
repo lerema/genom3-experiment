@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sdf version="1.4">
       <model name='blue_box'>
-      <pose>3.5 3.5 0 0 -0 0</pose>
       <link name='plate'>
         <pose>0 0 0 0 -0 0</pose>
         <collision name='collision'>
