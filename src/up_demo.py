@@ -88,6 +88,13 @@ class ProblemDefinition:
 
     def replan(self, problem: Problem, plan):
         """Replan the problem"""
+        # Remove satisfied goals and add to initial state
+        satisfied_goals = problem.goals
+        problem.clear_goals()
+
+        for goal in satisfied_goals:
+            problem.set_initial_value(goal, True) # TODO: Add generic
+
         print("*** Replanning ***")
         problem = self.replan_rule_1(problem)  # add plates to the problem
         plan = ProblemDefinition.solve(problem)
@@ -110,11 +117,15 @@ class ProblemDefinition:
                 objects.append(plate)
 
         is_location_inspected = problem.fluent("is_location_inspected")
+        robot_at = problem.fluent("robot_at")
+        robot = problem.object("robot_1")
+        base_station = problem.object("base_station")
         for obj_def in objects:
-            obj = self._bridge.create_object(obj_def.name, obj_def)
-            problem.add_object(obj)
-            problem.add_goal(is_location_inspected(obj))
-            # TODO: based on goals, update initial states
+            plate = self._bridge.create_object(obj_def.name, obj_def)
+            problem.add_object(plate)
+            problem.add_goal(is_location_inspected(plate))
+
+        problem.add_goal(robot_at(robot, base_station))
 
         return problem
 
