@@ -61,13 +61,15 @@ class DroneCommon:
                 (f"OccupancyGrids/og{id}", f"CT_drone{id}/OccupancyGrid"),
             ],
             "dynamic_tf": {
-                "name": f"drone{id}",
+                "frame_name": f"drone{id}",
+                "port_name": f"drone{id}",
                 "parent_frame": "world",
                 "ms_period": 10,
                 "undef_in_orig": True,
             },
             "dynamic_tf_pos": {
-                "name": f"drone{id}_pos",
+                "frame_name": f"drone{id}",
+                "port_name": f"drone{id}_pos",
                 "parent_frame": "world",
                 "ms_period": 10,
                 "undef_in_orig": True,
