@@ -69,3 +69,41 @@ def is_location_inspected(location: Location):
     data = JSONSerializer().get(f"ENV.LOCATIONS.{location.name}.inspected")
     logger.info(f"Checking if the location is inspected {location.name}")
     return bool(data)
+
+
+def is_plate_order_optimized():
+    """Check if the plates order is optimized."""
+
+    data = JSONSerializer().get(f"ENV.PLATES.ORDER_OPTIMIZED")
+    logger.info(f"Checking if the plates order are optimized: {data}")
+    return bool(data)
+
+
+def all_plates_inspected():
+    """Check if all plates are inspected."""
+
+    for plate_id in range(get_plates_no()):
+        data = get_plate_info(plate_id)
+
+        if bool(data["INSPECTED"]) is not True:
+            return False
+
+    return True
+
+
+def is_plate_inspected(location: Location):
+    """Check if the plate at specific locatin is inspected."""
+
+    # Split plate number with _
+    plate_id = int(location.name.split("_")[-1])
+    data = get_plate_info(plate_id)
+
+    return bool(data["INSPECTED"])
+
+
+def is_robot_available(robot: Robot):
+    """Check for robot's availability"""
+
+    data = JSONSerializer().get(f"ROBOTS.{robot.id}.is_available")
+
+    return bool(data)

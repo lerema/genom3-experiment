@@ -72,13 +72,9 @@ def demo_problem():
     move.add_effect(EndTiming(), robot_at(r, l_to), True)
     move.add_effect(EndTiming(), is_location_inspected(l_to), True)
 
-    acquire_plates_order = InstantaneousAction(
-        "acquire_plates_order", robot=Robot, location=Location
-    )
-    location = acquire_plates_order.parameter("location")
-    r = acquire_plates_order.parameter("robot")
-    acquire_plates_order.add_precondition(is_base_station(r, location))
+    acquire_plates_order = InstantaneousAction("acquire_plates_order", robot=Robot)
     acquire_plates_order.add_precondition(has_plates())
+    acquire_plates_order.add_precondition(Not(is_distance_optimized()))
     acquire_plates_order.add_effect(is_distance_optimized(), True)
 
     problem = Problem()
@@ -95,7 +91,6 @@ def demo_problem():
     problem.add_actions([survey, gather_info, move, acquire_plates_order])
     problem.set_initial_value(robot_at(robot, base_station), True)
     problem.set_initial_value(is_base_station(robot, base_station), True)
-
 
     problem.add_goal(is_surveyed())
     problem.add_goal(has_plates())

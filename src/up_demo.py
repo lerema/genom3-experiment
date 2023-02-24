@@ -42,6 +42,7 @@ class ProblemDefinition:
     def __init__(self) -> None:
         self._bridge = Bridge()
 
+        self._action_1 = None
         self._setup_experiment()
         self._setup_domain()
 
@@ -93,7 +94,7 @@ class ProblemDefinition:
         problem.clear_goals()
 
         for goal in satisfied_goals:
-            problem.set_initial_value(goal, True) # TODO: Add generic
+            problem.set_initial_value(goal, True)  # TODO: Add generic
 
         print("*** Replanning ***")
         problem = self.replan_rule_1(problem)  # add plates to the problem
@@ -175,6 +176,12 @@ class ProblemDefinition:
         f_is_location_inspected = self._bridge.create_fluent_from_function(
             is_location_inspected
         )
+        f_is_plates_order_optimized = self._bridge.create_fluent_from_function(
+            is_plate_order_optimized
+        )
+        f_is_robot_available = self.bridge.create_fluent_from_function(
+            is_robot_available
+        )
 
         # Default objects
         base_station = self._bridge.create_object("base_station", self.base_station)
@@ -193,6 +200,7 @@ class ProblemDefinition:
             l_from=Location,
             duration=10,
         )
+        survey.add_condition(StartTiming(), f_is_robot_available(r))
         survey.add_condition(StartTiming(), Not(f_is_surveyed()))
         survey.add_condition(StartTiming(), f_is_base_station(r, l))
         survey.add_condition(StartTiming(), Not(f_has_plates()))
@@ -201,9 +209,18 @@ class ProblemDefinition:
         gather_info, _ = self._bridge.create_action(
             "gather_info", _callable=GatherInfo, robot=Robot, duration=3
         )
+        gather_info.add_condition(StartTiming(), f_is_robot_available(r))
         gather_info.add_condition(StartTiming(), f_is_surveyed())
         gather_info.add_condition(StartTiming(), Not(f_has_plates()))
         gather_info.add_effect(EndTiming(), f_has_plates(), True)
+
+        optimize_plates_distance, [r] = self._bridge.create_action(
+            "optimize_plates_distance", _callable=OptimizeDistance, r=Robot
+        )
+        optimize_plates_distance.add_precondition(f_is_robot_available(r))
+        optimize_plates_distance.add_precondition(f_has_plates())
+        optimize_plates_distance.add_precondition(Not(f_is_plates_order_optimized()))
+        optimize_plates_distance.add_effect(f_is_plates_order_optimized(), True)
 
         move, [r, l_from, l_to] = self._bridge.create_action(
             "move",
@@ -213,9 +230,11 @@ class ProblemDefinition:
             l_to=Location,
             duration=10,
         )
+        move.add_condition(StartTiming(), f_is_robot_available(r))
         move.add_condition(StartTiming(), f_robot_at(r, l_from))
         move.add_condition(StartTiming(), Not(f_robot_at(r, l_to)))
         move.add_condition(StartTiming(), f_has_plates())
+        move.add_condition(StartTiming(), f_is_plates_order_optimized())
         move.add_effect(EndTiming(), f_robot_at(r, l_to), True)
         move.add_effect(StartTiming(), f_robot_at(r, l_from), False)
         move.add_effect(EndTiming(), f_is_location_inspected(l_to), True)
@@ -226,16 +245,19 @@ class ProblemDefinition:
         problem.add_fluent(f_has_plates, default_initial_value=False)
         problem.add_fluent(f_is_base_station, default_initial_value=False)
         problem.add_fluent(f_is_location_inspected, default_initial_value=False)
+        problem.add_fluent(f_is_plates_order_optimized, default_initial_value=False)
+        problem.add_fluent(f_is_robot_available, default_initial_value=True)
 
         problem.add_objects([robot, base_station, charging_station, area])
 
-        problem.add_actions([survey, gather_info, move])
+        problem.add_actions([survey, gather_info, move, optimize_plates_distance])
 
         problem.set_initial_value(f_robot_at(robot, base_station), True)
         problem.set_initial_value(f_is_base_station(robot, base_station), True)
 
         problem.add_goal(f_is_surveyed())
         problem.add_goal(f_has_plates())
+        problem.add_goal(f_is_plates_order_optimized())
         problem.add_goal(f_robot_at(robot, base_station))
 
         return problem

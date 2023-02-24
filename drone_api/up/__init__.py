@@ -1,7 +1,7 @@
 """Module to hold up related code."""
 from .user_types import Location, Area, Robot
 from .functions import *
-from .actions import Move, Survey, GatherInfo
+from .actions import Move, Survey, GatherInfo, OptimizeDistance
 
 
 __all__ = [
@@ -17,8 +17,13 @@ __all__ = [
     "get_plates_no",
     "get_plate_info",
     "is_location_inspected",
+    "is_plate_order_optimized",
+    "all_plates_inspected",
+    "is_plate_inspected",
+    "is_robot_available",
     # actions
     "Move",
     "Survey",
     "GatherInfo",
+    "OptimizeDistance",
 ]

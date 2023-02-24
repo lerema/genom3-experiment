@@ -21,6 +21,7 @@ class Robot:
                 "pose": self.pose,
                 "location_name": "base_station",
                 "battery_level": self.battery_level,
+                "is_available": True,
             }
         except AttributeError:
             raise ValueError("Robot object not initialized.")
