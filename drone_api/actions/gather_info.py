@@ -77,9 +77,6 @@ class GatherInfo:
                     self._data.update("ENV.PLATES.ORDER_OPTIMIZED", False)
                 self._data.update("ENV.NO_PLATES", len(self._plates_info))
 
-            # All color plates have ARUCO markers
-            self._data.update("ENV.NO_ARUCOS", len(self._plates_info))
-
     def _prepare_plates_info(self, result):
         plates_info = []
 

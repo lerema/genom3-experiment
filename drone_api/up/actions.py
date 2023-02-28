@@ -279,6 +279,10 @@ class InspectPlate:
         result = None
         if moved:
             result = self._robot.actions.detect_arucotag()
+
+            if not result:
+                return result
+
             result = self._robot.actions.move(
                 l_from=closer_location, l_to=self._process_location(self._location)
             )
