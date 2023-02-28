@@ -18,6 +18,7 @@ class DetectArucotag:
         self.arucotag = components["arucotag"].component
         self.ack = True
         self._status = None
+        self._id = None
 
         self._data = JSONSerializer()
         self._aruco_id = 0
@@ -26,9 +27,10 @@ class DetectArucotag:
     def components(self):
         return self._components
 
-    def __call__(self, **kwargs):
+    def __call__(self, location_id: int, **kwargs):
         logger.info("Inspecting Aruco Markers")
         result = self.arucotag.pose("10")
+        self._id = location_id
 
         try:
             self._update_data(result)

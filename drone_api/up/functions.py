@@ -96,6 +96,9 @@ def is_plate_order_optimized():
 def all_plates_inspected():
     """Check if all plates are inspected."""
 
+    if get_plates_no() < get_spawned_plates_no():
+        return False
+
     for plate_id in range(get_plates_no()):
         data = get_plate_info(plate_id)
 
@@ -121,3 +124,19 @@ def is_robot_available(robot: Robot):
     data = JSONSerializer().get(f"ROBOTS.{robot.id}.is_available")
 
     return bool(data)
+
+
+def get_spawned_plates_no():
+    """Get spawned plates no."""
+
+    import os
+
+    env_path = os.getenv("DRONE_VV_PATH", None)
+
+    if env_path is not None:
+        data_path = os.path.join(env_path, "genom3-experiment/data/data")
+
+        with open(data_path, "r") as f:
+            line = f.readline()
+
+            return int(line.split("=")[-1])
