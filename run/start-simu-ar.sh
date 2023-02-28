@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 logdir="/tmp/log-$(date +"%Y%m%d-%H%M%S")"
 SCRIPT_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
+DATA_PATH="$SCRIPT_DIR"/../data
 
 # Load environment variables
 drone_experiment # Added in install-scripts/setup-experiment.sh
@@ -18,7 +19,7 @@ genomixd -v -v >"$logdir"/genomixd.log &
 
 if [ $# -eq 0 ] || [ "$1" == "--python" ]; then
     # Start Gazebo
-    user_cmd="echo \"Use this terminal to access the Python script\"; bash ; ${SCRIPT_DIR}/end.sh; sleep 1"
+    user_cmd="echo \"Use this terminal to access the Python script\"; bash ; ${SCRIPT_DIR}/end.sh; rm $DATA_PATH/*; sleep 1"
 elif [ "$1" == "--tcl" ]; then
     # Start Gazebo
     user_cmd="script -f -c \"eltclsh -simu -cam -tf; ${SCRIPT_DIR}/end.sh; sleep 1\" $logdir/eltclsh.log"

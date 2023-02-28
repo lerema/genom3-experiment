@@ -1,11 +1,12 @@
 """Spawn plates and aruco markers in gazebo."""
-import rospy
-import rospkg
-import tf
-import random
+import os
+
 import numpy as np
-from gazebo_msgs.srv import SpawnModel, DeleteModel
-from geometry_msgs.msg import Pose, Point, Quaternion
+import rospkg
+import rospy
+import tf
+from gazebo_msgs.srv import DeleteModel, SpawnModel
+from geometry_msgs.msg import Point, Pose, Quaternion
 
 # This package directory
 dir = rospkg.RosPack().get_path("quad-cam_gazebo")
@@ -94,3 +95,12 @@ if __name__ == "__main__":
     for plate, pose in zip(plates, plate_poses):
         rospy.loginfo(f"Spawning {plate}")
         spawn_plate(plate, plate_model, "", pose, "world")
+
+    # TODO: Dump way to do
+    drone_path = os.getenv("DRONE_VV_PATH", None)
+    if drone_path is not None:
+        path = os.path.join(drone_path, "genom3-experiment/data", "data")
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w") as f:
+            f.write(f"EXPECTED_PLATES={len(plate_poses)}")

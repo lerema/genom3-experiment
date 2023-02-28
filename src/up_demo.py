@@ -322,9 +322,6 @@ def main():
 
     input("Press enter to exit...")
 
-    # Remove data files created by the experiment
-    os.remove(os.path.join(os.getcwd(), "data", "genom3-experiment-data.json"))
-
 
 if __name__ == "__main__":
     main()
