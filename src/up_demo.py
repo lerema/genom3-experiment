@@ -131,12 +131,9 @@ class ProblemDefinition:
         return problem
 
     @staticmethod
-    def execute_graph(graph: nx.DiGraph, replan=False):
+    def execute_graph(graph: nx.DiGraph):
         for node in graph.nodes(data=True):
             if node[0] in ["start", "end"]:
-                continue
-            if replan and "survey" in node[0]:
-                # TODO: Remove this hack
                 continue
             print(f"Executing {node[0]}")
             parameters = node[1]["parameters"]
@@ -285,7 +282,7 @@ def main():
     executable_graph = bridge.get_executable_graph(plan)
     print("Close the graph to start execution")
     problem_def.show_graph(executable_graph)
-    problem_def.execute_graph(executable_graph, replan=True)
+    problem_def.execute_graph(executable_graph)
 
     # draw graph
     plt.figure(figsize=(10, 10))
