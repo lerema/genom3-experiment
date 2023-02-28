@@ -243,3 +243,71 @@ class OptimizeDistance:
         # Order the points based on the shortest path
         ordered_points = [points[i] for i in sorted(path.keys(), key=lambda x: path[x])]
         return ordered_points
+
+
+class InspectPlate:
+    """UP Action representation for UP action."""
+
+    def __init__(self, ack=False, **kwargs):
+        self._robot = kwargs.get("robot", None)
+        self._location = kwargs.get("locaiton", None)
+
+        self._ack = ack
+
+    def __call__(self, robot: Robot, location: Location):
+        """Inspect Plates action"""
+        self._robot = robot
+        self._location = location
+
+        if JSONSerializer().get(f"ROBOTS.{self._robot.id}.location_name") != str(
+            self._location
+        ):
+            logger.error(
+                f"Robot is not in the right location to start the move action. Acquired location: {JSONSerializer().get(f'ROBOTS.{self._robot.id}.location_name') != str(self._location)}"
+            )
+            return False  # Robot is not in the right location to start the action
+
+        closer_location = self._process_location(self._location)
+        closer_location["z"] = 0.15
+        moved = self._robot.actions.move(
+            l_from=self._process_location(self._location),
+            l_to=closer_location,
+        )
+
+        moved = self.wait_for_completion(moved)
+
+        result = None
+        if moved:
+            result = self._robot.actions.detect_arucotag()
+            result = self._robot.actions.move(
+                l_from=closer_location, l_to=self._process_location(self._location)
+            )
+
+        if self._ack:
+            return result
+
+        return self.wait_for_completion(result)
+
+    def wait_for_completion(self, handle):
+        JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", False)
+        while True:
+            genomix.update()
+            if handle.status == genomix.Status.done:
+                JSONSerializer().update(
+                    f"ROBOTS.{self._robot.id}.location_name", str(self._location)
+                )
+                logger.info(f"Inspect Plate action completed")
+                JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
+                return True
+            elif handle.status == genomix.Status.error:
+                logger.error(f"Inspect Plate action failed")
+                JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
+                return False
+
+    def _process_location(self, location: Location):
+        return {
+            "x": location.x,
+            "y": location.y,
+            "z": location.z,
+            "yaw": 0.0,
+        }

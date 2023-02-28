@@ -7,6 +7,7 @@ from .localize_plates import LocalizePlates
 from .move import Move
 from .stop import Stop
 from .survey import Survey
+from .inspect_aruco import DetectArucotag
 
 
 class Actions:
@@ -19,6 +20,7 @@ class Actions:
         self._gather_info = GatherInfo(components, robot_id)
         self._capture_photo = CapturePhoto(components, robot_id)
         self._localize_plates = LocalizePlates(components, robot_id)
+        self._detect_arucotag = DetectArucotag(components, robot_id)
 
     def land(self, **kwargs):
         return self._land(**kwargs)
@@ -43,3 +45,6 @@ class Actions:
 
     def localize_plates(self, **kwargs):
         return self._localize_plates(**kwargs)
+
+    def detect_arucotag(self, **kwargs):
+        return self._detect_arucotag(**kwargs)
