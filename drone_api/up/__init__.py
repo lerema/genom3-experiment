@@ -1,7 +1,7 @@
 """Module to hold up related code."""
 from .user_types import Location, Area, Robot
 from .functions import *
-from .actions import Move, Survey, GatherInfo, OptimizeDistance
+from .actions import Move, Survey, GatherInfo, OptimizeDistance, InspectPlate
 
 
 __all__ = [
@@ -26,4 +26,5 @@ __all__ = [
     "Survey",
     "GatherInfo",
     "OptimizeDistance",
+    "InspectPlate",
 ]

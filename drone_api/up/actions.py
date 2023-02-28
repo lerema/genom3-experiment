@@ -268,7 +268,7 @@ class InspectPlate:
             return False  # Robot is not in the right location to start the action
 
         closer_location = self._process_location(self._location)
-        closer_location["z"] = 0.15
+        closer_location["z"] = 0.5
         moved = self._robot.actions.move(
             l_from=self._process_location(self._location),
             l_to=closer_location,
