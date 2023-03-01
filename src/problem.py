@@ -34,11 +34,14 @@ def demo_problem():
     is_location_inspected = Fluent(
         "is_location_inspected", BoolType(), position=Location
     )
+    is_robot_available = Fluent("is_robot_available", BoolType(), robot=Robot)
     is_plate_inspected = Fluent("is_plate_inspected", BoolType(), location=Location)
 
     # Default objects
-    robot = Object("robot", Robot)
-    base_station = Object("base_station", Location)
+    r1 = Object("r1", Robot)
+    r2 = Object("r2", Robot)
+    base_station_1 = Object("base_station_1", Location)
+    base_station_2 = Object("base_station_2", Location)
     charging_station = Object("charging_station", Location)
     area = Object("area", Area)
     l1 = Object("l1", Location)
@@ -50,12 +53,17 @@ def demo_problem():
     l_from = survey.parameter("From")
     r = survey.parameter("robot")
     survey.set_fixed_duration(10)  # TODO: make this a variable
+    survey.add_condition(StartTiming(), is_robot_available(r))
     survey.add_condition(StartTiming(), Not(is_surveyed()))
     survey.add_condition(StartTiming(), is_base_station(r, l_from))
     survey.add_condition(StartTiming(), Not(has_plates()))
+    survey.add_effect(StartTiming(), is_robot_available(r), False)
     survey.add_effect(EndTiming(), is_surveyed(), True)
+    survey.add_effect(EndTiming(), is_robot_available(r), True)
 
     send_info = InstantaneousAction("send_info", robot=Robot)
+    r = send_info.parameter("robot")
+    send_info.add_precondition(is_robot_available(r))
     send_info.add_precondition(is_surveyed())
     send_info.add_precondition(Not(has_plates()))
     send_info.add_effect(has_plates(), True)
@@ -65,14 +73,19 @@ def demo_problem():
     l_to = move.parameter("l_to")
     r = move.parameter("robot")
     move.set_fixed_duration(1)  # TODO: make this a variable
+    move.add_condition(StartTiming(), is_robot_available(r))
     move.add_condition(StartTiming(), robot_at(r, l_from))
     move.add_condition(StartTiming(), Not(robot_at(r, l_to)))
     move.add_condition(StartTiming(), has_plates())
     move.add_condition(StartTiming(), is_distance_optimized())
     move.add_effect(StartTiming(), robot_at(r, l_from), False)
+    move.add_effect(StartTiming(), is_robot_available(r), False)
     move.add_effect(EndTiming(), robot_at(r, l_to), True)
+    move.add_effect(EndTiming(), is_robot_available(r), True)
 
     acquire_plates_order = InstantaneousAction("acquire_plates_order", robot=Robot)
+    r = acquire_plates_order.parameter("robot")
+    acquire_plates_order.add_precondition(is_robot_available(r))
     acquire_plates_order.add_precondition(has_plates())
     acquire_plates_order.add_precondition(Not(is_distance_optimized()))
     acquire_plates_order.add_effect(is_distance_optimized(), True)
@@ -81,11 +94,14 @@ def demo_problem():
     r = inspect_plate.parameter("robot")
     l = inspect_plate.parameter("location")
     inspect_plate.set_fixed_duration(2)
+    inspect_plate.add_condition(StartTiming(), is_robot_available(r))
     inspect_plate.add_condition(StartTiming(), robot_at(r, l))
     inspect_plate.add_condition(StartTiming(), has_plates())
     inspect_plate.add_condition(StartTiming(), is_distance_optimized())
+    inspect_plate.add_effect(StartTiming(), is_robot_available(r), False)
     inspect_plate.add_effect(EndTiming(), is_location_inspected(l), True)
     inspect_plate.add_effect(EndTiming(), is_plate_inspected(l), True)
+    inspect_plate.add_effect(EndTiming(), is_robot_available(r), True)
 
     problem = Problem()
 
@@ -96,12 +112,17 @@ def demo_problem():
     problem.add_fluent(is_base_station, default_initial_value=False)
     problem.add_fluent(is_location_inspected, default_initial_value=False)
     problem.add_fluent(is_plate_inspected, default_initial_value=False)
+    problem.add_fluent(is_robot_available, default_initial_value=True)
 
-    problem.add_objects([robot, base_station, charging_station, area, l1, l2, l3, l4])
+    problem.add_objects(
+        [r1, r2, base_station_1, base_station_2, charging_station, area, l1, l2, l3, l4]
+    )
 
     problem.add_actions([survey, send_info, move, acquire_plates_order, inspect_plate])
-    problem.set_initial_value(robot_at(robot, base_station), True)
-    problem.set_initial_value(is_base_station(robot, base_station), True)
+    problem.set_initial_value(robot_at(r1, base_station_1), True)
+    problem.set_initial_value(is_base_station(r1, base_station_1), True)
+    problem.set_initial_value(robot_at(r2, base_station_2), True)
+    problem.set_initial_value(is_base_station(r2, base_station_2), True)
 
     problem.add_goal(is_surveyed())
     problem.add_goal(has_plates())
@@ -114,7 +135,8 @@ def demo_problem():
     problem.add_goal(is_plate_inspected(l2))
     problem.add_goal(is_plate_inspected(l3))
     problem.add_goal(is_plate_inspected(l4))
-    problem.add_goal(robot_at(robot, charging_station))
+    problem.add_goal(robot_at(r1, base_station_1))
+    problem.add_goal(robot_at(r2, base_station_2))
 
     return problem
 
