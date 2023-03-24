@@ -62,9 +62,6 @@ class Drone:
 def main():
     """Main function"""
 
-    print("Current version is not compatible with multiple drones.")
-    return
-
     d1 = Drone(1)
     d2 = Drone(2)
 

@@ -7,4 +7,7 @@
     <!-- more default parameters can be changed here -->
   </include>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find quad-cam_gazebo)/rviz/drone2.rviz"/>
+  <node name="load_plates" pkg="quad-cam_gazebo" type="load_plates.py" output="screen">
+    <param name="no_plates" value="5" />
+  </node>
 </launch>

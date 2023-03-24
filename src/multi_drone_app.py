@@ -11,50 +11,143 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import genomix
+import multiprocessing
 
+from drone_api.actions import Actions
 from drone_api.connect import Connector
-from drone_api.actions import *
+from drone_api.utils import setup_logging
+
+# Setup logging to file
+setup_logging(__file__)
+
+
+def drone_1_actions(action: Actions):
+    """Test run of the available actions."""
+    # Start actions
+    function_map = []
+    function_map.append((action.takeoff, {"height": 0.5}))
+    function_map.append(
+        (
+            action.move,
+            {"l_from": {}, "l_to": {"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0}},
+        )
+    )
+    function_map.append(
+        (
+            action.survey,
+            {
+                "area": {
+                    "xmin": -2.0,
+                    "xmax": 2.0,
+                    "ymin": -2.0,
+                    "ymax": 2.0,
+                    "z": 1.5,
+                    "yaw": 0.0,
+                }
+            },
+        )
+    )
+    function_map.append(
+        (
+            action.move,
+            {"l_from": {}, "l_to": {"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0}},
+        )
+    )
+    function_map.append((action.land, {}))
+
+    return function_map
+
+
+def drone_2_actions(action: Actions):
+    """Test run of the available actions."""
+    # Start actions
+    function_map = []
+    function_map.append((action.takeoff, {"height": 0.5}))
+    function_map.append(
+        (
+            action.move,
+            {"l_from": {}, "l_to": {"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0}},
+        )
+    )
+    function_map.append(
+        (
+            action.survey,
+            {
+                "area": {
+                    "xmin": -2.0,
+                    "xmax": 2.0,
+                    "ymin": -2.0,
+                    "ymax": 2.0,
+                    "z": 1.5,
+                    "yaw": 0.0,
+                }
+            },
+        )
+    )
+    function_map.append(
+        (
+            action.move,
+            {"l_from": {}, "l_to": {"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0}},
+        )
+    )
+    function_map.append((action.land, {}))
+
+    return function_map
 
 
 def main():
     """Main function"""
 
-    print("Current version is not compatible with multiple drones.")
-    return
-
     try:
-        c1 = Connector(id=1)
-        c2 = Connector(id=2)
+        drone_1_action_handler = Connector(id=0)
     except Exception as e:
-        raise Exception("Failed to connect to the drone") from e
+        raise Exception("Failed to connect to the drone 1") from e
+    try:
+        drone_2_action_handler = Connector(id=1)
+    except Exception as e:
+        raise Exception("Failed to connect to the drone 2") from e
 
-    # Start the connection and take off
-    c1.start()
-    c2.start()
-    a1 = Actions(c1.components)
-    a2 = Actions(c2.components)
+    def drone_1():
+        # Start the connection and take off
+        drone_1_action_handler.start()
+        action = Actions(drone_1_action_handler.components)
 
-    # Start actions
-    t = a1.takeoff(height=0.5)
-    t = a2.takeoff(height=0.5)
+        functions = drone_1_actions(action)
 
-    m = a1.move(area={}, l_from={}, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
-    m = a2.move(area={}, l_from={}, l_to={"x": 1.5, "y": 1.5, "z": 0.5, "yaw": 0.0})
+        for function, kwargs in functions:
+            result = function(**kwargs)
+            while True:
+                if genomix.update() or str(result.status) == "done":
+                    print(f"Action {function.__name__} completed")
+                    break
 
-    m = a1.move(area={}, l_from={}, l_to={"x": -0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
-    m = a2.move(area={}, l_from={}, l_to={"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0})
+    def drone_2():
+        # Start the connection and take off
+        drone_2_action_handler.start()
+        action = Actions(drone_2_action_handler.components)
 
-    m = a1.move(area={}, l_from={}, l_to={"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0})
-    m = a2.move(area={}, l_from={}, l_to={"x": 1.0, "y": 1.0, "z": 0.5, "yaw": 0.0})
+        functions = drone_2_actions(action)
 
-    l = a1.land()
-    l = a2.land()
+        for function, kwargs in functions:
+            result = function(**kwargs)
+            while True:
+                if genomix.update() or str(result.status) == "done":
+                    print(f"Action {function.__name__} completed")
+                    break
 
-    c1.stop()
-    c2.stop()
+    thread_1 = multiprocessing.Process(target=drone_1)
+    thread_2 = multiprocessing.Process(target=drone_2)
+    thread_1.start()
+    thread_2.start()
 
     # wait until keypress
+    drone_1_action_handler.stop()
+    drone_2_action_handler.stop()
     input("Press Enter to exit...")
+
+    thread_1.terminate()
+    thread_2.terminate()
 
 
 if __name__ == "__main__":
