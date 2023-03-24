@@ -157,10 +157,10 @@ class DroneCommon:
         ARUCOTAG = {
             "length": 0.2,
             "ports": [
-                ("frame", "camgazebo/frame/raw"),
-                ("drone", "pom/frame/robot"),
-                ("intrinsics", "camgazebo/intrinsics"),
-                ("extrinsics", "camgazebo/extrinsics"),
+                ("frame", f"camgazebo{id}/frame/raw"),
+                ("drone", f"pom{id}/frame/robot"),
+                ("intrinsics", f"camgazebo{id}/intrinsics"),
+                ("extrinsics", f"camgazebo{id}/extrinsics"),
             ],
             "length": 0.08,
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
@@ -179,10 +179,10 @@ class DroneCommon:
             "pixel_size": 3,
             "ports": [
                 # TODO: Add multiple ports
-                ("frame/camgazebo", "camgazebo/frame/raw"),
+                ("frame/camgazebo", f"camgazebo{id}/frame/raw"),
                 # ("pixel/tag1", "arucotag/pixel_pose/1"),
             ],
-            "camera": "camgazebo",
+            "camera": f"camgazebo{id}",
             "pixel_display": "tag1",
         }
 

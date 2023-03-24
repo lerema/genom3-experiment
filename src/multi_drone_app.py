@@ -100,11 +100,11 @@ def main():
     """Main function"""
 
     try:
-        drone_1_action_handler = Connector(id=0)
+        drone_1_action_handler = Connector(id=1)
     except Exception as e:
         raise Exception("Failed to connect to the drone 1") from e
     try:
-        drone_2_action_handler = Connector(id=1)
+        drone_2_action_handler = Connector(id=2)
     except Exception as e:
         raise Exception("Failed to connect to the drone 2") from e
 
