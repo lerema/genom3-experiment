@@ -97,7 +97,7 @@ To start the UP demo, you could run the following command:
 # From the root of the repository
 python3 src/up_demo.py
 ```
-
+> **Note: To restart the experiment, it is recommended to close all the terminals and relaunch the experiment.**
 
 ## Current Status
 
