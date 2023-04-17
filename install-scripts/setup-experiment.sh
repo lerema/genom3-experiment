@@ -145,7 +145,9 @@ catkin_make
 # EXPORT PACKAGE PATH
 # TODO: add sed comparison to check if the path is already exported
 echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>~/.bashrc
-echo "export PATH=/opt/openrobots/bin:${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
+echo "
+function drone_experiment {
+export PATH=/opt/openrobots/bin:${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
 export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
 
 export PYTHONPATH=/opt/openrobots/lib/python3.8/site-packages:${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
@@ -154,6 +156,7 @@ export GAZEBO_PLUGIN_PATH=/opt/openrobots/lib/gazebo:${INSTALL_DIR}/openrobots/l
 export GAZEBO_MODEL_PATH=/opt/openrobots/share/gazebo/models:${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models):${GAZEBO_MODEL_PATH}
 
 export GENOM_TMPL_PATH=/opt/openrobots/share/genom/site-templates:${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
+}
 " >>~/.bashrc
 
 # shellcheck source=/dev/null

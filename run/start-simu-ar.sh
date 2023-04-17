@@ -2,6 +2,9 @@
 logdir="/tmp/log-$(date +"%Y%m%d-%H%M%S")"
 SCRIPT_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
 
+# Load environment variables
+drone_experiment # Added in install-scripts/setup-experiment.sh
+
 # Source ROS workspace
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}"/../catkin_ws/devel/setup.bash
