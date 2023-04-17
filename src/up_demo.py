@@ -26,7 +26,7 @@ from unified_planning.shortcuts import (
     Problem,
     StartTiming,
 )
-from up_bridge import Bridge
+from up_esb import Bridge
 
 from drone_api.actions import Actions
 from drone_api.connect import Connector

@@ -1,1 +1,1 @@
-git+https://github.com/aiplan4eu/unified-planning-bridge.git#egg=up-bridge
+git+https://github.com/aiplan4eu/embedded-systems-bridge.git#egg=up-esb
