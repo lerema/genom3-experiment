@@ -64,7 +64,7 @@ class Connector:
         self._load_modules()
         if not set(MODULES["expected"]).issubset({*self.components}):
             raise ModuleNotFoundError(
-                f"Failed to find all expected modules. Expected {MODULES['expected']}, found {[*self.components]}"
+                f"Failed to find all expected modules. Missing modules: {set(MODULES['expected']) - {*self.components}}"
             )
 
         self.components = {
