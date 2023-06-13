@@ -112,8 +112,8 @@ class Connector:
         modules = glob.glob(f"{LIB_PATH}/genom/*/plugins/*.so")
         try:
             modules.extend(glob.glob("/opt/openrobots/lib/genom/*/plugins/*.so"))
-        except Exception:
-            pass
+        except Exception as e:
+            raise ModuleNotFoundError(e)
 
         if self.id == 0:
             id = ""

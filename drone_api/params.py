@@ -162,7 +162,7 @@ class DroneCommon:
                 ("intrinsics", f"camgazebo{id}/intrinsics"),
                 ("extrinsics", f"camgazebo{id}/extrinsics"),
             ],
-            "length": 0.08,
+            # "length": 0.08,
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
             "markers": [10, 11, 12, 13],
         }

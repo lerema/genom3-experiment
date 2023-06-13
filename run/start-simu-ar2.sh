@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
 source "${SCRIPT_DIR}"/../catkin_ws/devel/setup.bash
 mkdir -p "$logdir"
 rm -f core
-h2 init
+h2 init -d 500 -p 200000000
 #Source workspace
 # shellcheck source=/dev/null
 
