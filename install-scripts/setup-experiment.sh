@@ -180,6 +180,8 @@ fi
 
 # Install genom ros modules
 if [ "$INSTALL_GENOM" = true ]; then
+    drone_experiment # Function to source the path from bashrc
+
     for module in $GENOM_ROS_MODULES; do
         install_genom_modules "$module" "ros-template"
     done

@@ -134,12 +134,13 @@ class ProblemDefinition:
 
     @staticmethod
     def execute_graph(graph: nx.DiGraph):
-        for node in graph.nodes(data=True):
-            if node[0] in ["start", "end"]:
+        for _, node in dict(graph.nodes(data=True)).items():
+            if node["node_name"] in ["start", "end"]:
                 continue
-            print(f"Executing {node[0]}")
-            parameters = node[1]["parameters"]
-            result = node[1]["executor"]()(*parameters)
+            print(f"Executing {node['node_name']}")
+
+            parameters = node["parameters"]
+            result = node["executor"]()(*parameters)
             print(f"Result: {result}")
             time.sleep(1)
 
@@ -147,11 +148,16 @@ class ProblemDefinition:
     def show_graph(graph: nx.DiGraph):
         plt.figure(figsize=(10, 10))
 
+        labels = {}
+        for node in graph.nodes(data=True):
+            labels[node[0]] = node[1]["node_name"]
+
         pos = nx.nx_pydot.pydot_layout(graph, prog="dot")
         nx.draw(
             graph,
             pos,
             with_labels=True,
+            labels=labels,
             node_size=1000,
             node_color="skyblue",
             font_size=20,

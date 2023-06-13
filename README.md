@@ -77,7 +77,7 @@ To start the experiment, you need to launch the files from `run/` directory. For
 
 ```bash
 # To start the world with single drone equipped with camera and AR marker based environment
-bash run/start-simu-ar.sh --python # --python/--tcl. --python is optional
+drone_experiment && bash run/start-simu-ar.sh --python # --python/--tcl. --python is optional
 ```
 
 The above command will load the gazebo world, rviz and genom3 components. The terminal will be launching each component along with a empty terminal for the user. Please resize the terminal to your comfort. The user can use the empty terminal to run the python api or the UP demo.
