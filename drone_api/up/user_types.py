@@ -35,7 +35,7 @@ class Area:
         logger.info(f"Area {self.name} created")
 
     def __repr__(self):
-        return f"{self.name}-{self.survey_size}"
+        return f"{self.name}"
 
 
 class Robot:
@@ -58,4 +58,4 @@ class Robot:
         logger.info(f"Robot {self.name} created")
 
     def __repr__(self):
-        return f"{self.name}-{self.id}"
+        return f"{self.name}"

@@ -34,7 +34,7 @@ class Environment:
         self.NO_ARUCOS = no_arucos
 
         self.ARUCOS = {}
-        self.PLATES = {}
+        self.PLATES = {"ORDER_OPTIMIZED": False}
 
         self.HOME = (0.0, 0.0, 0.0)
         self.SURVEY_AREA = []

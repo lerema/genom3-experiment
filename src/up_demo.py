@@ -27,6 +27,7 @@ from unified_planning.shortcuts import (
     StartTiming,
 )
 from up_esb import Bridge
+from up_esb.plexmo import PlanDispatcher
 
 from drone_api.actions import Actions
 from drone_api.connect import Connector
@@ -120,7 +121,7 @@ class ProblemDefinition:
         is_location_inspected = problem.fluent("is_location_inspected")
         is_plate_inspected = problem.fluent("is_plate_inspected")
         robot_at = problem.fluent("robot_at")
-        robot = problem.object("robot_1")
+        robot = problem.object("drone_1")
         base_station = problem.object("base_station")
         for obj_def in objects:
             plate = self._bridge.create_object(obj_def.name, obj_def)
@@ -137,10 +138,14 @@ class ProblemDefinition:
         for _, node in dict(graph.nodes(data=True)).items():
             if node["node_name"] in ["start", "end"]:
                 continue
+            context = node["context"]
+            executor = context[node["action"]]
+            if node["node_name"] in ["start", "end"]:
+                continue
             print(f"Executing {node['node_name']}")
 
             parameters = node["parameters"]
-            result = node["executor"]()(*parameters)
+            result = executor(**parameters)
             print(f"Result: {result}")
             time.sleep(1)
 
@@ -184,16 +189,16 @@ class ProblemDefinition:
         f_is_plates_order_optimized = self._bridge.create_fluent_from_function(
             is_plate_order_optimized
         )
-        f_is_robot_available = self.bridge.create_fluent_from_function(
+        f_is_robot_available = self._bridge.create_fluent_from_function(
             is_robot_available
         )
-        f_is_plate_inspected = self.bridge.create_fluent_from_function(
+        f_is_plate_inspected = self._bridge.create_fluent_from_function(
             is_plate_inspected
         )
 
         # Default objects
         base_station = self._bridge.create_object("base_station", self.base_station)
-        robot = self._bridge.create_object("robot_1", self.robot)
+        robot = self._bridge.create_object("drone_1", self.robot)
         charging_station = self._bridge.create_object(
             "charging_station", self.charging_station
         )
@@ -246,7 +251,7 @@ class ProblemDefinition:
         move.add_effect(EndTiming(), f_robot_at(r, l_to), True)
         move.add_effect(StartTiming(), f_robot_at(r, l_from), False)
 
-        inspect_plate, [r, l] = self.bridge.create_action(
+        inspect_plate, [r, l] = self._bridge.create_action(
             "inspect_plate",
             _callable=InspectPlate,
             robot=Robot,
@@ -293,6 +298,7 @@ def main():
 
     # Get problem definition
     problem_def = ProblemDefinition()
+    plan_dispatcher = PlanDispatcher()
     problem = problem_def.setup_problem()
     bridge = problem_def.bridge
 
@@ -303,11 +309,12 @@ def main():
     problem_def.show_graph(executable_graph)
     problem_def.execute_graph(executable_graph)
 
-    plan = problem_def.replan(problem, plan)
-    executable_graph = bridge.get_executable_graph(plan)
-    print("Close the graph to start execution")
-    problem_def.show_graph(executable_graph)
-    problem_def.execute_graph(executable_graph)
+    while not all_plates_inspected():
+        plan = problem_def.replan(problem, plan)
+        executable_graph = bridge.get_executable_graph(plan)
+        print("Close the graph to start execution")
+        problem_def.show_graph(executable_graph)
+        problem_def.execute_graph(executable_graph)
 
     # draw graph
     plt.figure(figsize=(10, 10))
