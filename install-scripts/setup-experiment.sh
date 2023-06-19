@@ -26,6 +26,7 @@ function show_help {
     echo "  --robotpkg: install/reinstall the robotpkg modules"
     echo "  --all: install/reinstall all the modules"
     echo "  --update: update the experiment"
+    echo "  --ros-ws: setup the ros workspace"
     exit 0
 }
 
@@ -39,7 +40,7 @@ EOF
     curl http://robotpkg.openrobots.org/packages/debian/robotpkg.key |
         sudo apt-key add -
 
-    sudo apt-get update
+    sudo apt-get update || true
     printf "Installing robot-pkg modules...\n"
     sudo apt-get install -y \
         robotpkg-pom-genom3+codels+openprs+pocolibs-client-c+pocolibs-server \
@@ -110,15 +111,23 @@ fi
 if [ "$1" == "--all" ]; then
     INSTALL_GENOM=true
     INSTALL_ROBOTPKG=true
+    ROS_WS=true
 fi
 
 if [ "$1" == "--update" ]; then
     echo "Updating the experiment"
 fi
 
+if [ "$1" == "--ros-ws" ]; then
+    ROS_WS=true
+else
+    ROS_WS=false
+fi
+
 build_start="$(date)"
 
 # Check if ros, gazebo and rviz are installed
+source /opt/ros/noetic/setup.bash || eval "$(cat /opt/ros/noetic/setup.bash | tail -n +10)"
 if ! [ -x "$(command -v roscore)" ]; then
     echo 'Error: ros 1 is not installed.' >&2
     exit 1
@@ -133,34 +142,47 @@ if ! [ -x "$(command -v rviz)" ]; then
 fi
 
 # Install dependencies
-sudo apt-get install -y bison python3-vcstool libudev-dev tmux \
+sudo apt-get install -y bison python3-vcstool libudev-dev tmux git \
     python3-rospkg \
     ros-"$ROS_DISTRO"-jsk-rviz-plugins asciidoctor \
-    ros-"$ROS_DISTRO"-ros-comm ros-"$ROS_DISTRO"-ros ros-"$ROS_DISTRO"-common-msgs
+    ros-"$ROS_DISTRO"-ros-comm ros-"$ROS_DISTRO"-ros ros-"$ROS_DISTRO"-common-msgs ros-"$ROS_DISTRO"-octomap-msgs
 
 # Finally build ros simulation package
-cd "${SCRIPT_DIR}"/../catkin_ws
-catkin_make
+if [ "$ROS_WS" = true ]; then
+    echo "Building ros simulation package"
+    cd "${SCRIPT_DIR}"/../catkin_ws
+    catkin_make
+fi
 
 # EXPORT PACKAGE PATH
-# TODO: add sed comparison to check if the path is already exported
-echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>~/.bashrc
-echo "
-function drone_experiment {
-export PATH=/opt/openrobots/bin:${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
-export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
+if [ ! -d "$HOME" ]; then
+    mkdir "$HOME"
+fi
 
-export PYTHONPATH=/opt/openrobots/lib/python3.8/site-packages:${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
+# Create a bashrc file if it does not exist
+if [ ! -f "$HOME/.bashrc" ]; then
+    touch "$HOME/.bashrc"
+fi
 
-export GAZEBO_PLUGIN_PATH=/opt/openrobots/lib/gazebo:${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
-export GAZEBO_MODEL_PATH=/opt/openrobots/share/gazebo/models:${INSTALL_DIR}/openrobots/share/gazebo/models:$(realpath "$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models):${GAZEBO_MODEL_PATH}
+if ! grep -qF "function drone_experiment {" "$HOME/.bashrc"; then
+    echo "export DRONE_VV_PATH=""$INSTALL_DIR""" >>$HOME/.bashrc
+    echo "
+    function drone_experiment {
+    export PATH=/opt/openrobots/bin:${INSTALL_DIR}/bin:${INSTALL_DIR}/sbin:${INSTALL_DIR}/openrobots/sbin:${INSTALL_DIR}/openrobots/bin:${PATH}
+    export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig:${INSTALL_DIR}/lib/pkgconfig/genom/pocolibs:${INSTALL_DIR}/openrobots/lib/pkgconfig:${PKG_CONFIG_PATH}
 
-export GENOM_TMPL_PATH=/opt/openrobots/share/genom/site-templates:${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
-}
-" >>~/.bashrc
+    export PYTHONPATH=/opt/openrobots/lib/python3.8/site-packages:${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
+
+    export GAZEBO_PLUGIN_PATH=/opt/openrobots/lib/gazebo:${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
+    export GAZEBO_MODEL_PATH=/opt/openrobots/share/gazebo/models:${INSTALL_DIR}/openrobots/share/gazebo/models:"$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models:${GAZEBO_MODEL_PATH}
+
+    export GENOM_TMPL_PATH=/opt/openrobots/share/genom/site-templates:${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
+    }
+    " >>$HOME/.bashrc
+fi
 
 # shellcheck source=/dev/null
-eval "$(cat ~/.bashrc | tail -n +10)" # Hack to reload the bashrc
+eval "$(cat $HOME/.bashrc | tail -n +10)" || source $HOME/.bashrc
 
 # TODO: automatically detect the base directory of the robot-pkg repository
 # Pull dependencies
@@ -173,6 +195,7 @@ fi
 
 # Install genom modules
 if [ "$INSTALL_GENOM" = true ]; then
+    drone_experiment # Function to source the path from bashrc
     for module in $GENOM_MODULES; do
         install_genom_modules "$module"
     done
@@ -190,7 +213,7 @@ fi
 # Final setup
 
 #shellcheck source=/dev/null
-eval "$(cat ~/.bashrc | tail -n +10)" # Hack to reload the bashrc
+eval "$(cat $HOME/.bashrc | tail -n +10)" || source $HOME/.bashrc
 cd "$SCRIPT_DIR"/..
 
 echo "Setup started - $build_start"
