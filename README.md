@@ -10,10 +10,29 @@ This is a Genom3 based experiment for drones in search and survey application. T
 - Python 3.8
 - Pip >= 22.3
 - OpenCV4
+- Docker (Optional)
 
 The experiment has been tested on Python3.8, Ubuntu 20.04 with ROS Noetic and Gazebo 11 with the system architecture x86_64/AMD64. But it should work on other versions of Ubuntu, ROS1 and Gazebo.
 
 ## Setup
+
+### Using Docker
+
+One can use the docker image to setup the experiment. The docker image is available in [Docker Hub](https://hub.docker.com/r/franklinselva/drone-experiment). To setup the experiment using docker, we can use the following commands:
+
+```bash
+# Build the image
+docker build -t genom3-experiment .
+
+# Run the image
+./start.sh
+```
+
+The docker container is a VNC server. So, we can use any VNC client to connect to the docker container. The address and port of the VNC server is `localhost:6080`. The password for the VNC server is `ubuntu`.
+
+> **Note: Inside the docker container, it is expected to install the python dependencies everytime. The python dependencies are not installed in the docker image due to active development.**
+
+### From Source
 
 To setup the experiment, we should already have ROS and Gazebo installed. If not, please follow the installation instructions for [ROS](http://wiki.ros.org/noetic/Installation/Ubuntu) and [Gazebo](http://gazebosim.org/tutorials?tut=install_ubuntu&cat=install). Once ROS and Gazebo are installed and configured, we can install the experiment.
 
@@ -24,8 +43,6 @@ To setup the experiment workspace, we can use the following commands:
 mkdir -p drone-experiment && cd drone-experiment
 git clone https://github.com/franklinselva/genom3-experiment.git
 ```
-
-### Genom3
 
 The easier way to install genom3 and robotpkg modules is to launch the following commands:
 
@@ -61,7 +78,7 @@ The experiment depends on Python3 by default. To install the python api, we can 
 ```bash
 # In the root of the repository
 # Upgrade pip to the latest version. One of the dependency uses `pyproject.toml` which is supported by pip >= 22.3
-python3 -m pip install -U pip 'unified-planning[aries]'
+python3 -m pip install --upgrade pip
 # Install dependencies for the experiment
 python3 -m pip install -r requirements.txt
 # Install the drone python api

@@ -143,7 +143,7 @@ fi
 
 # Install dependencies
 sudo apt-get install -y bison python3-vcstool libudev-dev tmux git \
-    python3-rospkg \
+    python3-rospkg python3-pip \
     ros-"$ROS_DISTRO"-jsk-rviz-plugins asciidoctor \
     ros-"$ROS_DISTRO"-ros-comm ros-"$ROS_DISTRO"-ros ros-"$ROS_DISTRO"-common-msgs ros-"$ROS_DISTRO"-octomap-msgs
 
