@@ -87,7 +87,7 @@ class Survey:
             self._l_from
         ):
             logger.error(
-                f"Robot is not in the right location to start the move action. Acquired location: {JSONSerializer().get(f'ROBOTS.{self._robot.id}.location_name') != str(self._l_from)}"
+                f"Robot is not in the right location to start the move action. Acquired location: {JSONSerializer().get(f'ROBOTS.{self._robot.id}.location_name')} != {str(self._l_from)}"
             )
             return False  # Robot is not in the right location to start the action
 
@@ -190,7 +190,7 @@ class OptimizeDistance:
             plate_poses.append((plate_info["POSE"][0], plate_info["POSE"][1]))
 
         # Shortest path
-        self.shortest_path((current_x, current_y), plate_poses)
+        # self.shortest_path((current_x, current_y), plate_poses)
 
         logger.info(f"Reordered plates info based on distance for {robot.name}")
 

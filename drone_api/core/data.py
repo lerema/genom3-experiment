@@ -16,13 +16,22 @@ class Robot:
 
     def __dict__(self):
         try:
-            return {
-                "ID": self.ID,
-                "pose": self.pose,
-                "location_name": "base_station",
-                "battery_level": self.battery_level,
-                "is_available": True,
-            }
+            if self.ID == 0:
+                return {
+                    "ID": self.ID,
+                    "pose": self.pose,
+                    "location_name": "home",
+                    "battery_level": self.battery_level,
+                    "is_available": True,
+                }
+            else:
+                return {
+                    "ID": self.ID,
+                    "pose": self.pose,
+                    "location_name": f"base_station_{self.ID}",
+                    "battery_level": self.battery_level,
+                    "is_available": True,
+                }
         except AttributeError:
             raise ValueError("Robot object not initialized.")
 

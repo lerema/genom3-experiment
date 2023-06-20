@@ -42,7 +42,8 @@ def demo_problem():
     r2 = Object("r2", Robot)
     base_station_1 = Object("base_station_1", Location)
     base_station_2 = Object("base_station_2", Location)
-    charging_station = Object("charging_station", Location)
+    charging_station_1 = Object("charging_station_1", Location)
+    charging_station_2 = Object("charging_station_2", Location)
     area = Object("area", Area)
     l1 = Object("l1", Location)
     l2 = Object("l2", Location)
@@ -115,7 +116,19 @@ def demo_problem():
     problem.add_fluent(is_robot_available, default_initial_value=True)
 
     problem.add_objects(
-        [r1, r2, base_station_1, base_station_2, charging_station, area, l1, l2, l3, l4]
+        [
+            r1,
+            r2,
+            base_station_1,
+            base_station_2,
+            charging_station_1,
+            charging_station_2,
+            area,
+            l1,
+            l2,
+            l3,
+            l4,
+        ]
     )
 
     problem.add_actions([survey, send_info, move, acquire_plates_order, inspect_plate])
@@ -135,8 +148,8 @@ def demo_problem():
     problem.add_goal(is_plate_inspected(l2))
     problem.add_goal(is_plate_inspected(l3))
     problem.add_goal(is_plate_inspected(l4))
-    problem.add_goal(robot_at(r1, base_station_1))
-    problem.add_goal(robot_at(r2, base_station_2))
+    problem.add_goal(robot_at(r1, charging_station_1))
+    problem.add_goal(robot_at(r2, charging_station_2))
 
     return problem
 
