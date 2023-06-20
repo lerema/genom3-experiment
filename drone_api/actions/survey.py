@@ -31,7 +31,7 @@ class Survey:
 
         self._data = JSONSerializer()
 
-        result = self.ct_drone.ReadROSImageUpdateFindings(
+        self.ct_drone.ReadROSImageUpdateFindings(
             ack=self.ack, callback=self.callback
         )
 

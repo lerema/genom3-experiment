@@ -179,7 +179,7 @@ class DroneCommon:
             "pixel_size": 3,
             "ports": [
                 # TODO: Add multiple ports
-                ("frame/camgazebo", f"camgazebo/frame/raw"),
+                ("frame/camgazebo", "camgazebo/frame/raw"),
                 # ("pixel/tag1", "arucotag/pixel_pose/1"),
             ],
             "camera": "camgazebo",

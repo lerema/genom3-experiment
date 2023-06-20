@@ -1,6 +1,6 @@
 """Loads the current robot and environment state from the components to JSON."""
 import threading
-from drone_api.core import JSONSerializer, Robot, Environment
+from drone_api.core import JSONSerializer, Robot
 
 data_lock = threading.RLock()  # Locks the file access to the state file.
 

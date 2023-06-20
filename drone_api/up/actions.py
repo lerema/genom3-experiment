@@ -49,11 +49,11 @@ class Move:
                 JSONSerializer().update(
                     f"ROBOTS.{self._robot.id}.location_name", str(self._l_to)
                 )
-                logger.info(f"Move action completed")
+                logger.info("Move action completed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return True
             elif handle.status == genomix.Status.error:
-                logger.error(f"Move action failed")
+                logger.error("Move action failed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return False
 
@@ -112,11 +112,11 @@ class Survey:
         while True:
             genomix.update()
             if handle.status == genomix.Status.done:
-                logger.info(f"Survey action completed")
+                logger.info("Survey action completed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return True
             elif handle.status == genomix.Status.error:
-                logger.error(f"Survey action failed")
+                logger.error("Survey action failed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return False
 
@@ -160,11 +160,11 @@ class GatherInfo:
         while True:
             genomix.update()
             if handle.status == genomix.Status.done:
-                logger.info(f"GatherInfo action completed")
+                logger.info("GatherInfo action completed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return True
             elif handle.status == genomix.Status.error:
-                logger.error(f"GatherInfo action failed")
+                logger.error("GatherInfo action failed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return False
 
@@ -190,7 +190,7 @@ class OptimizeDistance:
             plate_poses.append((plate_info["POSE"][0], plate_info["POSE"][1]))
 
         # Shortest path
-        ordered_poses = self.shortest_path((current_x, current_y), plate_poses)
+        self.shortest_path((current_x, current_y), plate_poses)
 
         logger.info(f"Reordered plates info based on distance for {robot.name}")
 
@@ -209,7 +209,7 @@ class OptimizeDistance:
     def get_plates_info(self):
         """Get the plate information."""
         data = {}
-        for plate_id in range(JSONSerializer().get(f"ENV.NO_PLATES")):
+        for plate_id in range(JSONSerializer().get("ENV.NO_PLATES")):
             data[plate_id] = JSONSerializer().get(f"ENV.PLATES.{plate_id}")
             logger.debug(f"Getting the plate information {plate_id}")
 
@@ -296,11 +296,11 @@ class InspectPlate:
                 JSONSerializer().update(
                     f"ROBOTS.{self._robot.id}.location_name", str(self._location)
                 )
-                logger.info(f"Inspect Plate action completed")
+                logger.info("Inspect Plate action completed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return True
             elif handle.status == genomix.Status.error:
-                logger.error(f"Inspect Plate action failed")
+                logger.error("Inspect Plate action failed")
                 JSONSerializer().update(f"ROBOTS.{self._robot.id}.is_available", True)
                 return False
 

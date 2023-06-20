@@ -145,8 +145,7 @@ class ProblemDefinition:
             print(f"Executing {node['node_name']}")
 
             parameters = node["parameters"]
-            result = executor(**parameters)
-            print(f"Result: {result}")
+            executor()(**parameters)
             time.sleep(1)
 
     @staticmethod
@@ -228,7 +227,7 @@ class ProblemDefinition:
         send_info.add_effect(EndTiming(), f_has_plates(), True)
 
         optimize_plates_distance, [r] = self._bridge.create_action(
-            "optimize_plates_distance", _callable=OptimizeDistance, r=Robot
+            "optimize_plates_distance", _callable=OptimizeDistance, robot=Robot
         )
         optimize_plates_distance.add_precondition(f_is_robot_available(r))
         optimize_plates_distance.add_precondition(f_has_plates())
@@ -306,15 +305,17 @@ def main():
     plan = problem_def.plan(problem)
     executable_graph = bridge.get_executable_graph(plan)
     print("Close the graph to start execution")
-    problem_def.show_graph(executable_graph)
+    # problem_def.show_graph(executable_graph)
     problem_def.execute_graph(executable_graph)
 
     while not all_plates_inspected():
         plan = problem_def.replan(problem, plan)
         executable_graph = bridge.get_executable_graph(plan)
         print("Close the graph to start execution")
-        problem_def.show_graph(executable_graph)
+        # problem_def.show_graph(executable_graph)
         problem_def.execute_graph(executable_graph)
+    else:
+        print("All plates inspected")
 
     # draw graph
     plt.figure(figsize=(10, 10))

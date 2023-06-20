@@ -15,7 +15,7 @@
 """Functions to be called for estimating the drone and environment state."""
 import logging
 
-from drone_api.up.user_types import Area, Location, Robot
+from drone_api.up.user_types import Location, Robot
 from drone_api.core.data import JSONSerializer
 
 logger = logging.getLogger("[UP]")
@@ -52,8 +52,15 @@ def is_base_station(robot: Robot, location: Location = ""):
 
 def get_plates_no():
     """Get the number of plates collected."""
-    data = JSONSerializer().get(f"ENV.NO_PLATES")
+    data = JSONSerializer().get("ENV.NO_PLATES")
     logger.info("Getting the number of plates collected")
+    return data
+
+
+def get_arucos_no():
+    """Get the number of arucos collected."""
+    data = JSONSerializer().get("ENV.NO_ARUCOS")
+    logger.info("Getting the number of arucos collected")
     return data
 
 
@@ -61,6 +68,13 @@ def get_plate_info(plate_id: int):
     """Get the plate information."""
     data = JSONSerializer().get(f"ENV.PLATES.{plate_id}")
     logger.info(f"Getting the plate information {plate_id}")
+    return data
+
+
+def get_aruco_info(aruco_id: int):
+    """Get the aruco information."""
+    data = JSONSerializer().get(f"ENV.ARUCOS.{aruco_id}")
+    logger.info(f"Getting the aruco information {aruco_id}")
     return data
 
 
@@ -74,7 +88,7 @@ def is_location_inspected(location: Location):
 def is_plate_order_optimized():
     """Check if the plates order is optimized."""
 
-    data = JSONSerializer().get(f"ENV.PLATES.ORDER_OPTIMIZED")
+    data = JSONSerializer().get("ENV.PLATES.ORDER_OPTIMIZED")
     logger.info(f"Checking if the plates order are optimized: {data}")
     return bool(data)
 

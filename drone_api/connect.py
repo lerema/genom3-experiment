@@ -22,7 +22,7 @@ from drone_api.params import DRONES
 
 import genomix
 
-from drone_api import MODULES, USE_ROBOT
+from drone_api import MODULES
 from drone_api.genom3 import (
     Optitrack,
     POM,
@@ -111,7 +111,7 @@ class Connector:
         assert os.path.isdir(LIB_PATH)
         modules = glob.glob(f"{LIB_PATH}/genom/*/plugins/*.so")
         try:
-            modules.extend(glob.glob(f"/opt/openrobots/lib/genom/*/plugins/*.so"))
+            modules.extend(glob.glob("/opt/openrobots/lib/genom/*/plugins/*.so"))
         except Exception:
             pass
 
@@ -143,7 +143,7 @@ class Connector:
             logger.debug(f"Unloading module {os.path.basename(module)}")
             try:
                 self.handle.unload(module)
-            except Exception as e:
+            except Exception:
                 pass  # Unloading is an execption
 
     def _connect_optitrack(self) -> Optitrack:

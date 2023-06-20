@@ -20,6 +20,7 @@ class DetectArucotag:
         self._status = None
 
         self._data = JSONSerializer()
+        self._aruco_id = 0
 
     @property
     def components(self):
@@ -41,8 +42,8 @@ class DetectArucotag:
         y = result["pose"]["pos"]["y"]
         z = result["pose"]["pos"]["z"]
 
-        no_arucos = self._data.get("ENV.NO_ARUCOS")
+        self._data.update("ENV.NO_ARUCOS", self._aruco_id + 1)
+        self._data.update(f"ENV.ARUCOS.{self._aruco_id}.POSE", [x, y, z])
+        self._data.update(f"ENV.PLATES.{self._aruco_id}.INSPECTED", True)
 
-        self._data.update("ENV.NO_ARUCOS", no_arucos + 1)
-        self._data.update(f"ENV.ARUCOS.{no_arucos}.POSE", [x, y, z])
-        self._data.update(f"ENV.ARUCOS.{no_arucos}.INSPECTED", True)
+        self._aruco_id += 1
