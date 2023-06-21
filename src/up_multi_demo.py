@@ -47,8 +47,8 @@ class ProblemDefinition:
         self._setup_domain()
 
     def _setup_experiment(self):
-        self._drone_1 = Connector(id=1)
-        self._drone_2 = Connector(id=2)
+        self._drone_1 = Connector(drone_id=1)
+        self._drone_2 = Connector(drone_id=2)
         self._action_1 = Actions(self._drone_1.components, robot_id=1)
         self._action_2 = Actions(self._drone_2.components, robot_id=2)
         self._drone_1.start()
@@ -60,8 +60,8 @@ class ProblemDefinition:
         self.charging_station_1 = Location("charging_station_1", x=7.0, y=6.0, z=1.0)
         self.charging_station_2 = Location("charging_station_2", x=7.0, y=6.5, z=1.0)
 
-        self.robot_1 = Robot("drone_1", actions=self._action_1)
-        self.robot_2 = Robot("drone_2", actions=self._action_2)
+        self.robot_1 = Robot("drone_1", actions=self._action_1, robot_id=1)
+        self.robot_2 = Robot("drone_2", actions=self._action_2, robot_id=2)
 
         self.survey_area = Area("area_1", survey_size=4.0)
 
@@ -338,13 +338,13 @@ def main():
     # problem_def.show_graph(executable_graph)
     problem_def.execute_graph(executable_graph)
 
-    while not all_plates_inspected():
-        plan = problem_def.replan(problem, plan)
-        executable_graph = bridge.get_executable_graph(plan)
-        print("Close the graph to start execution")
-        # problem_def.show_graph(executable_graph)
-        problem_def.execute_graph(executable_graph)
-    else:
+    # Replan once
+    plan = problem_def.replan(problem, plan)
+    executable_graph = bridge.get_executable_graph(plan)
+    print("Close the graph to start execution")
+    # problem_def.show_graph(executable_graph)
+    problem_def.execute_graph(executable_graph)
+
         print("All plates inspected")
 
     # draw graph

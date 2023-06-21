@@ -45,9 +45,11 @@ logger.setLevel(logging.DEBUG)
 
 
 class Connector:
-    def __init__(self, id: int = 0, host: str = "localhost", port: int = 8080) -> None:
+    def __init__(
+        self, drone_id: int = 0, host: str = "localhost", port: int = 8080
+    ) -> None:
         # Attempt to start the genomix server
-        self.id = id
+        self.id = drone_id
         self.params = DRONES[self.id]
         self.genomix_process = subprocess.Popen(
             ["genomixd", "-d", "-v", "-v"],

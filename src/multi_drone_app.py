@@ -28,7 +28,7 @@ class Drone:
 
     def __call__(self):
         """Test run of the available actions."""
-        drone = Connector(id=self._id)
+        drone = Connector(drone_id=self._id)
         drone.start()
         action = Actions(drone.components)
 
@@ -49,7 +49,10 @@ class Drone:
         function_map.append(
             (
                 action.move,
-                {"l_from": {}, "l_to": {"x": self._id + 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0}},
+                {
+                    "l_from": {},
+                    "l_to": {"x": self._id + 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0},
+                },
             )
         )
         function_map.append(

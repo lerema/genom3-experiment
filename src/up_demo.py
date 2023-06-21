@@ -48,7 +48,7 @@ class ProblemDefinition:
         self._setup_domain()
 
     def _setup_experiment(self):
-        self._drone_1 = Connector(id=0)
+        self._drone_1 = Connector(drone_id=0)
         self._action_1 = Actions(self._drone_1.components, robot_id=0)
         self._drone_1.start()
 

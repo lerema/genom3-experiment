@@ -8,30 +8,23 @@ from drone_api import DATA_PATH
 
 class Robot:
     def __init__(
-        self, ID: int = 0, pose: tuple = (0.0, 0.0, 0.0), battery_level: int = 100
+        self, ID: int = 1, pose: tuple = (0.0, 0.0, 0.0), battery_level: int = 100
     ):
+        assert ID > 0, "Robot ID must be greater than 0."
+
         self.ID = ID
         self.pose = pose
         self.battery_level = battery_level
 
     def __dict__(self):
         try:
-            if self.ID == 0:
-                return {
-                    "ID": self.ID,
-                    "pose": self.pose,
-                    "location_name": "home",
-                    "battery_level": self.battery_level,
-                    "is_available": True,
-                }
-            else:
-                return {
-                    "ID": self.ID,
-                    "pose": self.pose,
-                    "location_name": f"base_station_{self.ID}",
-                    "battery_level": self.battery_level,
-                    "is_available": True,
-                }
+            return {
+                "ID": self.ID,
+                "pose": self.pose,
+                "location_name": f"base_station_{self.ID}",
+                "battery_level": self.battery_level,
+                "is_available": True,
+            }
         except AttributeError:
             raise ValueError("Robot object not initialized.")
 
@@ -67,9 +60,9 @@ class DataRepresentation:
     """Data representation class."""
 
     def __init__(
-        self, no_robots: int = 1, no_plates: int = 0, no_arucos: int = 0
+        self, no_robots: int = 5, no_plates: int = 0, no_arucos: int = 0
     ) -> None:
-        self.ROBOTS = [Robot()] * no_robots
+        self.ROBOTS = [Robot(ID=i + 1) for i in range(no_robots)]
         self.ENV = Environment()
 
         self.ENV.NO_ARUCOS = no_arucos
@@ -81,7 +74,7 @@ class DataRepresentation:
     def __dict__(self):
         ROBOTS = {}
         for i in range(self.ENV.NO_ROBOTS):
-            ROBOTS[i] = self.ROBOTS[i].__dict__()
+            ROBOTS[i+1] = self.ROBOTS[i].__dict__()
 
         return {"ROBOTS": ROBOTS, "ENV": self.ENV.__dict__()}
 
@@ -108,13 +101,13 @@ class JSONSerializer:
         if not os.path.exists(DATA_PATH):
             os.makedirs(DATA_PATH)
 
-        with open(cls.filename, "w") as f:
+        with open(cls.filename, "w", encoding="utf-8") as f:
             json.dump(cls.data.__dict__(), f, indent=4)
 
     @classmethod
     def _update_key(cls, key: str, value) -> None:
         """Update a key in the JSON file."""
-        with open(cls.filename, "r") as f:
+        with open(cls.filename, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         # If key has a dot, then it is a nested key
@@ -128,7 +121,7 @@ class JSONSerializer:
             return data
 
         data = update(data, key, value)
-        with open(cls.filename, "w") as f:
+        with open(cls.filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
     @classmethod
@@ -139,7 +132,7 @@ class JSONSerializer:
     def get(self, key: str):
         """Get a key from the JSON file."""
 
-        with open(self.filename, "r") as f:
+        with open(self.filename, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         # If key has a dot, then it is a nested key
@@ -156,7 +149,7 @@ class JSONSerializer:
 
     def get_all(self):
         """Get all data from the JSON file."""
-        with open(self.filename, "r") as f:
+        with open(self.filename, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         return data
