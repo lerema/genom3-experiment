@@ -28,14 +28,14 @@ fi
 tmux \
     new-session "roslaunch quad-cam_gazebo quad-cam.launch" \; \
     split-window -p 66 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
-    split-window -p 50 "CT_drone-pocolibs -f |& tee -i $logdir/CT_drone.log" \; \
-    split-window -p 50 "arucotag-pocolibs -f |& tee -i $logdir/arucotag.log" \; \
-    split-window -h -t 2 "camgazebo-pocolibs -f |& tee -i $logdir/arucotag.log" \; \
-    split-window -h -t 4 "camviz-pocolibs -f |& tee -i $logdir/arucotag.log" \; \
+    split-window -p 50 "CT_drone-pocolibs -f -i CT_drone1 |& tee -i $logdir/CT_drone.log" \; \
+    split-window -p 50 "arucotag-pocolibs -f -i arucotag1 |& tee -i $logdir/arucotag.log" \; \
+    split-window -h -t 2 "camgazebo-pocolibs -f -i camgazebo1 |& tee -i $logdir/arucotag.log" \; \
+    split-window -h -t 4 "camviz-pocolibs -f -i camviz1 |& tee -i $logdir/arucotag.log" \; \
     new-window "optitrack-pocolibs -f |& tee -i $logdir/optitrack.log" \; \
-    split-window -p 66 "maneuver-pocolibs -f |& tee -i $logdir/maneuver.log" \; \
+    split-window -p 66 "maneuver-pocolibs -f -i maneuver1 |& tee -i $logdir/maneuver.log" \; \
     split-window -p 50 "$user_cmd" \; \
-    split-window -h -t 0 "nhfc-pocolibs -f |& tee -i $logdir/nhfc.log" \; \
-    split-window -h -t 2 "pom-pocolibs -f |& tee -i $logdir/pom.log" \; \
-    split-window -h -t 4 "rotorcraft-pocolibs -f |& tee -i $logdir/rotorcraft.log" \; \
+    split-window -h -t 0 "nhfc-pocolibs -f -i nhfc1 |& tee -i $logdir/nhfc.log" \; \
+    split-window -h -t 2 "pom-pocolibs -f -i pom1 |& tee -i $logdir/pom.log" \; \
+    split-window -h -t 4 "rotorcraft-pocolibs -f -i rotorcraft1 |& tee -i $logdir/rotorcraft.log" \; \
     selectp -t 4

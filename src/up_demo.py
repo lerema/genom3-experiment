@@ -48,20 +48,20 @@ class ProblemDefinition:
         self._setup_domain()
 
     def _setup_experiment(self):
-        self._drone_1 = Connector(drone_id=0)
-        self._action_1 = Actions(self._drone_1.components, robot_id=0)
+        self._drone_1 = Connector(drone_id=1)
+        self._action_1 = Actions(self._drone_1.components, robot_id=1)
         self._drone_1.start()
 
     def _setup_domain(self):
-        self.base_station = Location("base_station", z=1.0)
+        self.base_station_1 = Location("base_station_1", z=1.0)
         self.charging_station = Location("charging_station", x=1.0, z=1.0)
 
-        self.robot = Robot("drone_1", actions=self._action_1)
+        self.robot = Robot("drone_1", actions=self._action_1, robot_id=1)
 
         self.survey_area = Area("area_1", survey_size=4.0)
 
         self.objects = [
-            self.base_station,
+            self.base_station_1,
             self.charging_station,
             self.robot,
             self.survey_area,
@@ -122,14 +122,14 @@ class ProblemDefinition:
         is_plate_inspected = problem.fluent("is_plate_inspected")
         robot_at = problem.fluent("robot_at")
         robot = problem.object("drone_1")
-        base_station = problem.object("base_station")
+        base_station_1 = problem.object("base_station_1")
         for obj_def in objects:
             plate = self._bridge.create_object(obj_def.name, obj_def)
             problem.add_object(plate)
             problem.add_goal(is_location_inspected(plate))
             problem.add_goal(is_plate_inspected(plate))
 
-        problem.add_goal(robot_at(robot, base_station))
+        problem.add_goal(robot_at(robot, base_station_1))
 
         return problem
 
@@ -181,7 +181,7 @@ class ProblemDefinition:
         f_robot_at = self._bridge.create_fluent_from_function(robot_at)
         f_is_surveyed = self._bridge.create_fluent_from_function(is_surveyed)
         f_has_plates = self._bridge.create_fluent_from_function(has_plates)
-        f_is_base_station = self._bridge.create_fluent_from_function(is_base_station)
+        f_is_base_station_1 = self._bridge.create_fluent_from_function(is_base_station)
         f_is_location_inspected = self._bridge.create_fluent_from_function(
             is_location_inspected
         )
@@ -196,7 +196,7 @@ class ProblemDefinition:
         )
 
         # Default objects
-        base_station = self._bridge.create_object("base_station", self.base_station)
+        base_station_1 = self._bridge.create_object("base_station_1", self.base_station_1)
         robot = self._bridge.create_object("drone_1", self.robot)
         charging_station = self._bridge.create_object(
             "charging_station", self.charging_station
@@ -214,7 +214,7 @@ class ProblemDefinition:
         )
         survey.add_condition(StartTiming(), f_is_robot_available(r))
         survey.add_condition(StartTiming(), Not(f_is_surveyed()))
-        survey.add_condition(StartTiming(), f_is_base_station(r, l))
+        survey.add_condition(StartTiming(), f_is_base_station_1(r, l))
         survey.add_condition(StartTiming(), Not(f_has_plates()))
         survey.add_effect(EndTiming(), f_is_surveyed(), True)
 
@@ -266,25 +266,25 @@ class ProblemDefinition:
         problem.add_fluent(f_robot_at, default_initial_value=False)
         problem.add_fluent(f_is_surveyed, default_initial_value=False)
         problem.add_fluent(f_has_plates, default_initial_value=False)
-        problem.add_fluent(f_is_base_station, default_initial_value=False)
+        problem.add_fluent(f_is_base_station_1, default_initial_value=False)
         problem.add_fluent(f_is_location_inspected, default_initial_value=False)
         problem.add_fluent(f_is_plates_order_optimized, default_initial_value=False)
         problem.add_fluent(f_is_robot_available, default_initial_value=True)
         problem.add_fluent(f_is_plate_inspected, default_initial_value=False)
 
-        problem.add_objects([robot, base_station, charging_station, area])
+        problem.add_objects([robot, base_station_1, charging_station, area])
 
         problem.add_actions(
             [survey, send_info, move, optimize_plates_distance, inspect_plate]
         )
 
-        problem.set_initial_value(f_robot_at(robot, base_station), True)
-        problem.set_initial_value(f_is_base_station(robot, base_station), True)
+        problem.set_initial_value(f_robot_at(robot, base_station_1), True)
+        problem.set_initial_value(f_is_base_station_1(robot, base_station_1), True)
 
         problem.add_goal(f_is_surveyed())
         problem.add_goal(f_has_plates())
         problem.add_goal(f_is_plates_order_optimized())
-        problem.add_goal(f_robot_at(robot, base_station))
+        problem.add_goal(f_robot_at(robot, base_station_1))
 
         return problem
 
