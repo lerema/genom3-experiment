@@ -122,5 +122,7 @@ Currently, the experiment is in the development phase. The following are the cur
 
  - [x] Python API for a single drone
  - [x] UP demo for a single drone
- - [ ] Python API for multiple drones
- - [ ] UP demo for multiple drones
+ - [x] Python API for multiple drones
+ - [x] UP demo for multiple drones
+ - [ ] Improve planning problem
+ - [ ] Implement Hierarchical Planning
