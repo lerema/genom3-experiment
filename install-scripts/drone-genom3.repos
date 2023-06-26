@@ -15,6 +15,9 @@ repositories:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/ct_drone.git
     version: 0b2d87fbcfa9de5ad0db9e1bc26d6c79ecde1722
+  d435-genom3:
+    type: git
+    url: https://github.com/franklinselva/d435-genom3.git
   felix-g3utils:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-g3utils.git
