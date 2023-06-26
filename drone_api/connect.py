@@ -18,23 +18,23 @@ import logging
 import os
 import subprocess
 import time
-from drone_api.params import DRONES
 
 import genomix
 
-from drone_api import MODULES
+from drone_api import MODULES, USE_ROBOT
 from drone_api.genom3 import (
-    Optitrack,
-    POM,
-    Maneuver,
-    RotorCraft,
     NHFC,
-    CTDrone,
+    POM,
     TF2,
     ArucoTag,
     CamGazebo,
     CamViz,
+    CTDrone,
+    Maneuver,
+    Optitrack,
+    RotorCraft,
 )
+from drone_api.params import DroneCommon
 
 USE_CAM = True
 
@@ -50,7 +50,7 @@ class Connector:
     ) -> None:
         # Attempt to start the genomix server
         self.id = drone_id
-        self.params = DRONES[self.id]
+        self.params = DroneCommon(drone_id, is_robot=USE_ROBOT)
         self.genomix_process = subprocess.Popen(
             ["genomixd", "-d", "-v", "-v"],
             stdout=subprocess.PIPE,

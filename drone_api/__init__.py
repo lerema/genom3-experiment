@@ -34,8 +34,13 @@ MODULES = {
 }
 DATA_PATH = "./data"
 
+
+USE_ROBOT = True
+
+if USE_ROBOT:
+    EXPECTED_MODULES.remove("camgazebo")
+    EXPECTED_MODULES.remove("camviz")
+    EXPECTED_MODULES.append("d435")
+
 from .actions import *
 from .utils import *
-
-
-USE_ROBOT = False

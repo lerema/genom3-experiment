@@ -18,9 +18,9 @@
 
 
 class DroneCommon:
-    def __call__(self, id=0, is_robot=False):
+    def __call__(self, drone_id=0, is_robot=False):
         # To access both experiments
-        id = "" if id == 0 else str(id)
+        drone_id = "" if drone_id == 0 else str(drone_id)
 
         OPTITRACK = {
             "host": "marey" if is_robot else "localhost",
@@ -30,22 +30,22 @@ class DroneCommon:
         }
 
         MANEUVER = {
-            "ports": ("state", f"pom{id}/frame/robot"),
+            "ports": ("state", f"pom{drone_id}/frame/robot"),
             "set_velocity_limit": (5, 2) if is_robot else (2, 1),
         }
 
         ROTORCRAFT = {
             "connect": ("/dev/ttyUSB0", 500000)
             if is_robot
-            else (f"/tmp/pty-quad{id}", 500000),
-            "ports": ("rotor_input", f"nhfc{id}/rotor_input"),
+            else (f"/tmp/pty-quad{drone_id}", 500000),
+            "ports": ("rotor_input", f"nhfc{drone_id}/rotor_input"),
             "set_sensor_rate": (1000, 0, 16, 1) if is_robot else (1000, 50, 16, 1),
         }
 
         NHFC = {
             "ports": [
-                ("state", f"pom{id}/frame/robot"),
-                ("reference", f"maneuver{id}/desired"),
+                ("state", f"pom{drone_id}/frame/robot"),
+                ("reference", f"maneuver{drone_id}/desired"),
             ],
             "set_emerg": (1.2, 0.1, 1, 0.3, 1),
             "servo_gain": (20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
@@ -56,40 +56,40 @@ class DroneCommon:
 
         TF2 = {
             "ports": [
-                (f"Poses/drone{id}", f"pom{id}/frame/robot"),
-                (f"Poses/drone{id}_pos", f"pom{id}/frame/robot"),
-                (f"OccupancyGrids/og{id}", f"CT_drone{id}/OccupancyGrid"),
+                (f"Poses/drone{drone_id}", f"pom{drone_id}/frame/robot"),
+                (f"Poses/drone{drone_id}_pos", f"pom{drone_id}/frame/robot"),
+                (f"OccupancyGrids/og{drone_id}", f"CT_drone{drone_id}/OccupancyGrid"),
             ],
             "dynamic_tf": {
-                "frame_name": f"drone{id}",
-                "port_name": f"drone{id}",
+                "frame_name": f"drone{drone_id}",
+                "port_name": f"drone{drone_id}",
                 "parent_frame": "world",
                 "ms_period": 10,
                 "undef_in_orig": True,
             },
             "dynamic_tf_pos": {
-                "frame_name": f"drone{id}",
-                "port_name": f"drone{id}_pos",
+                "frame_name": f"drone{drone_id}",
+                "port_name": f"drone{drone_id}_pos",
                 "parent_frame": "world",
                 "ms_period": 10,
                 "undef_in_orig": True,
             },
-            "odometry": f"drone{id}",
+            "odometry": f"drone{drone_id}",
             "twist_from_pose": {
-                "name": f"drone{id}",
-                "frame": f"drone{id}_pos",
-                "topic": f"drone{id}_twist",
+                "name": f"drone{drone_id}",
+                "frame": f"drone{drone_id}_pos",
+                "topic": f"drone{drone_id}_twist",
                 "ms_period": 10,
             },
             "wrench_from_pose": {
-                "name": f"drone{id}",
-                "frame": f"drone{id}_pos",
-                "topic": f"drone{id}_wrench",
+                "name": f"drone{drone_id}",
+                "frame": f"drone{drone_id}_pos",
+                "topic": f"drone{drone_id}_wrench",
                 "ms_period": 10,
             },
             "static_transform": [
                 {
-                    "name": f"og{id}",
+                    "name": f"og{drone_id}",
                     "parent_frame": "world",
                     "x": 0,
                     "y": 0,
@@ -110,9 +110,9 @@ class DroneCommon:
                 },
             ],
             "occupancy_grid": {
-                "name": f"og{id}",
-                "frame": f"og{id}",
-                "topic": f"og{id}",
+                "name": f"og{drone_id}",
+                "frame": f"og{drone_id}",
+                "topic": f"og{drone_id}",
                 "ms_period": 50,
             },
         }
@@ -120,9 +120,9 @@ class DroneCommon:
         CT_DRONE = {
             "rgb": (5, 5, 255),
             "threshold": 40,
-            "ports": ("Pose", f"pom{id}/frame/robot"),
-            "image_topic": f"/quad{str(id)}/down_camera_link/down_raw_image",
-            "image_info_topic": f"/quad{str(id)}/down_camera_link/down_info_image",
+            "ports": ("Pose", f"pom{drone_id}/frame/robot"),
+            "image_topic": f"/quad{str(drone_id)}/down_camera_link/down_raw_image",
+            "image_info_topic": f"/quad{str(drone_id)}/down_camera_link/down_info_image",
         }
 
         # if id == "":
@@ -132,14 +132,14 @@ class DroneCommon:
 
         POM = {
             "ports": [
-                ("measure/imu", f"rotorcraft{id}/imu"),
-                ("measure/mocap", f"optitrack/bodies/QR_{id}"),
+                ("measure/imu", f"rotorcraft{drone_id}/imu"),
+                ("measure/mocap", f"optitrack/bodies/QR_{drone_id}"),
             ]
             if is_robot
             else [
-                ("measure/imu", f"rotorcraft{id}/imu"),
-                ("measure/mocap", f"optitrack/bodies/QR{id}"),
-                ("measure/mag", f"rotorcraft{id}/mag"),
+                ("measure/imu", f"rotorcraft{drone_id}/imu"),
+                ("measure/mocap", f"optitrack/bodies/QR{drone_id}"),
+                ("measure/mag", f"rotorcraft{drone_id}/mag"),
             ],
             "add_measurements": {"imu": (0, 0, 0, 0, 0, 0), "mocap": (0, 0, 0, 0, 0, 0)}
             if is_robot
@@ -157,10 +157,10 @@ class DroneCommon:
         ARUCOTAG = {
             "length": 0.2,
             "ports": [
-                ("frame", f"camgazebo{id}/frame/raw"),
-                ("drone", f"pom{id}/frame/robot"),
-                ("intrinsics", f"camgazebo{id}/intrinsics"),
-                ("extrinsics", f"camgazebo{id}/extrinsics"),
+                ("frame", f"camgazebo{drone_id}/frame/raw"),
+                ("drone", f"pom{drone_id}/frame/robot"),
+                ("intrinsics", f"camgazebo{drone_id}/intrinsics"),
+                ("extrinsics", f"camgazebo{drone_id}/extrinsics"),
             ],
             # "length": 0.08,
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
@@ -171,7 +171,15 @@ class DroneCommon:
             "hfov": 2,
             "x_resolution": 640,
             "y_resolution": 480,
-            "port": f"~/quad{id}/down_camera_link/down_camera/image",
+            "port": f"~/quad{drone_id}/down_camera_link/down_camera/image",
+            "extrinsics": {"ext_values": [0, 0, 1, 0, 2, 1]},  # , 3, 0, 4, 0, 5, 0]},
+        }
+
+        D435 = {
+            "hfov": 2,
+            "x_resolution": 640,
+            "y_resolution": 480,
+            "port": "/dev/ttyUSB0",  # Check if port is correct
             "extrinsics": {"ext_values": [0, 0, 1, 0, 2, 1]},  # , 3, 0, 4, 0, 5, 0]},
         }
 
@@ -179,14 +187,14 @@ class DroneCommon:
             "pixel_size": 3,
             "ports": [
                 # TODO: Add multiple ports
-                ("frame/camgazebo", f"camgazebo{id}/frame/raw"),
+                ("frame/camgazebo", f"camgazebo{drone_id}/frame/raw"),
                 # ("pixel/tag1", "arucotag/pixel_pose/1"),
             ],
-            "camera": f"camgazebo{id}",
+            "camera": f"camgazebo{drone_id}",
             "pixel_display": "tag1",
         }
 
-        return {
+        components = {
             "optitrack": OPTITRACK,
             "pom": POM,
             "maneuver": MANEUVER,
@@ -199,5 +207,12 @@ class DroneCommon:
             "camviz": CAM_VIZ,
         }
 
+        if is_robot:
+            components.pop("camgazebo")
+            components.pop("camviz")
+            components["d435"] = D435
 
-DRONES = [DroneCommon()(id=i, is_robot=False) for i in range(0, 3)]
+        return components
+
+
+DRONES = [DroneCommon()(drone_id=i, is_robot=False) for i in range(0, 3)]
