@@ -12,16 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .arucotag import ArucoTag
+from .camgazebo import CamGazebo
+from .camviz import CamViz
 from .ct_drone import CTDrone
+from .d435 import D435Camera
 from .maneuver import Maneuver
 from .nhfc import NHFC
 from .optitrack import Optitrack
 from .pom import POM
 from .rotorcraft import RotorCraft
 from .tf2 import TF2
-from .arucotag import ArucoTag
-from .camgazebo import CamGazebo
-from .camviz import CamViz
 
 __all__ = [
     "CTDrone",
@@ -34,4 +35,5 @@ __all__ = [
     "ArucoTag",
     "CamGazebo",
     "CamViz",
+    "D435Camera",
 ]
