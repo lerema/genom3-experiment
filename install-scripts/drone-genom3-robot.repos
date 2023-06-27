@@ -1,0 +1,32 @@
+repositories:
+  arucotag-genom3:
+    type: git
+    url: https://github.com/franklinselva/arucotag-genom3.git
+    version: 0b6d014b7e1a397b5192c8662effac226bf5ac0b
+  ct_drone:
+    type: git
+    url: git://redmine.laas.fr/laas/users/felix/ct_drone.git
+    version: 0b2d87fbcfa9de5ad0db9e1bc26d6c79ecde1722
+  d435-genom3:
+    type: git
+    url: https://github.com/franklinselva/d435-genom3.git
+  felix-g3utils:
+    type: git
+    url: git://redmine.laas.fr/laas/users/felix/felix-g3utils.git
+    version: f1596416e8b076c12a8c33aa2e69360f14cb3287
+  felix-idl:
+    type: git
+    url: git://redmine.laas.fr/laas/users/felix/felix-idl.git
+    version: fb72fae56e6244e84f3be4aab3a44803fa7bcd44
+  minnie-tf2:
+    type: git
+    url: git://redmine.laas.fr/laas/users/felix/minnie-tf2.git
+    version: aaee04c06f69a3286c292beb13aacfe94ada0db0
+  rotorcraft-genom3:
+    type: git
+    url: https://github.com/franklinselva/rotorcraft-genom3.git
+    version: 92ee8cf915e58a928f6b3eb6bef813d929f431eb
+  vision-idl:
+    type: git
+    url: https://github.com/franklinselva/vision-idl.git
+    version: 9cfab5615587894204873796695043efbe1a6146
