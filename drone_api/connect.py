@@ -33,6 +33,7 @@ from drone_api.genom3 import (
     Maneuver,
     Optitrack,
     RotorCraft,
+    D435Camera,
 )
 from drone_api.params import DroneCommon
 
@@ -50,7 +51,7 @@ class Connector:
     ) -> None:
         # Attempt to start the genomix server
         self.id = drone_id
-        self.params = DroneCommon(drone_id, is_robot=USE_ROBOT)
+        self.params = DroneCommon()(drone_id, is_robot=USE_ROBOT)
         self.genomix_process = subprocess.Popen(
             ["genomixd", "-d", "-v", "-v"],
             stdout=subprocess.PIPE,
@@ -77,10 +78,13 @@ class Connector:
             "nhfc": self._connect_nhfc(),
             "CT_drone": self._connect_ctdrone(),
             "tf2": self._connect_tf2(),
-            "camgazebo": self._connect_camgazebo(),
             "arucotag": self._connect_arucotag(),
-            "camviz": self._connect_camviz(),
         }
+        if USE_ROBOT:
+            self.components["d435"] = self._connect_d435()
+        else:
+            self.components["camgazebo"] = self._connect_camgazebo()
+            self.components["camviz"] = self._connect_camviz()
 
     def start(self):
         # for component in self.components.values():
@@ -187,3 +191,7 @@ class Connector:
     def _connect_camviz(self) -> CamViz:
         """Connect to CamViz and load all pocolib modules"""
         return CamViz(self.components["camviz"], params=self.params)()
+
+    def _connect_d435(self) -> D435Camera:
+        """Connect to D435 and load all pocolib modules"""
+        return D435Camera(self.components["d435"], params=self.params)()
