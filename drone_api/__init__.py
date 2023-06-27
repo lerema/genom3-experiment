@@ -20,7 +20,7 @@ EXPECTED_MODULES = [
     "nhfc",
     "CT_drone",
     "tf2",
-    "camgazebo",
+    "d435",
     "arucotag",
     "camviz",
 ]
@@ -38,9 +38,11 @@ DATA_PATH = "./data"
 USE_ROBOT = True
 
 if USE_ROBOT:
-    EXPECTED_MODULES.remove("camgazebo")
-    EXPECTED_MODULES.remove("camviz")
-    EXPECTED_MODULES.append("d435")
-
+    try:
+        EXPECTED_MODULES.remove("camgazebo")
+        EXPECTED_MODULES.remove("camviz")
+        EXPECTED_MODULES.append("d435")
+    except ValueError:
+        pass
 from .actions import *
 from .utils import *

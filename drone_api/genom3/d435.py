@@ -28,12 +28,11 @@ class D435Camera:
         """D435 Genom component"""
 
         try:
-            self.component.set_hfov(self.params["hfov"])
-            self.component.set_format(
+            self.component.set_fps(self.params["fps"])
+            self.component.set_size(
                 self.params["x_resolution"], self.params["y_resolution"]
             )
             self.component.connect(self.params["port"])
-            self.component.set_extrinsics(self.params["extrinsics"])
         except Exception as e:
             logger.error(f"Failed to connect to D435. Throws {e}")
             raise e

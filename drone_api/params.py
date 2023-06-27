@@ -176,11 +176,11 @@ class DroneCommon:
         }
 
         D435 = {
-            "hfov": 2,
+            "fps": 30,
             "x_resolution": 640,
             "y_resolution": 480,
             "port": "/dev/ttyUSB0",  # Check if port is correct
-            "extrinsics": {"ext_values": [0, 0, 1, 0, 2, 1]},  # , 3, 0, 4, 0, 5, 0]},
+            # "extrinsics": {"ext_values": [0, 0, 1, 0, 2, 1]},  # , 3, 0, 4, 0, 5, 0]},
         }
 
         CAM_VIZ = {
