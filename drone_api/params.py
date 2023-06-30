@@ -179,7 +179,7 @@ class DroneCommon:
             "fps": 30,
             "x_resolution": 640,
             "y_resolution": 480,
-            "port": "/dev/ttyUSB0",  # Check if port is correct
+            "serial_number": "832112070817",
             # "extrinsics": {"ext_values": [0, 0, 1, 0, 2, 1]},  # , 3, 0, 4, 0, 5, 0]},
         }
 
