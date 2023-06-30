@@ -32,7 +32,7 @@ class D435Camera:
             self.component.set_size(
                 self.params["x_resolution"], self.params["y_resolution"]
             )
-            self.component.connect(self.params["port"])
+            self.component.connect(self.params["serial_number"])
         except Exception as e:
             logger.error(f"Failed to connect to D435. Throws {e}")
             raise e

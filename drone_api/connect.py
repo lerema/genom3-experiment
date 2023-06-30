@@ -69,22 +69,26 @@ class Connector:
             raise ModuleNotFoundError(
                 f"Failed to find all expected modules. Missing modules: {set(MODULES['expected']) - {*self.components}}"
             )
-
-        self.components = {
-            "optitrack": self._connect_optitrack(),
-            "pom": self._connect_pom(),
-            "maneuver": self._connect_maneuver(),
-            "rotorcraft": self._connect_rotorcraft(),
-            "nhfc": self._connect_nhfc(),
-            "CT_drone": self._connect_ctdrone(),
-            "tf2": self._connect_tf2(),
-            "arucotag": self._connect_arucotag(),
+        self.connectors = {
+            "optitrack": self._connect_optitrack,
+            "pom": self._connect_pom,
+            "maneuver": self._connect_maneuver,
+            "rotorcraft": self._connect_rotorcraft,
+            "nhfc": self._connect_nhfc,
+            "CT_drone": self._connect_ctdrone,
+            "tf2": self._connect_tf2,
+            "arucotag": self._connect_arucotag,
+            "d435": self._connect_d435,
         }
-        if USE_ROBOT:
-            self.components["d435"] = self._connect_d435()
-        else:
-            self.components["camgazebo"] = self._connect_camgazebo()
-            self.components["camviz"] = self._connect_camviz()
+
+        for component in MODULES["expected"]:
+            if USE_ROBOT:
+                if component in ["camgazebo", "camviz"]:
+                    continue
+            else:
+                if component == "d435":
+                    continue
+            self.components[component] = self.connectors[component]()
 
     def start(self):
         # for component in self.components.values():
