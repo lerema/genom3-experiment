@@ -23,7 +23,7 @@ class DroneCommon:
         drone_id = "" if drone_id == 0 else str(drone_id)
 
         OPTITRACK = {
-            "host": "marey" if is_robot else "localhost",
+            "host": "muybridge" if is_robot else "localhost",
             "host_port": "1510" if is_robot else "1509",
             "mcast": "239.192.168.30" if is_robot else "",
             "mcast_port": "1511" if is_robot else "",
