@@ -28,12 +28,6 @@ def sample_actions(action: Actions):
     function_map.append((action.takeoff, {"height": 0.5}))
     function_map.append(
         (
-            action.move,
-            {"l_from": {}, "l_to": {"x": 0.5, "y": 0.5, "z": 0.5, "yaw": 0.0}},
-        )
-    )
-    function_map.append(
-        (
             action.survey,
             {
                 "area": {
@@ -47,12 +41,6 @@ def sample_actions(action: Actions):
             },
         )
     )
-    function_map.append(
-        (
-            action.move,
-            {"l_from": {}, "l_to": {"x": 0.0, "y": 0.0, "z": 0.5, "yaw": 0.0}},
-        )
-    )
     function_map.append((action.land, {}))
 
     return function_map
@@ -63,8 +51,8 @@ def main():
 
     try:
         action_handler = Connector(drone_id=1)
-    except Exception as e:
-        raise Exception("Failed to connect to the drone") from e
+    except Exception as exception:
+        raise ConnectionError("Failed to connect to the drone") from exception
 
     # Start the connection and take off
     action_handler.start()
