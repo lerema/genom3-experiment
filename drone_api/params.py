@@ -157,10 +157,25 @@ class DroneCommon:
         ARUCOTAG = {
             "length": 0.2,
             "ports": [
-                ("frame", f"camgazebo{drone_id}/frame/raw"),
+                (
+                    "frame",
+                    f"d435{drone_id}/frame/raw"
+                    if is_robot
+                    else f"camgazebo{drone_id}/frame/raw",
+                ),
                 ("drone", f"pom{drone_id}/frame/robot"),
-                ("intrinsics", f"camgazebo{drone_id}/intrinsics"),
-                ("extrinsics", f"camgazebo{drone_id}/extrinsics"),
+                (
+                    "intrinsics",
+                    f"d435{drone_id}/intrinsics"
+                    if is_robot
+                    else f"camgazebo{drone_id}/intrinsics",
+                ),
+                (
+                    "extrinsics",
+                    f"d435{drone_id}/extrinsics"
+                    if is_robot
+                    else f"camgazebo{drone_id}/extrinsics",
+                ),
             ],
             # "length": 0.08,
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
