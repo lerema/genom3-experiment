@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from genomix.event import GenoMError
 
 import logging
 
@@ -36,6 +37,8 @@ class D435Camera:
         except Exception as e:
             logger.error(f"Failed to connect to D435. Throws {e}")
             raise e
+        except GenoMError:
+            logger.warning("D435 already connected")
         finally:
             logger.info("Connected to D435")
 
