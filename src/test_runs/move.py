@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright 2022 Selvakumar H S, LAAS-CNRS
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

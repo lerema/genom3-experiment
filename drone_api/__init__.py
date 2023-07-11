@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 
 EXPECTED_MODULES = [
     "optitrack",
@@ -20,7 +21,7 @@ EXPECTED_MODULES = [
     "nhfc",
     "CT_drone",
     "tf2",
-    "d435",
+    "camgazebo",
     "arucotag",
     "camviz",
 ]
@@ -35,7 +36,7 @@ MODULES = {
 DATA_PATH = "./data"
 
 
-USE_ROBOT = True
+USE_ROBOT = bool(os.environ.get("USE_ROBOT", False) == "1")
 
 if USE_ROBOT:
     try:
@@ -44,5 +45,7 @@ if USE_ROBOT:
         EXPECTED_MODULES.append("d435")
     except ValueError:
         pass
-from .actions import *
-from .utils import *
+
+
+from .actions import *  # pylint: disable=unused-wildcard-import, wrong-import-position
+from .utils import *  # pylint: disable=unused-wildcard-import, wrong-import-position

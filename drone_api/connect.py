@@ -30,10 +30,10 @@ from drone_api.genom3 import (
     CamGazebo,
     CamViz,
     CTDrone,
+    D435Camera,
     Maneuver,
     Optitrack,
     RotorCraft,
-    D435Camera,
 )
 from drone_api.params import DroneCommon
 
@@ -46,6 +46,8 @@ logger.setLevel(logging.DEBUG)
 
 
 class Connector:
+    """Connect to genomix server, load and setup all pocolib modules"""
+
     def __init__(
         self, drone_id: int = 0, host: str = "localhost", port: int = 8080
     ) -> None:
@@ -79,6 +81,8 @@ class Connector:
             "tf2": self._connect_tf2,
             "arucotag": self._connect_arucotag,
             "d435": self._connect_d435,
+            "camgazebo": self._connect_camgazebo,
+            "camviz": self._connect_camviz,
         }
 
         for component in MODULES["expected"]:
@@ -91,8 +95,7 @@ class Connector:
             self.components[component] = self.connectors[component]()
 
     def start(self):
-        # for component in self.components.values():
-        #     component.start()
+        """Start the drone"""
         self.components["rotorcraft"].start()
         time.sleep(1)
         self.components["nhfc"].start()
@@ -102,18 +105,8 @@ class Connector:
         self.components["CT_drone"].start()
 
     def stop(self):
+        """Stop the drone"""
         self.components["rotorcraft"].stop()
-
-    def __del__(self):
-        pass
-        # self._unload_modules()
-        # del self.components
-        # self.genomix_process.kill()
-        # subprocess.call(["pkill", "gzserver"])
-        # subprocess.call(["pkill", "gzclient"])
-        # subprocess.call(["h2", "end"])
-        # subprocess.call(["pkill", "genomixd"])
-        # subprocess.call(["pkill", "-f", "\-pocolibs"])
 
     def _load_modules(self) -> None:
         """Load all pocolib modules"""
