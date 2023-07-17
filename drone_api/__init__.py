@@ -18,10 +18,10 @@ USE_ROBOT = bool(os.environ.get("USE_ROBOT", False) == "1")
 DATA_PATH = "./data"
 
 EXPECTED_MODULES = [
-    # "optitrack",
+    "optitrack",
     "maneuver",
-    # "pom",
-    # "rotorcraft",
+    "pom",
+    "rotorcraft",
     "nhfc",
     "CT_drone",
     "tf2",
@@ -30,13 +30,13 @@ EXPECTED_MODULES = [
     "camviz",
 ]
 
-COMMON_MODULES = ["tf2"] #, "optitrack"]
+COMMON_MODULES = ["tf2", "optitrack"]
 
 if USE_ROBOT:
     EXPECTED_MODULES.remove("camgazebo")
     EXPECTED_MODULES.remove("camviz")
     EXPECTED_MODULES.append("d435")
-    
+
 MODULES = {
     "expected": EXPECTED_MODULES,
     "dedicated": set(EXPECTED_MODULES) - set(COMMON_MODULES),

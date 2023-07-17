@@ -37,6 +37,7 @@ class RotorCraft:
                 self.params["set_sensor_rate"][3],
             )
             if USE_ROBOT:
+                # TODO: Load IMU calibrations
                 self._load_imu_calibration()
 
             self.component.connect_port(

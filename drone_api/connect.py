@@ -18,6 +18,7 @@ import logging
 import os
 import subprocess
 import time
+from types import SimpleNamespace
 
 import genomix
 
@@ -102,7 +103,7 @@ class Connector:
         time.sleep(1)
         self.components["maneuver"].start()
         time.sleep(1)
-        self.components["CT_drone"].start()
+        # self.components["CT_drone"].start()
 
     def stop(self):
         """Stop the drone"""
@@ -192,3 +193,7 @@ class Connector:
     def _connect_d435(self) -> D435Camera:
         """Connect to D435 and load all pocolib modules"""
         return D435Camera(self.components["d435"], params=self.params)()
+
+    def get_components(self):
+        # Make the components as simplenamespace for attribute access
+        return SimpleNamespace(**self.components)
