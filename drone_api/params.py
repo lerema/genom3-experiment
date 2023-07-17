@@ -14,7 +14,7 @@
 
 """"Params for drones"""
 
-# TODO: Check params for real robot
+ROBOT_NAME = "Lerama"
 
 
 class DroneCommon:
@@ -133,7 +133,7 @@ class DroneCommon:
         POM = {
             "ports": [
                 ("measure/imu", f"rotorcraft{drone_id}/imu"),
-                ("measure/mocap", f"optitrack/bodies/QR_{drone_id}"),
+                ("measure/mocap", f"optitrack/bodies/{ROBOT_NAME}"),
             ]
             if is_robot
             else [
