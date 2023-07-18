@@ -99,10 +99,10 @@ if {$::env(USER) eq "felix"} {
 }
 
 $g load optitrack
-$g load pom
-$g load maneuver
-$g load rotorcraft
-$g load nhfc
+$g load pom -i pom1
+$g load maneuver -i maneuver1
+$g load rotorcraft -i rotorcraft1
+$g load nhfc -i nhfc1
 if {$use_hippo} {
     $g load hippo
 }
@@ -126,7 +126,7 @@ proc init {} {
 
     # OPTITRACK
     if {$robot} {
-        optitrack::connect { host marey host_port 1510 mcast 239.192.168.30 mcast_port 1511 }
+        optitrack::connect { host muybridge host_port 1510 mcast 239.192.168.30 mcast_port 1511 }
     } else {
         optitrack::connect { host localhost host_port 1509 mcast "" mcast_port "" }
     }
@@ -136,7 +136,7 @@ proc init {} {
     # POM
     pom::connect_port { local measure/imu remote rotorcraft/imu }
     if {$robot} {
-        pom::connect_port { local measure/mocap remote optitrack/bodies/QR_1 }
+        pom::connect_port { local measure/mocap remote optitrack/bodies/Lerema }
     } else {
         pom::connect_port { local measure/mag remote rotorcraft/mag }
         pom::connect_port { local measure/mocap remote optitrack/bodies/QR }
