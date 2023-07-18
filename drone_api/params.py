@@ -14,7 +14,7 @@
 
 """"Params for drones"""
 
-ROBOT_NAME = "Lerama"
+ROBOT_NAME = "Lerema"
 
 
 class DroneCommon:

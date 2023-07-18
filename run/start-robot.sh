@@ -20,7 +20,7 @@ if [ $# -eq 0 ] || [ "$1" == "--python" ]; then
     user_cmd="echo \"Use this terminal to access the Python script\"; bash ; ${SCRIPT_DIR}/end.sh; rm $DATA_PATH/*; sleep 1"
 elif [ "$1" == "--tcl" ]; then
     # Start Gazebo
-    user_cmd="script -f -c \"eltclsh -simu -cam -tf; ${SCRIPT_DIR}/end.sh; sleep 1\" $logdir/eltclsh.log"
+    user_cmd="script -f -c \"eltclsh -robot; ${SCRIPT_DIR}/end.sh; sleep 1\" $logdir/eltclsh.log"
 fi
 
 tmux \
