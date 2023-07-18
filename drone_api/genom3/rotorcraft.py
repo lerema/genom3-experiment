@@ -38,8 +38,8 @@ class RotorCraft:
                 self.params["set_sensor_rate"][3],
             )
             if USE_ROBOT:
-                # TODO: Load IMU calibrations
-                self._load_imu_calibration()
+                calibration = self._load_imu_calibration()
+                self.component.set_imu_calibration(imu_calibration=calibration)
 
             self.component.connect_port(
                 {"local": self.params["ports"][0], "remote": self.params["ports"][1]}
@@ -74,12 +74,44 @@ class RotorCraft:
     def __str__(self) -> str:
         return "rotorcraft"
 
-    def _load_imu_calibration(self):
-        # TODO: fix this
+    @staticmethod
+    def _load_imu_calibration(calibration_file: str = None):
         # Load IMU calibration
-        IMU_CALIB_FILE = os.path.join("root_path", "calib", "imu_calib.mat")
-        params = sio.loadmat(IMU_CALIB_FILE)
-        self.component.set_imu_calibration(**params)
+        # calibration_file = os.path.join("root_path", "calib", "imu_calib.mat")
+        if calibration_file is None:
+            calibration_file = (
+                "/home/ubuntu/drone-experiment/calibrations/2023_07_17_lerema.mat"
+            )
+        params = sio.loadmat(calibration_file)["calibration"]
+
+        def _convert_to_float32(params):
+            params = params.astype("float32").tolist()
+            return params
+
+        params = params[0][0][0][0][0]
+        gscale = params[0]
+        gbias = params[1]
+        gstdev = params[2]
+        ascale = params[3]
+        abias = params[4]
+        astdev = params[5]
+        mscale = params[6]
+        mbias = params[7]
+        mstdev = params[8]
+        temp = params[9]
+        calibration = {
+            "gscale": _convert_to_float32(gscale)[0],
+            "gbias": _convert_to_float32(gbias)[0],
+            "gstddev": _convert_to_float32(gstdev)[0],
+            "ascale": _convert_to_float32(ascale)[0],
+            "abias": _convert_to_float32(abias)[0],
+            "astddev": _convert_to_float32(astdev)[0],
+            "mscale": _convert_to_float32(mscale)[0],
+            "mbias": _convert_to_float32(mbias)[0],
+            "mstddev": _convert_to_float32(mstdev)[0],
+            # "temp": _convert_to_float32(temp)[0],
+        }
+        return calibration
 
     def _connect(self, serial, baudrate):
         """Connect to Rotorcraft and load all pocolib modules"""
