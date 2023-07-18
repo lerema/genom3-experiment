@@ -92,17 +92,16 @@ if {$::env(USER) eq "felix"} {
 } elseif {$::env(USER) eq "docker"} {
     $g rpath  /opt/openrobots/lib/genom/$mw/plugins/
 } elseif {$robot} {
-    puts "Cannot guess who you are..."
-    exit 2
+    $g rpath  /opt/openrobots/lib/genom/$mw/plugins/
 } else {
     $g rpath  $::env(DRONE_VV_PATH)/lib/genom/$mw/plugins/
 }
 
 $g load optitrack
-$g load pom -i pom1
-$g load maneuver -i maneuver1
-$g load rotorcraft -i rotorcraft1
-$g load nhfc -i nhfc1
+$g load pom 
+$g load maneuver 
+$g load rotorcraft 
+$g load nhfc 
 if {$use_hippo} {
     $g load hippo
 }
@@ -174,7 +173,7 @@ proc init {} {
     if {$robot} {
         rotorcraft::set_sensor_rate { rate { imu 1000 mag 0 motor 16 battery 1 } }
 
-        set imu_calib [read [open imu_calib.txt r]]
+        set imu_calib [read [open calibrations/imu_calib.txt r]]
         rotorcraft::set_imu_calibration $imu_calib
     } else {
         rotorcraft::set_sensor_rate { rate { imu 1000 mag 50 motor 16 battery 1 } }

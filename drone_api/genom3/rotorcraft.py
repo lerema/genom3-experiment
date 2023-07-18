@@ -80,8 +80,9 @@ class RotorCraft:
         # calibration_file = os.path.join("root_path", "calib", "imu_calib.mat")
         if calibration_file is None:
             calibration_file = (
-                "/home/ubuntu/drone-experiment/calibrations/2023_07_17_lerema.mat"
-            )
+                os.path.join(os.path.expanduser("~"),
+                "drone-experiment/calibrations/2023_07_17_lerema_std_increased.mat",
+            ))
         params = sio.loadmat(calibration_file)["calibration"]
 
         def _convert_to_float32(params):
