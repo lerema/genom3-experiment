@@ -62,6 +62,11 @@ class POM:
         """Stop the POM component"""
         return
 
+    def kill(self):
+        """Kill the POM component"""
+        logger.info("Killing POM")
+        self.component.kill()
+
     def __del__(self):
         try:
             self.component.kill()

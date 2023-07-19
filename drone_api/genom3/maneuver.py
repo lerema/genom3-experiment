@@ -69,6 +69,11 @@ class Maneuver:
     def stop(self):
         """Stop the Maneuver component"""
         self.component.stop()
+        
+    def kill(self):
+        """Kill the Maneuver component"""
+        logger.info("Killing maneuver component")
+        self.component.kill()
 
     def __del__(self):
         try:

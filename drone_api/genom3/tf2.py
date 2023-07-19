@@ -55,7 +55,10 @@ class TF2:
         return
 
     def stop(self):
-        return
+        self.component.stop()
+        
+    def kill(self):
+        self.component.stop()
 
     def __del__(self):
         try:

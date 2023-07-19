@@ -55,6 +55,11 @@ class Optitrack:
     def stop(self):
         """Stop the Optitrack component"""
         return
+    
+    def kill(self):
+        """Kill the Optitrack component"""
+        logger.info("Killing Optitrack")
+        self.component.kill()
 
     def __del__(self):
         try:

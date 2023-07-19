@@ -51,6 +51,11 @@ class RotorCraft:
             logger.info("Connected to Rotorcraft")
 
         return self
+    
+    def kill(self):
+        """Kill the Rotorcraft component"""
+        logger.info("Killing Rotorcraft")
+        self.component.kill()
 
     def start(self):
         """Start the Rotorcraft component"""

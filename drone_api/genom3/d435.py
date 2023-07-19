@@ -50,3 +50,7 @@ class D435Camera:
 
     def __str__(self):
         return "d435"
+
+    def kill(self):
+        """Kill the D435 component"""
+        self.component.kill()
