@@ -253,3 +253,58 @@ class Connector:
         
         rotorcraft = self.components["rotorcraft"].component
         rotorcraft.set_zero()
+
+    @property
+    def rotorcraft(self):
+        """Return rotorcraft handle"""
+        return self.components["rotorcraft"].component
+    
+    @property
+    def nhfc(self):
+        """Return nhfc handle"""
+        return self.components["nhfc"].component
+    
+    @property
+    def maneuver(self):
+        """Return maneuver handle"""
+        return self.components["maneuver"].component
+    
+    @property
+    def optitrack(self):
+        """Return optitrack handle"""
+        return self.components["optitrack"].component
+    
+    @property
+    def pom(self):
+        """Return pom handle"""
+        return self.components["pom"].component
+    
+    @property
+    def tf2(self):
+        """Return tf2 handle"""
+        return self.components["tf2"].component
+    
+    @property
+    def arucotag(self):
+        """Return arucotag handle"""
+        return self.components["arucotag"].component
+    
+    @property
+    def d435(self):
+        """Return d435 handle"""
+        return self.components["d435"].component
+    
+    @property
+    def camgazebo(self):
+        """Return camgazebo handle"""
+        return self.components["camgazebo"].component
+    
+    @property
+    def camviz(self):
+        """Return camviz handle"""
+        return self.components["camviz"].component
+    
+    @property
+    def ctdrone(self):
+        """Return ctdrone handle"""
+        return self.components["CT_drone"].component
