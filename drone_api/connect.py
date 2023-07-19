@@ -85,6 +85,11 @@ class Connector:
             "camgazebo": self._connect_camgazebo,
             "camviz": self._connect_camviz,
         }
+        
+        # Better to start with common modules first
+        for component in MODULES["common"]:
+            self.components[component] = self.connectors[component]()
+            time.sleep(1)
 
         for component in MODULES["expected"]:
             if USE_ROBOT:
@@ -94,6 +99,7 @@ class Connector:
                 if component == "d435":
                     continue
             self.components[component] = self.connectors[component]()
+            time.sleep(1)
 
     def start(self):
         """Start the drone"""
@@ -197,3 +203,37 @@ class Connector:
     def get_components(self):
         # Make the components as simplenamespace for attribute access
         return SimpleNamespace(**self.components)
+    
+    def calibrate_drone(self):
+        """Calibrate drone if called"""
+        
+        if not USE_ROBOT:
+            logger.info("Calibrating drone")
+            return
+        
+        rotorcraft = self.components["rotorcraft"].component
+        rotorcraft.set_calibration_param(30)
+        rotorcraft.calibrate_imu()
+        
+    def save_calibration(self):
+        """Save the calibration data"""
+        import scipy.io as sio
+        import datetime
+        
+        date = datetime.datetime.now().strftime("%Y_%m_%d")
+        
+        # Save as Matlab file
+        file_name = os.path.join(os.environ["DRONE_VV_PATH"], "genom3-experiment/calibrations" f"{date}_lerema.mat")
+        sio.savemat(file_name, self.components["rotorcraft"].component.get_imu_calibration())
+        
+        logger.info(f"Saved calibration data to {file_name}")
+    
+    def set_drone_zero(self):
+        """Set drone zero"""
+        
+        if not USE_ROBOT:
+            logger.info("Setting drone zero")
+            return
+        
+        rotorcraft = self.components["rotorcraft"].component
+        rotorcraft.set_zero()
