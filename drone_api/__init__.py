@@ -22,8 +22,8 @@ EXPECTED_MODULES = [
     "pom",
     "rotorcraft",
     "nhfc",
-    "CT_drone",
-    "tf2",
+    # "CT_drone",
+    # "tf2",
     "camgazebo",
     "arucotag",
     "camviz",
@@ -34,7 +34,7 @@ COMMON_MODULES = ["tf2", "optitrack"]
 if USE_ROBOT:
     EXPECTED_MODULES.remove("camgazebo")
     EXPECTED_MODULES.remove("camviz")
-    EXPECTED_MODULES.append("d435")
+    EXPECTED_MODULES.insert(0, "d435")
 
 MODULES = {
     "expected": EXPECTED_MODULES,

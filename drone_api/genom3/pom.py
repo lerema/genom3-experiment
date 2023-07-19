@@ -32,6 +32,7 @@ class POM:
         try:
             logger.info("Connecting to POM")
             for port in self.params["ports"]:
+                logger.info(f"Connecting to port {port[0]}:{port[1]}")
                 self._connect_port(port[0], port[1])
 
             for measurement in self.params["add_measurements"].keys():

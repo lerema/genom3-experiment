@@ -81,15 +81,19 @@ class RotorCraft:
         if calibration_file is None:
             calibration_file = (
                 os.path.join(os.path.expanduser("~"),
-                "drone-experiment/calibrations/2023_07_17_lerema_std_increased.mat",
+                "drone-experiment/genom3-experiment/calibrations/2023_07_17_lerema_stddev_increased.mat",
             ))
-        params = sio.loadmat(calibration_file)["calibration"]
-
+        
         def _convert_to_float32(params):
             params = params.astype("float32").tolist()
             return params
-
-        params = params[0][0][0][0][0]
+            
+        try:
+            params = sio.loadmat(calibration_file)["calibration"]
+            params = params[0][0][0][0][0]
+        except KeyError:
+            params = sio.loadmat(calibration_file)["imu_calibration"]
+            params = params[0][0]
         gscale = params[0]
         gbias = params[1]
         gstdev = params[2]

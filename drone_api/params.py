@@ -22,25 +22,35 @@ class DroneCommon:
         # To access both experiments
         drone_id = "" if drone_id == 0 else str(drone_id)
 
-        OPTITRACK = {
-            "host": "muybridge" if is_robot else "localhost",
-            "host_port": "1510" if is_robot else "1509",
-            "mcast": "239.192.168.30" if is_robot else "",
-            "mcast_port": "1511" if is_robot else "",
-        }
+        OPTITRACK = {}
+        if is_robot:
+            OPTITRACK["host"] = "muybridge"
+            OPTITRACK["host_port"] = "1510"
+            OPTITRACK["mcast"] = "239.192.168.30"
+            OPTITRACK["mcast_port"] = "1511"
+        else:
+            OPTITRACK["host"] = "localhost"
+            OPTITRACK["host_port"] = "1509"
+            OPTITRACK["mcast"] = ""
+            OPTITRACK["mcast_port"] = ""
 
         MANEUVER = {
             "ports": ("state", f"pom{drone_id}/frame/robot"),
-            "set_velocity_limit": (5, 2) if is_robot else (2, 1),
         }
+        if is_robot:
+            MANEUVER["set_velocity_limit"] = (5, 2)
+        else:
+            MANEUVER["set_velocity_limit"] = (2, 1)
 
-        ROTORCRAFT = {
-            "connect": ("/dev/ttyUSB0", 500000)
-            if is_robot
-            else (f"/tmp/pty-quad{drone_id}", 500000),
-            "ports": ("rotor_input", f"nhfc{drone_id}/rotor_input"),
-            "set_sensor_rate": (1000, 0, 16, 1) if is_robot else (1000, 50, 16, 1),
-        }
+        ROTORCRAFT = {}
+        if is_robot:
+            ROTORCRAFT["connect"] = ("/dev/ttyUSB0", 500000)
+            ROTORCRAFT["ports"] = ("rotor_input", f"nhfc{drone_id}/rotor_input")
+            ROTORCRAFT["set_sensor_rate"] = (1000, 0, 16, 1)
+        else:
+            ROTORCRAFT["connect"] = (f"/tmp/pty-quad{drone_id}", 500000)
+            ROTORCRAFT["ports"] = ("rotor_input", f"nhfc{drone_id}/rotor_input")
+            ROTORCRAFT["set_sensor_rate"] = (1000, 50, 16, 1)
 
         NHFC = {
             "ports": [
@@ -125,15 +135,10 @@ class DroneCommon:
             "image_info_topic": f"/quad{str(drone_id)}/down_camera_link/down_info_image",
         }
 
-        # if id == "":
-        #     id = 1
-        # else:
-        #     id = int(id) + 1
-
         POM = {
             "ports": [
                 ("measure/imu", f"rotorcraft{drone_id}/imu"),
-                ("measure/mocap", f"optitrack/bodies/{ROBOT_NAME}"),
+                ("measure/mocap", "optitrack/bodies/Lerema"),
             ]
             if is_robot
             else [
@@ -156,31 +161,22 @@ class DroneCommon:
 
         ARUCOTAG = {
             "length": 0.2,
-            "ports": [
-                (
-                    "frame",
-                    f"d435{drone_id}/frame/raw"
-                    if is_robot
-                    else f"camgazebo{drone_id}/frame/raw",
-                ),
-                ("drone", f"pom{drone_id}/frame/robot"),
-                (
-                    "intrinsics",
-                    f"d435{drone_id}/intrinsics"
-                    if is_robot
-                    else f"camgazebo{drone_id}/intrinsics",
-                ),
-                (
-                    "extrinsics",
-                    f"d435{drone_id}/extrinsics"
-                    if is_robot
-                    else f"camgazebo{drone_id}/extrinsics",
-                ),
-            ],
-            # "length": 0.08,
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
-            "markers": [10, 11, 12, 13],
+            "markers": [10] #, 11, 12, 13],
         }
+        if is_robot:
+            # Robot params
+            ARUCOTAG["ports"] = [("frame", "d435/frame/raw"), 
+                 ("intrinsics", "d435/intrinsics"),
+                 ("extrinsics", "d435/extrinsics")
+                 ]
+        else:
+            ARUCOTAG["ports"] = [
+                    ("frame", f"camgazebo{drone_id}/frame/raw"),
+                    ("intrinsics", f"camgazebo{drone_id}/intrinsics"),
+                    ("extrinsics", f"camgazebo{drone_id}/extrinsics"),
+                ]
+            
 
         CAM_GAZEBO = {
             "hfov": 2,
@@ -195,7 +191,6 @@ class DroneCommon:
             "x_resolution": 640,
             "y_resolution": 480,
             "serial_number": "832112070817",
-            # "extrinsics": {"ext_values": [0, 0, 1, 0, 2, 1]},  # , 3, 0, 4, 0, 5, 0]},
         }
 
         CAM_VIZ = {
