@@ -16,7 +16,6 @@
 import glob
 import logging
 import os
-import subprocess
 import time
 from types import SimpleNamespace
 
@@ -45,6 +44,12 @@ LIB_PATH = os.environ["DRONE_VV_PATH"] + "/lib"
 logger = logging.getLogger("[Drone Connector]")
 logger.setLevel(logging.DEBUG)
 
+from drone_api.utils import setup_logging
+
+def logging_setup():
+    """Setup logging"""
+    setup_logging("drone_api")
+    logger.info("Logging setup complete")
 
 class Connector:
     """Connect to genomix server, load and setup all pocolib modules"""
@@ -52,26 +57,25 @@ class Connector:
     def __init__(
         self, drone_id: int = 0, host: str = "localhost", port: int = 8080
     ) -> None:
-        # Attempt to start the genomix server
         self.id = drone_id
         self.params = DroneCommon()(drone_id, is_robot=USE_ROBOT)
-        self.genomix_process = subprocess.Popen(
-            ["genomixd", "-d", "-v", "-v"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
-        self.handle = genomix.connect(f"{host}:{port}")
         self.components = {}
 
-        assert self.handle is not None
-        assert self.genomix_process is not None
+        # Connect to genomix server
+        try:
+            self.handle = genomix.connect(f"{host}:{port}")
+            assert self.handle is not None
+        except genomix.event.GenoMError as exception:
+            raise ConnectionError(f"Failed to connect to genomix server. Check if `genomixd` is running. Throws {exception}")
 
+        # Load all modules
         self._load_modules()
         if not set(MODULES["expected"]).issubset({*self.components}):
             raise ModuleNotFoundError(
                 f"Failed to find all expected modules. Missing modules: {set(MODULES['expected']) - {*self.components}}"
             )
+        
+        # Connect Genom instances to python modules
         self.connectors = {
             "optitrack": self._connect_optitrack,
             "pom": self._connect_pom,
@@ -89,31 +93,43 @@ class Connector:
         # Better to start with common modules first
         for component in MODULES["common"]:
             self.components[component] = self.connectors[component]()
-            time.sleep(1)
+            time.sleep(1) # Time to let modules start
 
         for component in MODULES["expected"]:
-            if USE_ROBOT:
-                if component in ["camgazebo", "camviz"]:
-                    continue
-            else:
-                if component == "d435":
-                    continue
             self.components[component] = self.connectors[component]()
-            time.sleep(1)
+            time.sleep(1) # Time to let modules start
 
-    def start(self):
-        """Start the drone"""
+    def setup(self):
+        """Start the drone. 
+        
+        Python version of TCL's `setup` command
+        """
         self.components["rotorcraft"].start()
         time.sleep(1)
         self.components["nhfc"].start()
         time.sleep(1)
         self.components["maneuver"].start()
         time.sleep(1)
-        # self.components["CT_drone"].start()
+    
+    def start(self):
+        """Start the drone. Starts the rotorcraft component."""
+        self.components["rotorcraft"].start()
+        time.sleep(1)
 
     def stop(self):
-        """Stop the drone"""
+        """Stop the drone. Stops the rotorcraft component."""
         self.components["rotorcraft"].stop()
+    
+    def kill(self):
+        """Kill all genom3 modules"""
+        for component in self.components.values():
+            try:
+                component.kill()
+            except AttributeError as exception:
+                logger.error(f"Failed to kill component {component}. Throws {exception}")
+    
+    def __del__(self):
+        self.kill()
 
     def _load_modules(self) -> None:
         """Load all pocolib modules"""

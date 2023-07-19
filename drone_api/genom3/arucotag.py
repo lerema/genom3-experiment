@@ -48,6 +48,10 @@ class ArucoTag:
     def stop(self):
         """Stop the ArucoTag component"""
         self.component.stop()
+    
+    def kill(self):
+        """Kill the ArucoTag component"""
+        self.component.kill()
 
     def __str__(self) -> str:
         return "arucotag"

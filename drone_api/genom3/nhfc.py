@@ -72,6 +72,11 @@ class NHFC:
     def stop(self):
         """Stop the NHFC component"""
         self.component.stop()
+        
+    def kill(self):
+        """Kill the NHFC component"""
+        logger.info("Killing NHFC")
+        self.component.kill()
 
     def __del__(self):
         try:
