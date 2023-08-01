@@ -30,6 +30,7 @@ tmux \
     split-window -p 66 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
     split-window -p 50 "CT_drone-pocolibs -f -i CT_drone1 |& tee -i $logdir/CT_drone.log" \; \
     split-window -p 50 "arucotag-pocolibs -f -i arucotag1 |& tee -i $logdir/arucotag.log" \; \
+    split-window -h -t 0 "ColorTracker-pocolibs -f -i ColorTracker1 |& tee -i $logdir/ColorTracker.log" \; \
     split-window -h -t 2 "camgazebo-pocolibs -f -i camgazebo1 |& tee -i $logdir/arucotag.log" \; \
     split-window -h -t 4 "camviz-pocolibs -f -i camviz1 |& tee -i $logdir/arucotag.log" \; \
     new-window "optitrack-pocolibs -f |& tee -i $logdir/optitrack.log" \; \

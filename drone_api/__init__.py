@@ -23,6 +23,7 @@ EXPECTED_MODULES = [
     "rotorcraft",
     "nhfc",
     "CT_drone",
+    "ColorTracker",
     "tf2",
     "camgazebo",
     "arucotag",

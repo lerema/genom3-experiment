@@ -15,6 +15,7 @@
 from .arucotag import ArucoTag
 from .camgazebo import CamGazebo
 from .camviz import CamViz
+from .color_tracker import ColorTracker
 from .ct_drone import CTDrone
 from .d435 import D435Camera
 from .maneuver import Maneuver
@@ -26,6 +27,7 @@ from .tf2 import TF2
 
 __all__ = [
     "CTDrone",
+    "ColorTracker",
     "Maneuver",
     "NHFC",
     "Optitrack",
