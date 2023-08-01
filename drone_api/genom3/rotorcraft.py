@@ -51,7 +51,7 @@ class RotorCraft:
             logger.info("Connected to Rotorcraft")
 
         return self
-    
+
     def kill(self):
         """Kill the Rotorcraft component"""
         logger.info("Killing Rotorcraft")
@@ -84,15 +84,15 @@ class RotorCraft:
         # Load IMU calibration
         # calibration_file = os.path.join("root_path", "calib", "imu_calib.mat")
         if calibration_file is None:
-            calibration_file = (
-                os.path.join(os.path.expanduser("~"),
+            calibration_file = os.path.join(
+                os.path.expanduser("~"),
                 "drone-experiment/genom3-experiment/calibrations/2023_07_17_lerema_stddev_increased.mat",
-            ))
-        
+            )
+
         def _convert_to_float32(params):
             params = params.astype("float32").tolist()
             return params
-            
+
         try:
             params = sio.loadmat(calibration_file)["calibration"]
             params = params[0][0][0][0][0]

@@ -91,11 +91,11 @@ class Connector:
 
         Python version of TCL's `setup` command
         """
-        self.components["rotorcraft"].start()
+        self.components["rotorcraft"].python.start()
         time.sleep(1)
-        self.components["nhfc"].start()
+        self.components["nhfc"].python.start()
         time.sleep(1)
-        self.components["maneuver"].start()
+        self.components["maneuver"].python.start()
         time.sleep(1)
 
     def start(self):
@@ -110,12 +110,7 @@ class Connector:
     def kill(self):
         """Kill all genom3 modules"""
         for component in self.components.values():
-            try:
-                component.kill()
-            except AttributeError as exception:
-                logger.error(
-                    f"Failed to kill component {component}. Throws {exception}"
-                )
+            component.python.kill()
 
     def __del__(self):
         self.kill()
@@ -217,9 +212,20 @@ class Connector:
         python = D435Camera(self.components["d435"].genomix, params=self.params)()
         return GenomixComponent(python, self.components["d435"].genomix)
 
-    def get_components(self):
-        # Make the components as simplenamespace for attribute access
-        return SimpleNamespace(**self.components)
+    def get_python_components(self):
+        """Get all python components"""
+        python_components = {}
+        for module, component in self.components.items():
+            python_components[module] = component.python
+        return SimpleNamespace(**python_components)
+
+    def get_genomix_components(self):
+        """Get all genomix components"""
+        genomix_components = {}
+        for module, component in self.components.items():
+            genomix_components[module] = component.genomix
+
+        return SimpleNamespace(**genomix_components)
 
     def calibrate_drone(self):
         """Calibrate drone if called"""

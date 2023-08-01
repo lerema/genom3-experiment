@@ -98,10 +98,10 @@ if {$::env(USER) eq "felix"} {
 }
 
 $g load optitrack
-$g load pom 
-$g load maneuver 
-$g load rotorcraft 
-$g load nhfc 
+$g load pom
+$g load maneuver
+$g load rotorcraft
+$g load nhfc
 if {$use_hippo} {
     $g load hippo
 }
