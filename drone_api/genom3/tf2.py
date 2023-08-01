@@ -29,8 +29,7 @@ class TF2:
 
         try:
             for port in self.params["ports"]:
-                self.component.connect_port({"local": port[0], "remote": port[1]})
-            # self.component.Init()
+                self._connect_port(port[0], port[1])
             self._add_dynamic_tf(**self.params["dynamic_tf"])
             self._add_dynamic_pos_tf(**self.params["dynamic_tf_pos"])
             self._add_odometry(self.params["odometry"])
@@ -40,12 +39,12 @@ class TF2:
             for tf in self.params["static_transform"]:
                 self._publish_static_tf(**tf)
             self.component.AddOccupancyGrid(self.params["occupancy_grid"])
-        except GenoMError as e:
-            if "already_defined" in str(e):
+        except GenoMError as exception:
+            if "already_defined" in str(exception):
                 logging.warning("TF2 already defined")
-        except Exception as e:
-            logging.error(f"Failed to connect to TF2. Throws {e}")
-            raise e
+        except Exception as exception:
+            logging.error(f"Failed to connect to TF2. Throws {exception}")
+            raise exception
         finally:
             logging.info("Connected to TF2")
 
@@ -56,7 +55,7 @@ class TF2:
 
     def stop(self):
         self.component.stop()
-        
+
     def kill(self):
         self.component.stop()
 
@@ -70,7 +69,7 @@ class TF2:
         return "tf2"
 
     def _connect_port(self, local, remote):
-        return self.component.connect_port({"local": local, "remote": remote})
+        return self.component.connect_port(local=local, remote=remote)
 
     def _add_odometry(self, name):
         return self.component.AddOdometry({"name": name})
