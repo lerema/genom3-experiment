@@ -73,6 +73,7 @@ class Connector:
             "rotorcraft": self._connect_rotorcraft,
             "nhfc": self._connect_nhfc,
             "CT_drone": self._connect_ctdrone,
+            "ColorTracker": self._connect_colortracker,
             "tf2": self._connect_tf2,
             "arucotag": self._connect_arucotag,
             "d435": self._connect_d435,
@@ -186,6 +187,13 @@ class Connector:
         """Connect to CTDrone and load all pocolib modules"""
         python = CTDrone(self.components["CT_drone"].genomix, params=self.params)()
         return GenomixComponent(python, self.components["CT_drone"].genomix)
+
+    def _connect_colortracker(self) -> ColorTracker:
+        """Connect to ColorTrack and load all pocolib modules"""
+        python = ColorTracker(
+            self.components["ColorTracker"].genomix, params=self.params
+        )()
+        return GenomixComponent(python, self.components["ColorTracker"].genomix)
 
     def _connect_tf2(self) -> TF2:
         """Connect to TF2 and load all pocolib modules"""

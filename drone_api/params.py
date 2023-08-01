@@ -16,6 +16,8 @@
 
 ROBOT_NAME = "Lerema"
 
+# pylint: disable=too-few-public-methods, invalid-name
+
 
 class DroneCommon:
     def __call__(self, drone_id=0, is_robot=False):
@@ -135,6 +137,17 @@ class DroneCommon:
             "image_info_topic": f"/quad{str(drone_id)}/down_camera_link/down_info_image",
         }
 
+        COLOR_TRACKER = {
+            "rgb": (5, 5, 255),
+            "threshold": 40,
+            "ports": [
+                ("DronePose", f"pom{drone_id}/frame/robot"),
+                ("Frame", f"camgazebo{drone_id}/frame/raw"),
+                ("Intrinsics", f"camgazebo{drone_id}/intrinsics"),
+                ("Extrinsics", f"camgazebo{drone_id}/extrinsics"),
+            ],
+        }
+
         POM = {
             "ports": [
                 ("measure/imu", f"rotorcraft{drone_id}/imu"),
@@ -162,21 +175,21 @@ class DroneCommon:
         ARUCOTAG = {
             "length": 0.2,
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
-            "markers": [10] #, 11, 12, 13],
+            "markers": [10],  # , 11, 12, 13],
         }
         if is_robot:
             # Robot params
-            ARUCOTAG["ports"] = [("frame", "d435/frame/raw"), 
-                 ("intrinsics", "d435/intrinsics"),
-                 ("extrinsics", "d435/extrinsics")
-                 ]
+            ARUCOTAG["ports"] = [
+                ("frame", "d435/frame/raw"),
+                ("intrinsics", "d435/intrinsics"),
+                ("extrinsics", "d435/extrinsics"),
+            ]
         else:
             ARUCOTAG["ports"] = [
-                    ("frame", f"camgazebo{drone_id}/frame/raw"),
-                    ("intrinsics", f"camgazebo{drone_id}/intrinsics"),
-                    ("extrinsics", f"camgazebo{drone_id}/extrinsics"),
-                ]
-            
+                ("frame", f"camgazebo{drone_id}/frame/raw"),
+                ("intrinsics", f"camgazebo{drone_id}/intrinsics"),
+                ("extrinsics", f"camgazebo{drone_id}/extrinsics"),
+            ]
 
         CAM_GAZEBO = {
             "hfov": 2,
@@ -211,6 +224,7 @@ class DroneCommon:
             "rotorcraft": ROTORCRAFT,
             "nhfc": NHFC,
             "CT_drone": CT_DRONE,
+            "ColorTracker": COLOR_TRACKER,
             "tf2": TF2,
             "arucotag": ARUCOTAG,
             "camgazebo": CAM_GAZEBO,
