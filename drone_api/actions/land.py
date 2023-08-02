@@ -17,8 +17,8 @@ class Land:
     def __init__(self, components, robot_id=0):
         self._components = ["rotorcraft", "maneuver"]
         self.rotorcraft, self.maneuver = (
-            components["rotorcraft"].component,
-            components["maneuver"].component,
+            components["rotorcraft"].genomix,
+            components["maneuver"].genomix,
         )
         self.ack = True
         self._status = None

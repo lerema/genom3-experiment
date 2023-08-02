@@ -14,7 +14,7 @@ class LocalizePlates:
 
     def __init__(self, components, robot_id=0):
         self._components = ["CT_drone"]
-        self.ct_drone = components["CT_drone"].component
+        self.ct_drone = components["CT_drone"].genomix
         self.ack = True
         self._status = None
 

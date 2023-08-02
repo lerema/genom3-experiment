@@ -14,7 +14,7 @@ class CapturePhoto:
 
     def __init__(self, components, robot_id=0):
         self._components = ["maneuver"]
-        self.maneuver = components["maneuver"].component
+        self.maneuver = components["maneuver"].genomix
         self.ack = True
 
     @property

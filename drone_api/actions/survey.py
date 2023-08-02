@@ -15,8 +15,8 @@ class Survey:
 
     def __init__(self, components, robot_id=0):
         self._components = ["maneuver", "CT_drone"]
-        self.maneuver = components["maneuver"].component
-        self.ct_drone = components["CT_drone"].component
+        self.maneuver = components["maneuver"].genomix
+        self.ct_drone = components["CT_drone"].genomix
         self.ack = True
         self._x_step_size = 1
         self._y_step_size = 1
@@ -31,9 +31,7 @@ class Survey:
 
         self._data = JSONSerializer()
 
-        self.ct_drone.ReadROSImageUpdateFindings(
-            ack=self.ack, callback=self.callback
-        )
+        self.ct_drone.ReadROSImageUpdateFindings(ack=self.ack, callback=self.callback)
 
     @property
     def components(self):

@@ -17,8 +17,8 @@ class GatherInfo:
 
     def __init__(self, components, robot_id=0):
         self._components = ["maneuver", "CT_drone"]
-        self.maneuver = components["maneuver"].component
-        self.ct_drone = components["CT_drone"].component
+        self.maneuver = components["maneuver"].genomix
+        self.ct_drone = components["CT_drone"].genomix
         self.ack = True
 
         self._status = None
