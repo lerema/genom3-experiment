@@ -26,7 +26,7 @@ class NHFC:
 
     def __call__(self):
         try:
-            self.component.set_gtmrp_geom({})
+            self.component.set_gtmrp_geom(**self.params["geometry"])
             self._servo_gain(
                 self.params["servo_gain"][0],
                 self.params["servo_gain"][1],
@@ -53,6 +53,7 @@ class NHFC:
                     }
                 }
             )
+            self.component.set_saturation(sat=self.params["saturation"])
             for port in self.params["ports"]:
                 self.component.connect_port({"local": port[0], "remote": port[1]})
         except Exception as e:

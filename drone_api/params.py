@@ -48,23 +48,43 @@ class DroneCommon:
         if is_robot:
             ROTORCRAFT["connect"] = ("/dev/ttyUSB0", 500000)
             ROTORCRAFT["ports"] = ("rotor_input", f"nhfc{drone_id}/rotor_input")
-            ROTORCRAFT["set_sensor_rate"] = (1000, 0, 16, 1)
+            ROTORCRAFT["set_sensor_rate"] = (1000, 0, 20, 1)
         else:
-            ROTORCRAFT["connect"] = (f"/tmp/pty-quad{drone_id}", 500000)
+            ROTORCRAFT["connect"] = (f"/tmp/pty-quad{drone_id}", 0)
             ROTORCRAFT["ports"] = ("rotor_input", f"nhfc{drone_id}/rotor_input")
-            ROTORCRAFT["set_sensor_rate"] = (1000, 50, 16, 1)
+            ROTORCRAFT["set_sensor_rate"] = (1000, 0, 20, 1)
+            ROTORCRAFT["imu_filter"] = {
+                "gfc": [20, 20, 20],
+                "afc": [5, 5, 5],
+                "mfc": [20, 20, 20],
+            }
 
         NHFC = {
             "ports": [
                 ("state", f"pom{drone_id}/frame/robot"),
                 ("reference", f"maneuver{drone_id}/desired"),
             ],
-            "set_emerg": (1.2, 0.1, 1, 0.3, 1),
+            "set_emerg": (0.1, 0.5, 1, 3, 3),
             "servo_gain": (20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
             if is_robot
-            else (20, 20, 3, 0.3, 8, 8, 0.3, 0.03, 0, 0),
+            else (5, 5, 4, 0.1, 6, 6, 1, 0.1, 0, 0),
             "wlimit": (0, 0) if is_robot else (16, 100),
         }
+        if not is_robot:
+            NHFC["geometry"] = {
+                "rotors": 4,
+                "cx": 0,
+                "cy": 0,
+                "cz": 0,
+                "armlen": 0.23,
+                "mass": 1.28,
+                "rx": 0,
+                "ry": 0,
+                "rz": -1,
+                "cf": 6.5e-4,
+                "ct": 1e-5,
+            }
+        NHFC["saturation"] = {"x": 1, "v": 1, "ix": 0}
 
         TF2 = {
             "ports": [
@@ -166,7 +186,7 @@ class DroneCommon:
                 "mocap": (0, 0, 0, 0, 0, 0),
                 "mag": (0, 0, 0, 0, 0, 0),
             },
-            "set_mag_field": (0, 0, 0)
+            "set_mag_field": (23.8e-06, -0.4e-06, -39.8e-06)
             if is_robot
             else (23.816e-6, -0.41e-6, -39.829e-6),
             "history_length": 0.5,
