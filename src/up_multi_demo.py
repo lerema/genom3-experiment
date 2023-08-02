@@ -51,8 +51,8 @@ class ProblemDefinition:
         self._drone_2 = Connector(drone_id=2)
         self._action_1 = Actions(self._drone_1.components, robot_id=1)
         self._action_2 = Actions(self._drone_2.components, robot_id=2)
-        self._drone_1.start()
-        self._drone_2.start()
+        self._drone_1.setup()
+        self._drone_2.setup()
 
     def _setup_domain(self):
         self.base_station_1 = Location("base_station_1", x=6.0, y=6.0, z=1.0)

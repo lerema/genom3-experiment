@@ -48,11 +48,11 @@ class ProblemDefinition:
     def _setup_experiment(self):
         self._drone_1 = Connector(id=0)
         self._action_1 = Actions(self._drone_1.components, robot_id=0)
-        self._drone_1.start()
-    
+        self._drone_1.setup()
+
         self._drone_2 = Connector(id=1)
         self.action_2 = Actions(self._drone_2.components, robot_id=1)
-        self._drone_2.start()
+        self._drone_2.setup()
 
     def _setup_domain(self):
         self.base_station_1 = Location("base_station_1", z=1.0)
@@ -306,7 +306,7 @@ def main():
     problem_def.show_graph(executable_graph)
     problem_def.execute_graph(executable_graph)
 
-    while(not all_plates_inspected()):
+    while not all_plates_inspected():
         plan = problem_def.replan(problem, plan)
         executable_graph = bridge.get_executable_graph(plan)
         print("Close the graph to start execution")
