@@ -50,7 +50,7 @@ class ProblemDefinition:
     def _setup_experiment(self):
         self._drone_1 = Connector(drone_id=1)
         self._action_1 = Actions(self._drone_1.components, robot_id=1)
-        self._drone_1.start()
+        self._drone_1.setup()
 
     def _setup_domain(self):
         self.base_station_1 = Location("base_station_1", z=1.0)
@@ -196,7 +196,9 @@ class ProblemDefinition:
         )
 
         # Default objects
-        base_station_1 = self._bridge.create_object("base_station_1", self.base_station_1)
+        base_station_1 = self._bridge.create_object(
+            "base_station_1", self.base_station_1
+        )
         robot = self._bridge.create_object("drone_1", self.robot)
         charging_station = self._bridge.create_object(
             "charging_station", self.charging_station
