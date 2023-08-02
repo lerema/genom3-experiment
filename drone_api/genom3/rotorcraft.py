@@ -40,6 +40,8 @@ class RotorCraft:
             if USE_ROBOT:
                 calibration = self._load_imu_calibration()
                 self.component.set_imu_calibration(imu_calibration=calibration)
+            else:
+                self.component.set_imu_filter(**self.params["imu_filter"])
 
             self.component.connect_port(
                 {"local": self.params["ports"][0], "remote": self.params["ports"][1]}
