@@ -15,7 +15,7 @@ class DetectArucotag:
 
     def __init__(self, components, robot_id=0):
         self._components = ["arucotag"]
-        self.arucotag = components["arucotag"].component
+        self.arucotag = components["arucotag"].genomix
         self.ack = True
         self._status = None
         self._id = None

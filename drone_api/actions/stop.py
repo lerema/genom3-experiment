@@ -15,7 +15,7 @@ class Stop:
 
     def __init__(self, components, robot_id=0):
         self._components = ["rotorcraft"]
-        self.rotorcraft = components["rotorcraft"].component
+        self.rotorcraft = components["rotorcraft"].genomix
         self.ack = True
         self._status = None
 
