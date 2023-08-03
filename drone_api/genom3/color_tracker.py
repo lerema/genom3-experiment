@@ -36,6 +36,7 @@ class ColorTracker:
                 "threshold": self.params["threshold"],
             }
         )
+        self.component.set_distance_threshold(self.params["distance_tolerance"])
         for local, remote in self.params["ports"]:
             self.component.connect_port(local=local, remote=remote)
 

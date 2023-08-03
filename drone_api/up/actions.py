@@ -91,6 +91,8 @@ class Survey:
             )
             return False  # Robot is not in the right location to start the action
 
+        # Start Localizing the color plates
+        self._robot.actions.localize_plates()
         result = self._robot.actions.survey(area=self._area)
 
         surveyed = self.wait_for_completion(result)
@@ -210,8 +212,8 @@ class OptimizeDistance:
         """Get the plate information."""
         data = {}
         for plate_id in range(JSONSerializer().get("ENV.NO_PLATES")):
-            data[plate_id] = JSONSerializer().get(f"ENV.PLATES.{plate_id}")
-            logger.debug(f"Getting the plate information {plate_id}")
+            data[plate_id+1] = JSONSerializer().get(f"ENV.PLATES.{plate_id+1}")
+            logger.debug(f"Getting the plate information {plate_id+1}")
 
         return data
 

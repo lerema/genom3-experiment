@@ -9,7 +9,7 @@ logger.setLevel(logging.INFO)
 
 
 # This class is not used in the current version. The behavior is integrated in the Survey action.
-class LocalizePlates:
+class CTDroneLocalizePlates:
     """Localize coloured plates"""
 
     def __init__(self, components, robot_id=0):
@@ -39,3 +39,32 @@ class LocalizePlates:
 
     def callback(self, request):
         self._status = request.status
+
+
+class LocalizePlates:
+    """Localize coloured plates"""
+
+    def __init__(self, components, robot_id=0):
+        self._components = ["ColorTracker"]
+        self.color_tracker = components["ColorTracker"].genomix
+        self.ack = True
+        self._status = None
+
+    @property
+    def components(self):
+        return self._components
+
+    def __call__(self, **kwargs):
+        logger.info("Localizing plates")
+        # Start the activity
+        result = self.color_tracker.color_track(ack=self.ack)
+
+        self.color_tracker.start_color_tracking()
+
+        return result
+
+    def callback(self, request):
+        self._status = request.status
+
+    def __del__(self):
+        self.color_tracker.stop_color_tracking()
