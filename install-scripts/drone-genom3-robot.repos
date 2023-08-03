@@ -7,6 +7,10 @@ repositories:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/ct_drone.git
     version: 0b2d87fbcfa9de5ad0db9e1bc26d6c79ecde1722
+  color-tracker-genom3:
+    type: git
+    url: https://github.com/franklinselva/color-tracker-genom3.git
+    version: 8ce8f019165b1a62d911347d936a577eba5935c7
   d435-genom3:
     type: git
     url: https://github.com/franklinselva/d435-genom3.git
