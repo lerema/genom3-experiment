@@ -212,8 +212,8 @@ class OptimizeDistance:
         """Get the plate information."""
         data = {}
         for plate_id in range(JSONSerializer().get("ENV.NO_PLATES")):
-            data[plate_id+1] = JSONSerializer().get(f"ENV.PLATES.{plate_id+1}")
-            logger.debug(f"Getting the plate information {plate_id+1}")
+            data[plate_id] = JSONSerializer().get(f"ENV.PLATES.{plate_id}")
+            logger.debug(f"Getting the plate information {plate_id}")
 
         return data
 
