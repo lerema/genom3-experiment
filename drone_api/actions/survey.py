@@ -20,7 +20,7 @@ class Survey:
         self.ack = True
         self._x_step_size = 1
         self._y_step_size = 1
-        self.speed = 1.0
+        self.speed = 0.5
 
         self._status = None
         self._id = robot_id
@@ -43,6 +43,11 @@ class Survey:
         if not isinstance(area, dict):
             area = area.__dict__()
 
+        if not (0 < self.speed <= 0.5):
+            logger.warning(
+                f"Speed {self.speed} is not in the range (0, 0.5]. Setting to default"
+            )
+            self.speed = None
         xmin = area.get("xmin", -5.0)
         ymin = area.get("ymin", -5.0)
         xmax = area.get("xmax", 5.0)
@@ -82,10 +87,18 @@ class Survey:
 
         x = xmin
         self._y_step_size = ymax - ymin
+        duration = 0.0
         while x <= xmax:
             y = ymin
             while y <= ymax:
-                input_dict.update({"x": x, "y": y, "z": z, "yaw": yaw})
+                # Compute duration based on speed and distance
+                if self.speed is not None:
+                    duration = (
+                        math.sqrt((x + self._x_step_size) ** 2 + y**2) / self.speed
+                    )
+                input_dict.update(
+                    {"x": x, "y": y, "z": z, "yaw": yaw, "duration": duration}
+                )
                 self.maneuver.waypoint(input_dict)
                 y += self._y_step_size
             x += self._x_step_size
