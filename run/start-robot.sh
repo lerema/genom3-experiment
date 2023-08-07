@@ -8,7 +8,7 @@ DATA_PATH="$SCRIPT_DIR"/../data
 # shellcheck source=/dev/null
 mkdir -p "$logdir"
 rm -f core
-h2 init -d 500 -p 200000000
+h2 init -d 500 -p 2000000000
 
 genomixd -v -v >"$logdir"/genomixd.log &
 
@@ -24,6 +24,7 @@ tmux \
     split-window -p 66 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
     split-window -p 50 "CT_drone-pocolibs -f |& tee -i $logdir/CT_drone.log" \; \
     split-window -p 50 "arucotag-pocolibs -f |& tee -i $logdir/arucotag.log" \; \
+    split-window -h -t 0 "ColorTracker-pocolibs -f |& tee -i $logdir/ColorTracker.log" \; \
     new-window "optitrack-pocolibs -f |& tee -i $logdir/optitrack.log" \; \
     split-window -p 66 "maneuver-pocolibs -f|& tee -i $logdir/maneuver.log" \; \
     split-window -p 50 "$user_cmd" \; \

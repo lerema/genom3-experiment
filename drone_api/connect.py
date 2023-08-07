@@ -242,7 +242,7 @@ class Connector:
             logger.info("Calibrating drone")
             return
 
-        rotorcraft = self.components["rotorcraft"].component
+        rotorcraft = self.components["rotorcraft"].genomix
         rotorcraft.set_calibration_param(30)
         rotorcraft.calibrate_imu()
 
@@ -257,10 +257,10 @@ class Connector:
         # Save as Matlab file
         file_name = os.path.join(
             os.environ["DRONE_VV_PATH"],
-            "genom3-experiment/calibrations" f"{date}_lerema.mat",
+            "genom3-experiment/calibrations/" f"{date}_lerema.mat",
         )
         sio.savemat(
-            file_name, self.components["rotorcraft"].component.get_imu_calibration()
+            file_name, self.components["rotorcraft"].genomix.get_imu_calibration()
         )
 
         logger.info(f"Saved calibration data to {file_name}")
@@ -272,60 +272,60 @@ class Connector:
             logger.info("Setting drone zero")
             return
 
-        rotorcraft = self.components["rotorcraft"].component
+        rotorcraft = self.components["rotorcraft"].genomix
         rotorcraft.set_zero()
 
     @property
     def rotorcraft(self):
         """Return rotorcraft handle"""
-        return self.components["rotorcraft"].component
+        return self.components["rotorcraft"].genomix
 
     @property
     def nhfc(self):
         """Return nhfc handle"""
-        return self.components["nhfc"].component
+        return self.components["nhfc"].genomix
 
     @property
     def maneuver(self):
         """Return maneuver handle"""
-        return self.components["maneuver"].component
+        return self.components["maneuver"].genomix
 
     @property
     def optitrack(self):
         """Return optitrack handle"""
-        return self.components["optitrack"].component
+        return self.components["optitrack"].genomix
 
     @property
     def pom(self):
         """Return pom handle"""
-        return self.components["pom"].component
+        return self.components["pom"].genomix
 
     @property
     def tf2(self):
         """Return tf2 handle"""
-        return self.components["tf2"].component
+        return self.components["tf2"].genomix
 
     @property
     def arucotag(self):
         """Return arucotag handle"""
-        return self.components["arucotag"].component
+        return self.components["arucotag"].genomix
 
     @property
     def d435(self):
         """Return d435 handle"""
-        return self.components["d435"].component
+        return self.components["d435"].genomix
 
     @property
     def camgazebo(self):
         """Return camgazebo handle"""
-        return self.components["camgazebo"].component
+        return self.components["camgazebo"].genomix
 
     @property
     def camviz(self):
         """Return camviz handle"""
-        return self.components["camviz"].component
+        return self.components["camviz"].genomix
 
     @property
     def ctdrone(self):
         """Return ctdrone handle"""
-        return self.components["CT_drone"].component
+        return self.components["CT_drone"].genomix

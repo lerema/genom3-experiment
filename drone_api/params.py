@@ -70,20 +70,19 @@ class DroneCommon:
             else (5, 5, 4, 0.1, 6, 6, 1, 0.1, 0, 0),
             "wlimit": (0, 0) if is_robot else (16, 100),
         }
-        if not is_robot:
-            NHFC["geometry"] = {
-                "rotors": 4,
-                "cx": 0,
-                "cy": 0,
-                "cz": 0,
-                "armlen": 0.23,
-                "mass": 1.28,
-                "rx": 0,
-                "ry": 0,
-                "rz": -1,
-                "cf": 6.5e-4,
-                "ct": 1e-5,
-            }
+        NHFC["geometry"] = {
+            "rotors": 4,
+            "cx": 0,
+            "cy": 0,
+            "cz": 0,
+            "armlen": 0.23,
+            "mass": 1.28,
+            "rx": 0,
+            "ry": 0,
+            "rz": -1,
+            "cf": 6.5e-4,
+            "ct": 1e-5,
+        }
         NHFC["saturation"] = {"x": 1, "v": 1, "ix": 0}
 
         TF2 = {
