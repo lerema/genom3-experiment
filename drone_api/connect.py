@@ -85,7 +85,7 @@ class Connector:
         modules = list(MODULES["common"]) + list(MODULES["dedicated"])
         for module in modules:
             self.components[module] = connectors[module]()
-            time.sleep(1)  # Hack to let modules start
+            # time.sleep(1)  # Hack to let modules start
 
     def setup(self):
         """Start the drone.
@@ -112,9 +112,6 @@ class Connector:
         """Kill all genom3 modules"""
         for component in self.components.values():
             component.python.kill()
-
-    def __del__(self):
-        self.kill()
 
     def _load_modules(self) -> List[str]:
         """Load all pocolib modules"""
