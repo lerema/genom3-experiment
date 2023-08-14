@@ -18,27 +18,64 @@ repositories:
   ct_drone:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/ct_drone.git
-    version: 0b2d87fbcfa9de5ad0db9e1bc26d6c79ecde1722
+    version: master
   d435-genom3:
     type: git
     url: https://github.com/franklinselva/d435-genom3.git
+    version: master
   felix-g3utils:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-g3utils.git
-    version: f1596416e8b076c12a8c33aa2e69360f14cb3287
+    version: master
   felix-idl:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-idl.git
-    version: fb72fae56e6244e84f3be4aab3a44803fa7bcd44
+    version: master
+  genom3-experiment:
+    type: git
+    url: git@github.com:franklinselva/genom3-experiment.git
+    version: drone
+  joystick-genom3:
+    type: git
+    url: https://git.openrobots.org/robots/joystick-genom3.git
+    version: master
+  libkdtp:
+    type: git
+    url: https://git.openrobots.org/robots/libkdtp.git
+    version: master
+  maneuver-genom3:
+    type: git
+    url: git://git.openrobots.org/robots/telekyb3/maneuver-genom3.git
+    version: master
   minnie-tf2:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/minnie-tf2.git
-    version: aaee04c06f69a3286c292beb13aacfe94ada0db0
+    version: master
+  monocular-camera-genom3:
+    type: git
+    url: https://github.com/franklinselva/monocular-camera-genom3.git
+    version: main
+  nhfc-genom3:
+    type: git
+    url: git://git.openrobots.org/robots/telekyb3/nhfc-genom3.git
+    version: master
+  optitrack-genom3:
+    type: git
+    url: git://git.openrobots.org/robots/optitrack-genom3.git
+    version: master
+  pom-genom3:
+    type: git
+    url: git://git.openrobots.org/robots/pom-genom3.git
+    version: master
   rotorcraft-genom3:
     type: git
-    url: https://github.com/franklinselva/rotorcraft-genom3.git
-    version: 92ee8cf915e58a928f6b3eb6bef813d929f431eb
+    url: git://git.openrobots.org/robots/telekyb3/rotorcraft-genom3.git
+    version: master
   vision-idl:
     type: git
     url: https://github.com/franklinselva/vision-idl.git
     version: 9cfab5615587894204873796695043efbe1a6146
+  yolov8-genom3:
+    type: git
+    url: https://github.com/franklinselva/yolov8-genom3.git
+    version: main

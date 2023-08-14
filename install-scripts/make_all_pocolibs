@@ -1,6 +1,0 @@
-#!/bin/bash
-make -C pom-genom3/build $* && \
-make -C rotorcraft-genom3/build $* && \
-make -C nhfc-genom3/build $* && \
-make -C maneuver-genom3/build $* && \
-make -C optitrack-genom3/build $*
