@@ -1,1 +1,0 @@
-git+https://github.com/aiplan4eu/embedded-systems-bridge.git#egg=up-esb
