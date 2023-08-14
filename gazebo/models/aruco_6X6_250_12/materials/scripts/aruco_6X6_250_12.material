@@ -1,0 +1,16 @@
+material aruco_6X6_250_12/Marker
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            texture_unit
+            {
+                texture aruco_6X6_250_12.png
+                filtering none none none
+                scale 1.0 1.0
+            }
+        }
+    }
+}
