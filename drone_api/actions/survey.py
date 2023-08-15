@@ -14,9 +14,8 @@ class Survey:
     """Survey action along x-axis for the drone"""
 
     def __init__(self, components, robot_id=0):
-        self._components = ["maneuver", "CT_drone"]
+        self._components = ["maneuver"]
         self.maneuver = components["maneuver"].genomix
-        self.ct_drone = components["CT_drone"].genomix
         self.ack = True
         self._x_step_size = 1
         self._y_step_size = 1
@@ -30,8 +29,6 @@ class Survey:
         self.robot_z = 0.0
 
         self._data = JSONSerializer()
-
-        self.ct_drone.ReadROSImageUpdateFindings(ack=self.ack, callback=self.callback)
 
     @property
     def components(self):
@@ -92,10 +89,10 @@ class Survey:
             y = ymin
             while y <= ymax:
                 # Compute duration based on speed and distance
-                if self.speed is not None:
-                    duration = (
-                        math.sqrt((x + self._x_step_size) ** 2 + y**2) / self.speed
-                    )
+                # if self.speed is not None:
+                #     duration = (
+                #         math.sqrt((x + self._x_step_size) ** 2 + y**2) / self.speed
+                #     )
                 input_dict.update(
                     {"x": x, "y": y, "z": z, "yaw": yaw, "duration": duration}
                 )

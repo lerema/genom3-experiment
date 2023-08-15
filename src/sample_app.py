@@ -37,10 +37,10 @@ def sample_actions(action: Actions):
             action.survey,
             {
                 "area": {
-                    "xmin": -2.0,
-                    "xmax": 2.0,
-                    "ymin": -2.0,
-                    "ymax": 2.0,
+                    "xmin": -1.0,
+                    "xmax": 1.0,
+                    "ymin": -1.0,
+                    "ymax": 1.0,
                     "z": 1.5,
                     "yaw": 0.0,
                 }
@@ -67,7 +67,7 @@ def main():
         raise Exception("Failed to connect to the drone") from e
 
     # Start the connection and take off
-    action_handler.start()
+    action_handler.setup()
     action = Actions(action_handler.components)
 
     functions = sample_actions(action)

@@ -157,7 +157,7 @@ class DroneCommon:
         }
 
         COLOR_TRACKER = {
-            "rgb": (255, 5, 5),  # FIXME: Problem in image channel decoding
+            "rgb": (5, 5, 255),  # blue
             "threshold": 40,
             "distance_tolerance": 1.0,
             "ports": [
