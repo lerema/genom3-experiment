@@ -1,655 +1,749 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-<model name='quad'>
-  <link name='base'>
-    <inertial>
-      <mass>1</mass>
-      <inertia>
-        <ixx>0.015</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>0.015</iyy>
-        <iyz>0</iyz>
-        <izz>0.007</izz>
-      </inertia>
-      <pose>0 0 0 0 -0 0</pose>
-    </inertial>
-    <collision name='base'>
-      <geometry>
-        <cylinder>
-          <radius>0.1</radius>
-          <length>0.05</length>
-        </cylinder>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+  <model name='quad'>
+    <link name='base'>
+      <inertial>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.015</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.015</iyy>
+          <iyz>0</iyz>
+          <izz>0.007</izz>
+        </inertia>
+        <pose>0 0 0 0 -0 0</pose>
+      </inertial>
+      <collision name='base'>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <collision name='land_1'>
-      <pose>0.1 0 0 0 -0 0</pose>
-      <geometry>
-        <sphere>
-          <radius>0.03</radius>
-        </sphere>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <collision name='land_2'>
-      <pose>-0.05 0.086 0 0 -0 0</pose>
-      <geometry>
-        <sphere>
-          <radius>0.03</radius>
-        </sphere>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='land_1'>
+        <pose>0.1 0 0 0 -0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.03</radius>
+          </sphere>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <collision name='land_3'>
-      <pose>-0.05 -0.086 0 0 -0 0</pose>
-      <geometry>
-        <sphere>
-          <radius>0.03</radius>
-        </sphere>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <visual name='body'>
-      <geometry>
-        <cylinder>
-          <radius>0.08</radius>
-          <length>0.05</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>1 0.6 0.4 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='arm-1'>
-      <pose>0.125 0 0 3.14159 1.57079 3.14159</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.01</radius>
-          <length>0.25</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>1 0.4 0.4 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='arm-2'>
-      <pose>0 0.125 0 3.14159 1.57079 -1.57079</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.01</radius>
-          <length>0.25</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.6 0.6 0.6 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='arm-3'>
-      <pose>-0.125 0 0 3.14159 1.57079 3.14159</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.01</radius>
-          <length>0.25</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.6 0.6 0.6 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='arm-4'>
-      <pose>0 -0.125 0 3.14159 1.57079 -1.57079</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.01</radius>
-          <length>0.25</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.6 0.6 0.6 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <self_collide>0</self_collide>
-    <enable_wind>0</enable_wind>
-    <kinematic>0</kinematic>
-  </link>
-  <frame name='rotor-1::__model__' attached_to='rotor-1::propeller'>
-    <pose relative_to='__model__'>0.23 0 0 0 -0 0</pose>
-  </frame>
-  <link name='rotor-1::propeller'>
-    <inertial>
-      <mass>0.07</mass>
-      <inertia>
-        <ixx>4e-05</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>4e-05</iyy>
-        <iyz>0</iyz>
-        <izz>8e-05</izz>
-      </inertia>
-      <pose>0 0 0 0 -0 0</pose>
-    </inertial>
-    <collision name='collision'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.127</radius>
-          <length>0.002</length>
-        </cylinder>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='land_2'>
+        <pose>-0.05 0.086 0 0 -0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.03</radius>
+          </sphere>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <visual name='motor'>
-      <pose>0 0 0.015 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.015</radius>
-          <length>0.03</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='axle'>
-      <pose>0 0 0.035 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.002</radius>
-          <length>0.01</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='blade'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <box>
-          <size>0.25 0.03 0.002</size>
-        </box>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <pose relative_to='rotor-1::__model__'>0 0 0 0 -0 0</pose>
-    <self_collide>0</self_collide>
-    <enable_wind>0</enable_wind>
-    <kinematic>0</kinematic>
-  </link>
-  <joint name='rotor-1' type='revolute'>
-    <parent>base</parent>
-    <child>rotor-1::propeller</child>
-    <axis>
-      <xyz>0 0 1</xyz>
-      <limit>
-        <lower>-1e+16</lower>
-        <upper>1e+16</upper>
-      </limit>
-      <dynamics>
-        <spring_reference>0</spring_reference>
-        <spring_stiffness>0</spring_stiffness>
-      </dynamics>
-    </axis>
-  </joint>
-  <frame name='rotor-2::__model__' attached_to='rotor-2::propeller'>
-    <pose relative_to='__model__'>0 0.23 0 0 -0 0</pose>
-  </frame>
-  <link name='rotor-2::propeller'>
-    <inertial>
-      <mass>0.07</mass>
-      <inertia>
-        <ixx>4e-05</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>4e-05</iyy>
-        <iyz>0</iyz>
-        <izz>8e-05</izz>
-      </inertia>
-      <pose>0 0 0 0 -0 0</pose>
-    </inertial>
-    <collision name='collision'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.127</radius>
-          <length>0.002</length>
-        </cylinder>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <visual name='motor'>
-      <pose>0 0 0.015 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.015</radius>
-          <length>0.03</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='axle'>
-      <pose>0 0 0.035 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.002</radius>
-          <length>0.01</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='blade'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <box>
-          <size>0.25 0.03 0.002</size>
-        </box>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <pose relative_to='rotor-2::__model__'>0 0 0 0 -0 0</pose>
-    <self_collide>0</self_collide>
-    <enable_wind>0</enable_wind>
-    <kinematic>0</kinematic>
-  </link>
-  <joint name='rotor-2' type='revolute'>
-    <parent>base</parent>
-    <child>rotor-2::propeller</child>
-    <axis>
-      <xyz>0 0 1</xyz>
-      <limit>
-        <lower>-1e+16</lower>
-        <upper>1e+16</upper>
-      </limit>
-      <dynamics>
-        <spring_reference>0</spring_reference>
-        <spring_stiffness>0</spring_stiffness>
-      </dynamics>
-    </axis>
-  </joint>
-  <frame name='rotor-3::__model__' attached_to='rotor-3::propeller'>
-    <pose relative_to='__model__'>-0.23 0 0 0 -0 0</pose>
-  </frame>
-  <link name='rotor-3::propeller'>
-    <inertial>
-      <mass>0.07</mass>
-      <inertia>
-        <ixx>4e-05</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>4e-05</iyy>
-        <iyz>0</iyz>
-        <izz>8e-05</izz>
-      </inertia>
-      <pose>0 0 0 0 -0 0</pose>
-    </inertial>
-    <collision name='collision'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.127</radius>
-          <length>0.002</length>
-        </cylinder>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='land_3'>
+        <pose>-0.05 -0.086 0 0 -0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.03</radius>
+          </sphere>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <visual name='motor'>
-      <pose>0 0 0.015 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.015</radius>
-          <length>0.03</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='axle'>
-      <pose>0 0 0.035 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.002</radius>
-          <length>0.01</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='blade'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <box>
-          <size>0.25 0.03 0.002</size>
-        </box>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <pose relative_to='rotor-3::__model__'>0 0 0 0 -0 0</pose>
-    <self_collide>0</self_collide>
-    <enable_wind>0</enable_wind>
-    <kinematic>0</kinematic>
-  </link>
-  <joint name='rotor-3' type='revolute'>
-    <parent>base</parent>
-    <child>rotor-3::propeller</child>
-    <axis>
-      <xyz>0 0 1</xyz>
-      <limit>
-        <lower>-1e+16</lower>
-        <upper>1e+16</upper>
-      </limit>
-      <dynamics>
-        <spring_reference>0</spring_reference>
-        <spring_stiffness>0</spring_stiffness>
-      </dynamics>
-    </axis>
-  </joint>
-  <frame name='rotor-4::__model__' attached_to='rotor-4::propeller'>
-    <pose relative_to='__model__'>0 -0.23 0 0 -0 0</pose>
-  </frame>
-  <link name='rotor-4::propeller'>
-    <inertial>
-      <mass>0.07</mass>
-      <inertia>
-        <ixx>4e-05</ixx>
-        <ixy>0</ixy>
-        <ixz>0</ixz>
-        <iyy>4e-05</iyy>
-        <iyz>0</iyz>
-        <izz>8e-05</izz>
-      </inertia>
-      <pose>0 0 0 0 -0 0</pose>
-    </inertial>
-    <collision name='collision'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.127</radius>
-          <length>0.002</length>
-        </cylinder>
-      </geometry>
-      <max_contacts>10</max_contacts>
-      <surface>
-        <contact>
-          <ode/>
-        </contact>
-        <bounce/>
-        <friction>
-          <torsional>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
             <ode/>
-          </torsional>
-          <ode/>
-        </friction>
-      </surface>
-    </collision>
-    <visual name='motor'>
-      <pose>0 0 0.015 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.015</radius>
-          <length>0.03</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='axle'>
-      <pose>0 0 0.035 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.002</radius>
-          <length>0.01</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <visual name='blade'>
-      <pose>0 0 0.04 0 -0 0</pose>
-      <geometry>
-        <box>
-          <size>0.25 0.03 0.002</size>
-        </box>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <pose relative_to='rotor-4::__model__'>0 0 0 0 -0 0</pose>
-    <self_collide>0</self_collide>
-    <enable_wind>0</enable_wind>
-    <kinematic>0</kinematic>
-  </link>
-  <joint name='rotor-4' type='revolute'>
-    <parent>base</parent>
-    <child>rotor-4::propeller</child>
-    <axis>
-      <xyz>0 0 1</xyz>
-      <limit>
-        <lower>-1e+16</lower>
-        <upper>1e+16</upper>
-      </limit>
-      <dynamics>
-        <spring_reference>0</spring_reference>
-        <spring_stiffness>0</spring_stiffness>
-      </dynamics>
-    </axis>
-  </joint>
-  <link name='down_camera_link'>
-    <pose>0 0 0 3.14159 1.57079 3.14159</pose>
-    <inertial>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='body'>
+        <geometry>
+          <cylinder>
+            <radius>0.08</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 0.6 0.4 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='arm-1'>
+        <pose>0.125 0 0 3.14159 1.57079 3.14159</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.01</radius>
+            <length>0.25</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 0.4 0.4 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='arm-2'>
+        <pose>0 0.125 0 3.14159 1.57079 -1.57079</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.01</radius>
+            <length>0.25</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='arm-3'>
+        <pose>-0.125 0 0 3.14159 1.57079 3.14159</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.01</radius>
+            <length>0.25</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='arm-4'>
+        <pose>0 -0.125 0 3.14159 1.57079 -1.57079</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.01</radius>
+            <length>0.25</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <self_collide>0</self_collide>
+      <enable_wind>0</enable_wind>
+      <kinematic>0</kinematic>
+    </link>
+    <frame name='rotor-1::__model__' attached_to='rotor-1::propeller'>
+      <pose relative_to='__model__'>0.23 0 0 0 -0 0</pose>
+    </frame>
+    <link name='rotor-1::propeller'>
+      <inertial>
+        <mass>0.07</mass>
+        <inertia>
+          <ixx>4e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4e-05</iyy>
+          <iyz>0</iyz>
+          <izz>8e-05</izz>
+        </inertia>
+        <pose>0 0 0 0 -0 0</pose>
+      </inertial>
+      <collision name='collision'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.127</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='motor'>
+        <pose>0 0 0.015 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.015</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='axle'>
+        <pose>0 0 0.035 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.002</radius>
+            <length>0.01</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='blade'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.25 0.03 0.002</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <pose relative_to='rotor-1::__model__'>0 0 0 0 -0 0</pose>
+      <self_collide>0</self_collide>
+      <enable_wind>0</enable_wind>
+      <kinematic>0</kinematic>
+    </link>
+    <joint name='rotor-1' type='revolute'>
+      <parent>base</parent>
+      <child>rotor-1::propeller</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <frame name='rotor-2::__model__' attached_to='rotor-2::propeller'>
+      <pose relative_to='__model__'>0 0.23 0 0 -0 0</pose>
+    </frame>
+    <link name='rotor-2::propeller'>
+      <inertial>
+        <mass>0.07</mass>
+        <inertia>
+          <ixx>4e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4e-05</iyy>
+          <iyz>0</iyz>
+          <izz>8e-05</izz>
+        </inertia>
+        <pose>0 0 0 0 -0 0</pose>
+      </inertial>
+      <collision name='collision'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.127</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='motor'>
+        <pose>0 0 0.015 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.015</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='axle'>
+        <pose>0 0 0.035 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.002</radius>
+            <length>0.01</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='blade'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.25 0.03 0.002</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <pose relative_to='rotor-2::__model__'>0 0 0 0 -0 0</pose>
+      <self_collide>0</self_collide>
+      <enable_wind>0</enable_wind>
+      <kinematic>0</kinematic>
+    </link>
+    <joint name='rotor-2' type='revolute'>
+      <parent>base</parent>
+      <child>rotor-2::propeller</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <frame name='rotor-3::__model__' attached_to='rotor-3::propeller'>
+      <pose relative_to='__model__'>-0.23 0 0 0 -0 0</pose>
+    </frame>
+    <link name='rotor-3::propeller'>
+      <inertial>
+        <mass>0.07</mass>
+        <inertia>
+          <ixx>4e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4e-05</iyy>
+          <iyz>0</iyz>
+          <izz>8e-05</izz>
+        </inertia>
+        <pose>0 0 0 0 -0 0</pose>
+      </inertial>
+      <collision name='collision'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.127</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='motor'>
+        <pose>0 0 0.015 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.015</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='axle'>
+        <pose>0 0 0.035 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.002</radius>
+            <length>0.01</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='blade'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.25 0.03 0.002</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <pose relative_to='rotor-3::__model__'>0 0 0 0 -0 0</pose>
+      <self_collide>0</self_collide>
+      <enable_wind>0</enable_wind>
+      <kinematic>0</kinematic>
+    </link>
+    <joint name='rotor-3' type='revolute'>
+      <parent>base</parent>
+      <child>rotor-3::propeller</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <frame name='rotor-4::__model__' attached_to='rotor-4::propeller'>
+      <pose relative_to='__model__'>0 -0.23 0 0 -0 0</pose>
+    </frame>
+    <link name='rotor-4::propeller'>
+      <inertial>
+        <mass>0.07</mass>
+        <inertia>
+          <ixx>4e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4e-05</iyy>
+          <iyz>0</iyz>
+          <izz>8e-05</izz>
+        </inertia>
+        <pose>0 0 0 0 -0 0</pose>
+      </inertial>
+      <collision name='collision'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.127</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <max_contacts>10</max_contacts>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <bounce/>
+          <friction>
+            <torsional>
+              <ode/>
+            </torsional>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='motor'>
+        <pose>0 0 0.015 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.015</radius>
+            <length>0.03</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='axle'>
+        <pose>0 0 0.035 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.002</radius>
+            <length>0.01</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <visual name='blade'>
+        <pose>0 0 0.04 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.25 0.03 0.002</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <pose relative_to='rotor-4::__model__'>0 0 0 0 -0 0</pose>
+      <self_collide>0</self_collide>
+      <enable_wind>0</enable_wind>
+      <kinematic>0</kinematic>
+    </link>
+    <joint name='rotor-4' type='revolute'>
+      <parent>base</parent>
+      <child>rotor-4::propeller</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="depth_camera">
+      <gravity>0</gravity>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>1e-5</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-5</iyy>
+          <iyz>0</iyz>
+          <izz>1e-5</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="collision">
+        <pose>0 0 0.04 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02 0.02 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <!-- Rotate in order to have the camera looking toward +Z when aligned with worldframe -->
+      <pose>0.26 0 0  1.57 0 -1.57</pose>
+
+      <visual name="depth_camera">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02 0.02 0.02</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1.0 1.0 1.0 1</diffuse>
+        </material>
+      </visual>
+      <visual name="xface">
+        <pose>0.01 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.001 0.01 0.01</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>1 0 0 1</ambient>
+          <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+      <visual name="yface">
+        <pose>0 -0.01 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.001 0.01</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0 1 0 1</ambient>
+          <diffuse>0 1 0 1</diffuse>
+        </material>
+      </visual>
+      <visual name="lens">
+        <pose>0 0 -0.01  0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.008</radius>
+            <length>0.01</length>
+          </cylinder>
+        </geometry>
+      </visual>
+
+      <sensor name="cam" type="depth">
+        <topic>mrsim-depth</topic>
+        <pose>0 0 -0.015 1.5708 1.5708 3.1415</pose>
+        <camera>
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>480</width>
+            <height>270</height>
+            <format>R_FLOAT32</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>5</far>
+          </clip>
+        </camera>
+        <visualize>1</visualize>
+        <always_on>1</always_on>
+        <update_rate>60</update_rate>
+      </sensor>
+    </link>
+    <joint name='depth_camera_joint' type='fixed'>
+      <child>depth_camera</child>
+      <parent>base</parent>
       <pose>0 0 0 0 -0 0</pose>
-      <mass>0.001</mass>
-      <inertia>
-        <ixx>3.2061e-05</ixx>
-        <ixy>-1.169e-08</ixy>
-        <ixz>-4.2601e-10</ixz>
-        <iyy>3.0815e-05</iyy>
-        <iyz>5.2182e-10</iyz>
-        <izz>5.1652e-06</izz>
-      </inertia>
-    </inertial>
-    <visual name='down_camera_visual'>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+      </axis>
+    </joint>
+    <link name='down_camera_link'>
+      <pose>0 0 0 3.14159 1.57079 3.14159</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>3.2061e-05</ixx>
+          <ixy>-1.169e-08</ixy>
+          <ixz>-4.2601e-10</ixz>
+          <iyy>3.0815e-05</iyy>
+          <iyz>5.2182e-10</iyz>
+          <izz>5.1652e-06</izz>
+        </inertia>
+      </inertial>
+      <visual name='down_camera_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length>0.04</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay/>
+      <self_collide>0</self_collide>
+      <sensor name='down_camera' type='camera'>
+        <pose>0 0 0 0 -0 0</pose>
+        <camera>
+          <horizontal_fov>1.2</horizontal_fov>
+          <image>
+            <format>R8G8B8</format>
+            <width>640</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>15000</far>
+          </clip>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+      </sensor>
+      <enable_wind>0</enable_wind>
+      <kinematic>0</kinematic>
+    </link>
+    <joint name='down_camera_joint' type='fixed'>
+      <child>down_camera_link</child>
+      <parent>base</parent>
       <pose>0 0 0 0 -0 0</pose>
-      <geometry>
-        <cylinder>
-          <radius>0.02</radius>
-          <length>0.04</length>
-        </cylinder>
-      </geometry>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>1 1 1 1</diffuse>
-      </material>
-    </visual>
-    <gravity>1</gravity>
-    <velocity_decay/>
-    <self_collide>0</self_collide>
-    <sensor name='down_camera' type='camera'>
-      <pose>0 0 0 0 -0 0</pose>
-      <camera>
-        <horizontal_fov>1.2</horizontal_fov>
-        <image>
-          <format>R8G8B8</format>
-          <width>640</width>
-          <height>480</height>
-        </image>
-        <clip>
-          <near>0.05</near>
-          <far>15000</far>
-        </clip>
-      </camera>
-      <always_on>1</always_on>
-      <update_rate>10</update_rate>
-      <plugin name='camera_en_ros' filename='libgazebo_ros_camera.so'>
-        <robotNamespace/>
-        <cameraName>down_camera_link</cameraName>
-        <imageTopicName>down_raw_image</imageTopicName>
-        <cameraInfoTopicName>down_info_image</cameraInfoTopicName>
-        <FrameName>downCameraImage</FrameName>
-        <Cy>0</Cy>
-        <Cx>0</Cx>
-        <updateRate>30.0</updateRate>
-      </plugin>
-    </sensor>
-    <enable_wind>0</enable_wind>
-    <kinematic>0</kinematic>
-  </link>
-  <joint name='down_camera_joint' type='fixed'>
-    <child>down_camera_link</child>
-    <parent>base</parent>
-    <pose>0 0 0 0 -0 0</pose>
-    <axis>
-      <xyz>1 0 0</xyz>
-      <limit>
-        <lower>-1e+16</lower>
-        <upper>1e+16</upper>
-      </limit>
-    </axis>
-  </joint>
-  <plugin name='mrsim' filename='mrsim-gazebo.so'>
-    <link>base</link>
-    <rotors>
-      <noise>0.03</noise>
-      <cf>6.5e-4</cf>
-      <ct>1e-5</ct>
-      <rotor>
-        <joint spin='cw'>rotor-1</joint>
-      </rotor>
-      <rotor>
-        <joint spin='ccw'>rotor-2</joint>
-      </rotor>
-      <rotor>
-        <joint spin='cw'>rotor-3</joint>
-      </rotor>
-      <rotor>
-        <joint spin='ccw'>rotor-4</joint>
-      </rotor>
-    </rotors>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+      </axis>
+    </joint>
+    <plugin name='mrsim' filename='mrsim-gazebo.so'>
+      <link>base</link>
+      <rotors>
+        <noise>0.03</noise>
+        <cf>6.5e-4</cf>
+        <ct>1e-5</ct>
+        <rotor>
+          <joint spin='cw'>rotor-1</joint>
+        </rotor>
+        <rotor>
+          <joint spin='ccw'>rotor-2</joint>
+        </rotor>
+        <rotor>
+          <joint spin='cw'>rotor-3</joint>
+        </rotor>
+        <rotor>
+          <joint spin='ccw'>rotor-4</joint>
+        </rotor>
+      </rotors>
+    </plugin>
+    <pose>0 0 0.02 0 -0 0</pose>
+  </model>
+  <plugin name='optitrack' filename='optitrack-gazebo.so'>
+    <hz>1000</hz>
+    <port>1509</port>
+    <publish>
+      <link>quad::base</link>
+      <name>QR</name>
+    </publish>
   </plugin>
-  <pose>0 0 0.02 0 -0 0</pose>
-</model>
-<plugin name='optitrack' filename='optitrack-gazebo.so'>
-  <hz>1000</hz>
-  <port>1509</port>
-  <publish>
-    <link>quad::base</link>
-    <name>QR</name>
-  </publish>
-</plugin>
 </sdf>

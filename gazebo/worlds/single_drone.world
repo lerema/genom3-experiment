@@ -621,6 +621,110 @@
           </dynamics>
         </axis>
       </joint>
+          <link name="depth_camera">
+      <gravity>0</gravity>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>1e-5</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-5</iyy>
+          <iyz>0</iyz>
+          <izz>1e-5</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="collision">
+        <pose>0 0 0.04 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02 0.02 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <!-- Rotate in order to have the camera looking toward +Z when aligned with worldframe -->
+      <pose>0.26 0 0  1.57 0 -1.57</pose>
+
+      <visual name="depth_camera">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02 0.02 0.02</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>1.0 1.0 1.0 1</diffuse>
+        </material>
+      </visual>
+      <visual name="xface">
+        <pose>0.01 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.001 0.01 0.01</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>1 0 0 1</ambient>
+          <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+      <visual name="yface">
+        <pose>0 -0.01 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.001 0.01</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0 1 0 1</ambient>
+          <diffuse>0 1 0 1</diffuse>
+        </material>
+      </visual>
+      <visual name="lens">
+        <pose>0 0 -0.01  0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.008</radius>
+            <length>0.01</length>
+          </cylinder>
+        </geometry>
+      </visual>
+
+      <sensor name="cam" type="depth">
+        <topic>mrsim-depth</topic>
+        <pose>0 0 -0.015 1.5708 1.5708 3.1415</pose>
+        <camera>
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>480</width>
+            <height>270</height>
+            <format>R_FLOAT32</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>5</far>
+          </clip>
+        </camera>
+        <visualize>1</visualize>
+        <always_on>1</always_on>
+        <update_rate>60</update_rate>
+      </sensor>
+    </link>
+    <joint name='depth_camera_joint' type='fixed'>
+      <child>depth_camera</child>
+      <parent>base</parent>
+      <pose>0 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+      </axis>
+    </joint>
       <link name='down_camera_link'>
         <pose>0 0 0 3.14159 1.57079 3.14159</pose>
         <inertial>
