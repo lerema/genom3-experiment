@@ -22,15 +22,18 @@ EXPECTED_MODULES = [
     "pom",
     "rotorcraft",
     "nhfc",
-    "CT_drone",
+    # "CT_drone",
     "ColorTracker",
-    "tf2",
+    # "tf2",
     "camgazebo",
     "arucotag",
     "camviz",
 ]
 
-COMMON_MODULES = ["tf2", "optitrack"]
+COMMON_MODULES = [
+    # "tf2",
+    "optitrack"
+]
 
 if USE_ROBOT:
     EXPECTED_MODULES.remove("camgazebo")

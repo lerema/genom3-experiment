@@ -22,8 +22,8 @@ elif [ "$1" == "--tcl" ]; then
 fi
 
 tmux \
-    new-session "roslaunch quad-cam_gazebo quad-cam2.launch" \; \
-    split-window -p 50 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
+    new-session "gazebo ${SCRIPT_DIR}/../gazebo/worlds/single_drone.world --verbose" \; \
+    split-window -p 50 "joystick-pocolibs -f |& tee -i $logdir/joystick.log" \; \
     split-window -p 83 "ColorTracker-pocolibs -i ColorTracker1 -f |& tee -i $logdir/ColorTracker1.log" \; \
     split-window -p 50 "arucotag-pocolibs -i arucotag1 -f |& tee -i $logdir/arucotag1.log" \; \
     split-window -h -t 1 "optitrack-pocolibs -f & tee -i $logdir/optitrack.log" \; \
