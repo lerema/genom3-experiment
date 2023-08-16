@@ -29,7 +29,7 @@ class ColorTracker:
         """ColorTracker component"""
 
         self.component.set_color(
-            color_info={
+            color={
                 "r": self.params["rgb"][0],
                 "g": self.params["rgb"][1],
                 "b": self.params["rgb"][2],

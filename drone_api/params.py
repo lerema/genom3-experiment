@@ -177,7 +177,7 @@ class DroneCommon:
         }
 
         COLOR_TRACKER = {
-            "rgb": (5, 5, 255),  # blue
+            "rgb": (1, 1, 140),  # blue
             "threshold": 40,
             "distance_tolerance": 1.0,
             "ports": [
