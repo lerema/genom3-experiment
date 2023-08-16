@@ -9,9 +9,10 @@ LIB_PATH = os.environ.get("DRONE_VV_PATH")
 handle = genomix.connect("localhost:8080")
 
 joystick = handle.load(f"{LIB_PATH}/lib/genom/pocolibs/plugins/joystick.so")
-c = Connector(1)
+maneuver = handle.load("/opt/openrobots/lib/genom/pocolibs/plugins/maneuver.so")
+rotorcraft = handle.load("/opt/openrobots/lib/genom/pocolibs/plugins/rotorcraft.so")
 
-c.maneuver.set_velocity_limit(
+maneuver.set_velocity_limit(
     v=1.0,  # m/s
     w=1.0,  # rad/s
 )
@@ -97,53 +98,51 @@ try:
         key_map = get_keymap(key_map)
         if key_map["B"]:
             # Stop the drone
-            c.rotorcraft.stop()
+            print("Trying to stop" + " "*20, end="\r")
+            rotorcraft.stop()
 
         if (key_map["RT"] > 0) or (key_map["LT"] > 0):
             # Process command
             print("Processing command" + " " * 20, end="\r")
-            if key_map["A"]:
-                c.setup()
-            elif key_map["LUP"] < -10000:
+            if key_map["LUP"] < -10000:
                 # Move the drone along z axis
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0, vy=0, vz=0.5, wz=0, ax=0, ay=0, az=0.1, duration=0
                 )
             elif key_map["LDOWN"] > 10000:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0, vy=0, vz=-0.5, wz=0, ax=0, ay=0, az=-0.1, duration=0
                 )
             elif key_map["LTOGG_X"] > 10000:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=-0.5, vy=0, vz=0, wz=0, ax=0.1, ay=0, az=0, duration=0
                 )
             elif key_map["LTOGG_X"] < -10000:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0.5, vy=0, vz=0, wz=0, ax=-0.1, ay=0, az=0, duration=0
                 )
             elif key_map["LTOGG_Y"] > 10000:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0, vy=-0.5, vz=0, wz=0, ax=0, ay=0.1, az=0, duration=0
                 )
             elif key_map["LTOGG_Y"] < -10000:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0, vy=+0.5, vz=0, wz=0, ax=0, ay=-0.1, az=0, duration=0
                 )
             elif key_map["RTOGG_Y"] > 10000:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0, vy=0, vz=0, wz=-0.5, ax=0, ay=0, az=0.1, duration=0
                 )
             elif key_map["RTOGG_Y"] < -10000:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0, vy=0, vz=0, wz=0.5, ax=0, ay=0, az=-0.1, duration=0
                 )
             else:
-                c.maneuver.velocity(
+                maneuver.velocity(
                     vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0
                 )
 
         else:
             print("Press RT or LT to accept commands", end="\r")
-            c.maneuver.velocity(vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0)
 except KeyboardInterrupt:
     print("Keyboard interrupt detected. Exiting...")

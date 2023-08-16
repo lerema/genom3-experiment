@@ -98,10 +98,10 @@ if {$::env(USER) eq "felix"} {
 }
 
 $g load optitrack
-$g load pom -i pom1
-$g load maneuver -i maneuver1
-$g load rotorcraft -i rotorcraft1
-$g load nhfc -i nhfc1
+$g load pom
+$g load maneuver
+$g load rotorcraft
+$g load nhfc
 if {$use_hippo} {
     $g load hippo
 }
@@ -133,89 +133,89 @@ proc init {} {
 
 
     # POM
-    pom1::connect_port { local measure/imu remote rotorcraft1/imu }
+    pom::connect_port { local measure/imu remote rotorcraft1/imu }
     if {$robot} {
-        pom1::connect_port { local measure/mocap remote optitrack/bodies/Lerema }
+        pom::connect_port { local measure/mocap remote optitrack/bodies/Lerema }
     } else {
-        pom1::connect_port { local measure/mag remote rotorcraft1/mag }
-        pom1::connect_port { local measure/mocap remote optitrack/bodies/QR1 }
+        pom::connect_port { local measure/mag remote rotorcraft1/mag }
+        pom::connect_port { local measure/mocap remote optitrack/bodies/QR1 }
     }
 
-    pom1::add_measurement { port imu x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
-    pom1::add_measurement { port mocap x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
+    pom::add_measurement { port imu x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
+    pom::add_measurement { port mocap x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
     if {$simu} {
-        pom1::add_measurement { port mag x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
-        pom1::set_mag_field { magdir { x 23.816e-6 y -0.41e-6 z -39.829e-6 } }
+        pom::add_measurement { port mag x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
+        pom::set_mag_field { magdir { x 23.816e-6 y -0.41e-6 z -39.829e-6 } }
     }
 
-    pom1::set_history_length { history_length 0.5 }
+    pom::set_history_length { history_length 0.5 }
 
 
     # MANEUVER
-    maneuver1::connect_port { local state remote pom1/frame/robot }
+    maneuver::connect_port { local state remote pom/frame/robot }
     if {$simu} {
-        maneuver1::set_velocity_limit {v 2 w 1}
+        maneuver::set_velocity_limit {v 2 w 1}
     }
 
 
     # ROTORCRAFT
     if {$robot} {
-        rotorcraft1::connect { serial /dev/ttyUSB0 baud 500000 }
+        rotorcraft::connect { serial /dev/ttyUSB0 baud 500000 }
     } else {
         if {$cam} {
-            rotorcraft1::connect { serial /tmp/pty-quad1 baud 500000 }
+            rotorcraft::connect { serial /tmp/pty-quad1 baud 500000 }
         } else {
-            rotorcraft1::connect { serial /tmp/pty-mrsim-quadrotor baud 500000 }
+            rotorcraft::connect { serial /tmp/pty-mrsim-quadrotor baud 500000 }
         }
     }
-    rotorcraft1::connect_port { local rotor_input remote nhfc1/rotor_input }
+    rotorcraft::connect_port { local rotor_input remote nhfc1/rotor_input }
 
     if {$robot} {
-        rotorcraft1::set_sensor_rate { rate { imu 1000 mag 0 motor 16 battery 1 } }
+        rotorcraft::set_sensor_rate { rate { imu 1000 mag 0 motor 16 battery 1 } }
 
         set imu_calib [read [open calibrations/imu_calib.txt r]]
-        rotorcraft1::set_imu_calibration $imu_calib
+        rotorcraft::set_imu_calibration $imu_calib
     } else {
-        rotorcraft1::set_sensor_rate { rate { imu 1000 mag 50 motor 16 battery 1 } }
+        rotorcraft::set_sensor_rate { rate { imu 1000 mag 50 motor 16 battery 1 } }
     }
 
     # NHFC
-    # nhfc1::set_mass $m
-    # nhfc1::set_geom $G $J
-    nhfc1::set_gtmrp_geom {}
+    # nhfc::set_mass $m
+    # nhfc::set_geom $G $J
+    nhfc::set_gtmrp_geom {rz -1}
 
     if {$robot} {
-        nhfc1::set_servo_gain { gain {Kpxy 20 Kpz 25 Kqxy 3 Kqz 0.3 Kvxy 15
+        nhfc::set_servo_gain { gain {Kpxy 20 Kpz 25 Kqxy 3 Kqz 0.3 Kvxy 15
             Kvz 20  Kwxy 0.3 Kwz 0.03 Kixy 0.5  Kiz 3 } }
         } else {
-        nhfc1::set_servo_gain { gain {Kpxy 20 Kpz 20 Kqxy 3  Kqz 0.3
+        nhfc::set_servo_gain { gain {Kpxy 20 Kpz 20 Kqxy 3  Kqz 0.3
             Kvxy 8 Kvz 8  Kwxy 0.3 Kwz 0.03 Kixy 0  Kiz 0 } }
         }
-        nhfc1::set_emerg { emerg { descent 1.2 dx 0.1 dq 1 dv 0.3 dw 1 } }
-        nhfc1::connect_port { local state remote pom1/frame/robot }
-        nhfc1::connect_port { local reference remote maneuver1/desired }
+        nhfc::set_emerg { emerg { descent 1.2 dx 0.1 dq 1 dv 0.3 dw 1 } }
+        nhfc::connect_port { local state remote pom/frame/robot }
+        nhfc::connect_port { local reference remote maneuver1/desired }
 
         if {$simu} {
-        nhfc1::set_wlimit { wmin 16 wmax 100}
+        nhfc::set_wlimit { wmin 16 wmax 100}
     }
 
     #CT_drone
     if {$cam} {
-        CT_drone1::Set_my_r 5
-        CT_drone1::Set_my_g 5
-        CT_drone1::Set_my_b 255
-        CT_drone1::Set_my_seuil 40
+        CT_drone::Set_my_r 5
+        CT_drone::Set_my_g 5
+        CT_drone::Set_my_b 255
+        CT_drone::Set_my_seuil 40
 
-        CT_drone1::connect_port { local Pose remote pom1/frame/robot }
+        CT_drone::connect_port { local Pose remote pom/frame/robot }
 
-        CT_drone1::SetCameraImageTopicName /quad1/down_camera_link/down_raw_image
-        CT_drone1::SetCameraInfoTopicName /quad1/down_camera_link/down_info_image
+        CT_drone::SetCameraImageTopicName /quad1/down_camera_link/down_raw_image
+        CT_drone::SetCameraInfoTopicName /quad1/down_camera_link/down_info_image
     }
 
     if {$use_tf} {
         #tf2
-        tf2::connect_port Poses/drone pom1/frame/robot
-        tf2::connect_port Poses/drone_pos pom1/frame/robot
+        tf2::connect_port Poses/drone pom/frame/robot
+        tf2::connect_port Poses/drone_pos pom/frame/robot
         tf2::connect_port OccupancyGrids/og CT_drone1/OccupancyGrid
 
         # tf2::Init
@@ -252,11 +252,11 @@ proc start_log {} {
 
     file mkdir $dir_logs
 
-    pom1::log_state ${dir_logs}/pom.log $log_rate_d
-    pom1::log_measurements ${dir_logs}/pom-measurements.log
-    rotorcraft1::log ${dir_logs}/rotorcraft.log $log_rate_d
-    nhfc1::log ${dir_logs}/nhfc.log $log_rate_d
-    maneuver1::log ${dir_logs}/maneuver.log $log_rate_d
+    pom::log_state ${dir_logs}/pom.log $log_rate_d
+    pom::log_measurements ${dir_logs}/pom-measurements.log
+    rotorcraft::log ${dir_logs}/rotorcraft.log $log_rate_d
+    nhfc::log ${dir_logs}/nhfc.log $log_rate_d
+    maneuver::log ${dir_logs}/maneuver.log $log_rate_d
     optitrack::set_logfile ${dir_logs}/optitrack.log
 }
 
@@ -264,58 +264,58 @@ proc start_log {} {
 proc setup {} {
     global cam
     #    start_log
-    rotorcraft1::start
-    maneuver1::set_bounds -- -100 100 -100 100 -2 30 -10 10
-    maneuver1::set_current_state
-    nhfc1::set_current_position
-    rotorcraft1::servo &
-    maneuver1::take_off { height 0.15 duration 0 }
-    nhfc1::servo &
+    rotorcraft::start
+    maneuver::set_bounds -- -100 100 -100 100 -2 30 -10 10
+    maneuver::set_current_state
+    nhfc::set_current_position
+    rotorcraft::servo &
+    maneuver::take_off { height 0.15 duration 0 }
+    nhfc::servo &
 
     if {$cam} {
-        CT_drone1::PublishOccupancyGrid &
+        CT_drone::PublishOccupancyGrid &
     }
 
 }
 
 proc restart {} {
-    rotorcraft1::start
-    maneuver1::set_current_state
-    nhfc1::set_current_position
-    rotorcraft1::servo &
-    maneuver1::take_off { height 0.15 duration 0 }
-    nhfc1::servo &
+    rotorcraft::start
+    maneuver::set_current_state
+    nhfc::set_current_position
+    rotorcraft::servo &
+    maneuver::take_off { height 0.15 duration 0 }
+    nhfc::servo &
 }
 
 proc land {} {
     global robot
 
     if {$robot} {
-        maneuver1::take_off {height 0.15 duration 0 }
+        maneuver::take_off {height 0.15 duration 0 }
     } else {
-        maneuver1::take_off {height 0.05 duration 0 }
+        maneuver::take_off {height 0.05 duration 0 }
     }
-    rotorcraft1::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
+    rotorcraft::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
 }
 
 proc stop {} {
-    rotorcraft1::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
-    rotorcraft1::stop
+    rotorcraft::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
+    rotorcraft::stop
 }
 
 proc stop_all {} {
-    rotorcraft1::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
-    rotorcraft1::stop
-    nhfc1::stop
-    maneuver1::stop
+    rotorcraft::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
+    rotorcraft::stop
+    nhfc::stop
+    maneuver::stop
 }
 
 # STOP LOGS
 proc stop_log {} {
-    pom1::log_stop
-    rotorcraft1::log_stop
-    nhfc1::log_stop
-    maneuver1::log_stop
+    pom::log_stop
+    rotorcraft::log_stop
+    nhfc::log_stop
+    maneuver::log_stop
 }
 
 proc kill_all {} {
@@ -323,47 +323,47 @@ proc kill_all {} {
     global cam
 
     optitrack::kill
-    pom1::kill
-    maneuver1::kill
-    rotorcraft1::kill
-    nhfc1::kill
+    pom::kill
+    maneuver::kill
+    rotorcraft::kill
+    nhfc::kill
     if {$use_tf} {
         tf2::kill
     }
     if {$cam} {
-        CT_drone1::kill
+        CT_drone::kill
     }
 }
 
 if {$simu} {
     proc move {} {
-        ::maneuver1::set_bounds -- -20 20 -20 20 -2 10 -3.14 3.14
-        ::maneuver1::take_off 3 0
+        ::maneuver::set_bounds -- -20 20 -20 20 -2 10 -3.14 3.14
+        ::maneuver::take_off 3 0
         after 1000
-        ::maneuver1::waypoint -- 1.5 0 4 0     0 0 0 0   0 0 0  0
-        ::maneuver1::waypoint -- 1 -0.5 1 3.14   0 0 0 0   0 0 0  0
-        ::maneuver1::waypoint -- 1 -0.5 4 0    0 0 0 0   0 0 0  0
-        ::maneuver1::waypoint --  1.5 0 4 0    0 0 0 0   0 0 0  0
-        ::maneuver1::wait
+        ::maneuver::waypoint -- 1.5 0 4 0     0 0 0 0   0 0 0  0
+        ::maneuver::waypoint -- 1 -0.5 1 3.14   0 0 0 0   0 0 0  0
+        ::maneuver::waypoint -- 1 -0.5 4 0    0 0 0 0   0 0 0  0
+        ::maneuver::waypoint --  1.5 0 4 0    0 0 0 0   0 0 0  0
+        ::maneuver::wait
         after 1000
-        ::maneuver1::take_off 2 0
+        ::maneuver::take_off 2 0
     }
 
 
     proc move2 {} {
-        ::maneuver1::set_current_state
+        ::maneuver::set_current_state
 
-        ::maneuver1::set_bounds -- -100 100 -100 100 -2 30 -10 10
-        ::maneuver1::take_off 3.0 0
+        ::maneuver::set_bounds -- -100 100 -100 100 -2 30 -10 10
+        ::maneuver::take_off 3.0 0
         after 1000
-        ::maneuver1::waypoint -- 10.0 0 5 0     0 0 0 0   0 0 0  0
-        ::maneuver1::waypoint -- 1 -8.5 8 3.14   0 0 0 0   0 0 0  0
-        ::maneuver1::waypoint -- 20 -25 7 0    0 0 0 0   0 0 0  0
-        ::maneuver1::waypoint --  30 0 8 0    0 0 0 0   0 0 0  0
-        ::maneuver1::waypoint --  0 0 6 0    0 0 0 0   0 0 0  0
-        ::maneuver1::wait
+        ::maneuver::waypoint -- 10.0 0 5 0     0 0 0 0   0 0 0  0
+        ::maneuver::waypoint -- 1 -8.5 8 3.14   0 0 0 0   0 0 0  0
+        ::maneuver::waypoint -- 20 -25 7 0    0 0 0 0   0 0 0  0
+        ::maneuver::waypoint --  30 0 8 0    0 0 0 0   0 0 0  0
+        ::maneuver::waypoint --  0 0 6 0    0 0 0 0   0 0 0  0
+        ::maneuver::wait
         after 1000
-        ::maneuver1::take_off 2.0 0
+        ::maneuver::take_off 2.0 0
     }
 }
 
@@ -371,59 +371,59 @@ proc carre {} {
     global robot
 
     if {$robot} {
-        ::maneuver1::goto {x 0.5 y 0.5 z 0.7 yaw 2 duration 0}
-        ::maneuver1::goto {x 0.5 y -0.5 z 0.5 yaw -2 duration 0}
-        ::maneuver1::goto {x -0.5 y -0.5 z 0.7 yaw 2 duration 0}
-        ::maneuver1::goto {x -0.5 y 0.5 z 0.3 yaw -2 duration 0}
+        ::maneuver::goto {x 0.5 y 0.5 z 0.7 yaw 2 duration 0}
+        ::maneuver::goto {x 0.5 y -0.5 z 0.5 yaw -2 duration 0}
+        ::maneuver::goto {x -0.5 y -0.5 z 0.7 yaw 2 duration 0}
+        ::maneuver::goto {x -0.5 y 0.5 z 0.3 yaw -2 duration 0}
     } else {
-        ::maneuver1::set_bounds -- -10 10 -10 10 -1 10 -4 4
-        ::maneuver1::goto {x 6 y 6 z 1.7 yaw 2 duration 0}
-        ::maneuver1::goto {x 6 y -6 z 2.7 yaw -2 duration 0}
-        ::maneuver1::goto {x -6 y -6 z 0.7 yaw 2 duration 0}
-        ::maneuver1::goto {x -6 y 6 z 3.7 yaw -2 duration 0}
+        ::maneuver::set_bounds -- -10 10 -10 10 -1 10 -4 4
+        ::maneuver::goto {x 6 y 6 z 1.7 yaw 2 duration 0}
+        ::maneuver::goto {x 6 y -6 z 2.7 yaw -2 duration 0}
+        ::maneuver::goto {x -6 y -6 z 0.7 yaw 2 duration 0}
+        ::maneuver::goto {x -6 y 6 z 3.7 yaw -2 duration 0}
     }
 }
 
 proc draw_H {x y z width height} {
     ::tf2::SetOdometryDisplay drone 0
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
     ::tf2::SetOdometryDisplay drone 1
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height/2.0}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height/2.0}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height/2.0}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height/2.0}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
 }
 
 proc draw_P {x y z width height} {
     ::tf2::SetOdometryDisplay drone 0
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
     ::tf2::SetOdometryDisplay drone 1
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height*2.0/3.0}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height*2.0/3.0}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height*2.0/3.0}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height*2.0/3.0}] yaw [expr 0] duration 0]
 }
 
 proc draw_O {x y z width height} {
     ::tf2::SetOdometryDisplay drone 0
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
     ::tf2::SetOdometryDisplay drone 1
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x + $width}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
 }
 
 proc draw_I {x y z width height} {
     ::tf2::SetOdometryDisplay drone 0
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
     ::tf2::SetOdometryDisplay drone 1
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height}] yaw [expr 0] duration 0]
     ::tf2::SetOdometryDisplay drone 0
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height*1.2}] yaw [expr 0] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height*1.2}] yaw [expr 0] duration 0]
     ::tf2::SetOdometryDisplay drone 1
-    ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height*1.2}] yaw [expr -3.14] duration 0]
+    ::maneuver::goto  [dict create x [expr {$x}] y [expr {$y}] z [expr {$z + $height*1.2}] yaw [expr -3.14] duration 0]
 }
 
 proc draw_hippo {x y z lw lh} {
@@ -436,9 +436,9 @@ proc draw_hippo {x y z lw lh} {
 
 if {$simu} {
     proc fly_around {} {
-        ::maneuver1::set_bounds -- -10 10 -10 10 -1 10 -4 4
+        ::maneuver::set_bounds -- -10 10 -10 10 -1 10 -4 4
         while 1 {
-            if { [catch {maneuver1::goto [dict create x [expr {rand()*20 - 10}] y [expr {rand()*20 - 10}] z [expr {rand()*10 + 0.2}] yaw [expr {rand()*6.26 -3.14 }] duration 0]} result]} {
+            if { [catch {maneuver::goto [dict create x [expr {rand()*20 - 10}] y [expr {rand()*20 - 10}] z [expr {rand()*10 + 0.2}] yaw [expr {rand()*6.26 -3.14 }] duration 0]} result]} {
                 puts $result
                 return
             }
@@ -449,34 +449,34 @@ if {$simu} {
 
 proc fly_survey_x {xmin ymin z xmax ymax stepy speed} {
 
-    #    CT_drone1::ReadROSImageUpdateFindings &
+    #    CT_drone::ReadROSImageUpdateFindings &
 
-    ::maneuver1::set_bounds -- -100 100 -100 100 -2 30 -10 10
-    ::maneuver1::goto  [dict create x [expr {$xmin}] y [expr {$ymin}] z [expr {$z}] yaw [expr 0] duration 0]
+    ::maneuver::set_bounds -- -100 100 -100 100 -2 30 -10 10
+    ::maneuver::goto  [dict create x [expr {$xmin}] y [expr {$ymin}] z [expr {$z}] yaw [expr 0] duration 0]
     set y $ymin
     while {$y < $ymax} {
-        ::maneuver1::goto  [dict create x [expr {$xmax}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration [expr { ($xmax - $xmin)  / $speed}]]
+        ::maneuver::goto  [dict create x [expr {$xmax}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration [expr { ($xmax - $xmin)  / $speed}]]
         set y [expr {$y + $stepy}]
-        ::maneuver1::goto  [dict create x [expr {$xmax}] y [expr {$y}] z [expr {$z}] yaw [expr 3.1416] duration 0]
-        ::maneuver1::goto  [dict create x [expr {$xmin}] y [expr {$y}] z [expr {$z}] yaw [expr 3.1416] duration [expr { ($xmax - $xmin) / $speed}]]
+        ::maneuver::goto  [dict create x [expr {$xmax}] y [expr {$y}] z [expr {$z}] yaw [expr 3.1416] duration 0]
+        ::maneuver::goto  [dict create x [expr {$xmin}] y [expr {$y}] z [expr {$z}] yaw [expr 3.1416] duration [expr { ($xmax - $xmin) / $speed}]]
         set y [expr {$y + $stepy}]
-        ::maneuver1::goto  [dict create x [expr {$xmin}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
+        ::maneuver::goto  [dict create x [expr {$xmin}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
     }
 }
 
 proc fly_survey_y {xmin ymin z xmax ymax stepx speed} {
 
-    #    CT_drone1::ReadROSImageUpdateFindings &
+    #    CT_drone::ReadROSImageUpdateFindings &
 
-    ::maneuver1::set_bounds -- -100 100 -100 100 -2 30 -10 10
-    ::maneuver1::goto  [dict create x [expr {$xmin}] y [expr {$ymin}] z [expr {$z}] yaw [expr 1.57079] duration 0]
+    ::maneuver::set_bounds -- -100 100 -100 100 -2 30 -10 10
+    ::maneuver::goto  [dict create x [expr {$xmin}] y [expr {$ymin}] z [expr {$z}] yaw [expr 1.57079] duration 0]
     set x $xmin
     while {$x < $xmax} {
-        ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$ymax}] z [expr {$z}] yaw [expr 1.57079] duration [expr { ($ymax - $ymin)  / $speed}]]
+        ::maneuver::goto  [dict create x [expr {$x}] y [expr {$ymax}] z [expr {$z}] yaw [expr 1.57079] duration [expr { ($ymax - $ymin)  / $speed}]]
         set x [expr {$x + $stepx}]
-        ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$ymax}] z [expr {$z}] yaw [expr -1.57079] duration 0]
-        ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$ymin}] z [expr {$z}] yaw [expr -1.57079] duration [expr { ($ymax - $ymin) / $speed}]]
+        ::maneuver::goto  [dict create x [expr {$x}] y [expr {$ymax}] z [expr {$z}] yaw [expr -1.57079] duration 0]
+        ::maneuver::goto  [dict create x [expr {$x}] y [expr {$ymin}] z [expr {$z}] yaw [expr -1.57079] duration [expr { ($ymax - $ymin) / $speed}]]
         set x [expr {$x + $stepx}]
-        ::maneuver1::goto  [dict create x [expr {$x}] y [expr {$ymin}] z [expr {$z}] yaw [expr 1.57079] duration 0]
+        ::maneuver::goto  [dict create x [expr {$x}] y [expr {$ymin}] z [expr {$z}] yaw [expr 1.57079] duration 0]
     }
 }

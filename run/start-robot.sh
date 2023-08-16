@@ -25,6 +25,7 @@ tmux \
     split-window -p 50 "CT_drone-pocolibs -f |& tee -i $logdir/CT_drone.log" \; \
     split-window -p 50 "arucotag-pocolibs -f |& tee -i $logdir/arucotag.log" \; \
     split-window -h -t 0 "ColorTracker-pocolibs -f |& tee -i $logdir/ColorTracker.log" \; \
+    split-window -h -t 2 "joystick-pocolibs -f |& tee -i $logdir/joystick.log" \; \
     new-window "optitrack-pocolibs -f |& tee -i $logdir/optitrack.log" \; \
     split-window -p 66 "maneuver-pocolibs -f|& tee -i $logdir/maneuver.log" \; \
     split-window -p 50 "$user_cmd" \; \
