@@ -115,19 +115,19 @@ try:
                 )
             elif key_map["LTOGG_X"] > 10000:
                 c.maneuver.velocity(
-                    vx=0.5, vy=0, vz=0, wz=0, ax=0.1, ay=0, az=0, duration=0
+                    vx=-0.5, vy=0, vz=0, wz=0, ax=0.1, ay=0, az=0, duration=0
                 )
             elif key_map["LTOGG_X"] < -10000:
                 c.maneuver.velocity(
-                    vx=-0.5, vy=0, vz=0, wz=0, ax=-0.1, ay=0, az=0, duration=0
+                    vx=0.5, vy=0, vz=0, wz=0, ax=-0.1, ay=0, az=0, duration=0
                 )
             elif key_map["LTOGG_Y"] > 10000:
                 c.maneuver.velocity(
-                    vx=0, vy=0.5, vz=0, wz=0, ax=0, ay=0.1, az=0, duration=0
+                    vx=0, vy=-0.5, vz=0, wz=0, ax=0, ay=0.1, az=0, duration=0
                 )
             elif key_map["LTOGG_Y"] < -10000:
                 c.maneuver.velocity(
-                    vx=0, vy=-0.5, vz=0, wz=0, ax=0, ay=-0.1, az=0, duration=0
+                    vx=0, vy=+0.5, vz=0, wz=0, ax=0, ay=-0.1, az=0, duration=0
                 )
             elif key_map["RTOGG_Y"] > 10000:
                 c.maneuver.velocity(
