@@ -3,14 +3,42 @@
 import os
 
 import genomix
-from drone_api.connect import Connector
+import argparse
+
+arg = argparse.ArgumentParser()
+arg.add_argument(
+    "robot_id",
+    help="The robot id of the drone. This is used to load the correct lib. Default is 0 for no suffix",
+    type=int,
+    default=0,
+)
+arg.add_argument(
+    "-d",
+    "--device",
+    help="The name of the joystick device. This is used to read the joystick input",
+    type=str,
+    default="Logitech",
+)
+
+# access the optional argument using args.optional_arg
+args = arg.parse_args()
+
+suffix = ""
+joystick_device = args.device
+
+if args.robot_id != 0:
+    suffix = str(args.robot_id)
 
 LIB_PATH = os.environ.get("DRONE_VV_PATH")
 handle = genomix.connect("localhost:8080")
 
-joystick = handle.load(f"{LIB_PATH}/lib/genom/pocolibs/plugins/joystick.so")
-maneuver = handle.load("/opt/openrobots/lib/genom/pocolibs/plugins/maneuver.so")
-rotorcraft = handle.load("/opt/openrobots/lib/genom/pocolibs/plugins/rotorcraft.so")
+handle.rpath(f"{LIB_PATH}/lib/genom/pocolibs/plugins")
+handle.rpath("/opt/openrobots/lib/genom/pocolibs/plugins")
+joystick = handle.load(
+    "joystick.so",
+)
+rotorcraft = handle.load("rotorcraft.so", "-i", "rotorcraft1")
+maneuver = handle.load("maneuver.so", "-i", "maneuver1")
 
 maneuver.set_velocity_limit(
     v=1.0,  # m/s
@@ -94,11 +122,11 @@ print(help_text)
 print("Ready to receive joystick commands", end="\r")
 try:
     while True:
-        key_map = joystick.device("Logitech")
+        key_map = joystick.device(joystick_device)
         key_map = get_keymap(key_map)
         if key_map["B"]:
             # Stop the drone
-            print("Trying to stop" + " "*20, end="\r")
+            print("Trying to stop" + " " * 20, end="\r")
             rotorcraft.stop()
 
         if (key_map["RT"] > 0) or (key_map["LT"] > 0):
@@ -138,9 +166,7 @@ try:
                     vx=0, vy=0, vz=0, wz=0.5, ax=0, ay=0, az=-0.1, duration=0
                 )
             else:
-                maneuver.velocity(
-                    vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0
-                )
+                maneuver.velocity(vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0)
 
         else:
             print("Press RT or LT to accept commands", end="\r")
