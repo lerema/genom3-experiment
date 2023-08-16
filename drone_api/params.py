@@ -41,8 +41,28 @@ class DroneCommon:
         }
         if is_robot:
             MANEUVER["set_velocity_limit"] = (5, 2)
+            MANEUVER["bounds"] = {
+                "xmin": -4,
+                "xmax": 4,
+                "ymin": -4,
+                "ymax": 4,
+                "zmin": 0.5,
+                "zmax": 2.5,
+                "yawmin": -10,
+                "yawmax": 10,
+            }
         else:
             MANEUVER["set_velocity_limit"] = (2, 1)
+            MANEUVER["bounds"] = {
+                "xmin": -100,
+                "xmax": 100,
+                "ymin": -100,
+                "ymax": 100,
+                "zmin": -2,
+                "zmax": 30,
+                "yawmin": -10,
+                "yawmax": 10,
+            }
 
         ROTORCRAFT = {}
         if is_robot:
