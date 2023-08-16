@@ -92,12 +92,18 @@ class Connector:
 
         Python version of TCL's `setup` command
         """
-        self.components["rotorcraft"].python.start()
+        self.rotorcraft.start()
+        self.maneuver.set_bounds(
+            "x", self.params["x_min"], self.params["x_max"], self.params["x_step"]
+        )
+        self.maneuver.set_current_state()
+        self.nhfc.set_current_position()
+        self.rotorcraft.servo(ack=1)
         time.sleep(1)
-        self.components["nhfc"].python.start()
+        self.maneuver.takeoff(height=0.15, duration-0)
+        self.nhfc.servo(ack=1)
         time.sleep(1)
-        self.components["maneuver"].python.start()
-        time.sleep(1)
+
 
     def start(self):
         """Start the drone. Starts the rotorcraft component."""

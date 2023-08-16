@@ -288,22 +288,18 @@ if {$robot} {
 # SETUP
 proc setup {} {
     global cam
-#    start_log
-
+    # start_log
     rotorcraft::start
-    rotorcraft::servo &
-
-    nhfc::set_current_position
-    nhfc::servo &
-
     maneuver::set_bounds -- -100 100 -100 100 -2 30 -10 10
     maneuver::set_current_state
+    nhfc::set_current_position
+    rotorcraft::servo &
     maneuver::take_off { height 0.15 duration 0 }
+    nhfc::servo &
 
     if {$cam} {
-	CT_drone::PublishOccupancyGrid &  
+        CT_drone::PublishOccupancyGrid &
     }
-    
 }
 
 proc restart {} {
