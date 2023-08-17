@@ -20,11 +20,20 @@ arg.add_argument(
     default="Logitech",
 )
 
+arg.add_argument(
+    "--fixed",
+    help="Use this flag to use the fixed velocity command. This is used to read the joystick input",
+    action="store_true",
+)
+
 # access the optional argument using args.optional_arg
 args = arg.parse_args()
 
 suffix = ""
 joystick_device = args.device
+use_fixed = args.fixed
+vmax, wmax = 1.0, 1.0
+fixed_velocity = 0.1
 
 if args.robot_id != 0:
     suffix = str(args.robot_id)
@@ -41,9 +50,27 @@ rotorcraft = handle.load("rotorcraft.so", "-i", f"rotorcraft{suffix}")
 maneuver = handle.load("maneuver.so", "-i", f"maneuver{suffix}")
 
 maneuver.set_velocity_limit(
-    v=1.0,  # m/s
-    w=1.0,  # rad/s
+    v=vmax,  # m/s
+    w=wmax,  # rad/s
 )
+
+help_text = """\033[1m
+This script will help you control the drone using a joystick.
+
+The controls are as follows:
+
+    RT/LT: Always press to accept any commands
+    B: Kill switch for drone. (rotorcraft.stop)
+    A: Start the drone
+    LUP: Move the drone along z axis
+    LDOWN: Move the drone along z axis
+    LTOGG_X: Move the drone along x axis
+    LTOGG_Y: Move the drone along y axis
+    RTOGG_X: Rotate the drone along x axis
+    RTOGG_Y: Rotate the drone along y axis
+
+\033[0m
+"""
 
 
 def get_keymap(key_map, reset=False) -> dict:
@@ -101,74 +128,138 @@ def get_keymap(key_map, reset=False) -> dict:
     return new_key_map
 
 
-help_text = """\033[1m
-This script will help you control the drone using a joystick.
+def accept_fixed_commands():
+    """Accept commands from the joystick"""
+    print(help_text)
+    print("Ready to receive joystick commands", end="\r")
+    try:
+        while True:
+            key_map = joystick.device(joystick_device)
+            key_map = get_keymap(key_map)
+            if key_map["B"]:
+                # Stop the drone
+                print("Trying to stop" + " " * 20, end="\r")
+                rotorcraft.stop()
 
-The controls are as follows:
+            if (key_map["RT"] > 0) or (key_map["LT"] > 0):
+                # Process command
+                print("Processing command" + " " * 20, end="\r")
+                if key_map["LUP"] < -10000:
+                    # Move the drone along z axis
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=fixed_velocity, wz=0, ax=0, ay=0, az=0.1, duration=0
+                    )
+                elif key_map["LDOWN"] > 10000:
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=-fixed_velocity, wz=0, ax=0, ay=0, az=-0.1, duration=0
+                    )
+                elif key_map["LTOGG_X"] > 10000:
+                    maneuver.velocity(
+                        vx=-fixed_velocity, vy=0, vz=0, wz=0, ax=0.1, ay=0, az=0, duration=0
+                    )
+                elif key_map["LTOGG_X"] < -10000:
+                    maneuver.velocity(
+                        vx=fixed_velocity, vy=0, vz=0, wz=0, ax=-0.1, ay=0, az=0, duration=0
+                    )
+                elif key_map["LTOGG_Y"] > 10000:
+                    maneuver.velocity(
+                        vx=0, vy=-fixed_velocity, vz=0, wz=0, ax=0, ay=0.1, az=0, duration=0
+                    )
+                elif key_map["LTOGG_Y"] < -10000:
+                    maneuver.velocity(
+                        vx=0, vy=+fixed_velocity, vz=0, wz=0, ax=0, ay=-0.1, az=0, duration=0
+                    )
+                elif key_map["RTOGG_Y"] > 10000:
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=0, wz=-fixed_velocity, ax=0, ay=0, az=0.1, duration=0
+                    )
+                elif key_map["RTOGG_Y"] < -10000:
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=0, wz=fixed_velocity, ax=0, ay=0, az=-0.1, duration=0
+                    )
+                else:
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0
+                    )
 
-    RT/LT: Always press to accept any commands
-    B: Kill switch for drone. (rotorcraft.stop)
-    A: Start the drone
-    LUP: Move the drone along z axis
-    LDOWN: Move the drone along z axis
-    LTOGG_X: Move the drone along x axis
-    LTOGG_Y: Move the drone along y axis
-    RTOGG_X: Rotate the drone along x axis
-    RTOGG_Y: Rotate the drone along y axis
-
-\033[0m
-"""
-print(help_text)
-print("Ready to receive joystick commands", end="\r")
-try:
-    while True:
-        key_map = joystick.device(joystick_device)
-        key_map = get_keymap(key_map)
-        if key_map["B"]:
-            # Stop the drone
-            print("Trying to stop" + " " * 20, end="\r")
-            rotorcraft.stop()
-
-        if (key_map["RT"] > 0) or (key_map["LT"] > 0):
-            # Process command
-            print("Processing command" + " " * 20, end="\r")
-            if key_map["LUP"] < -10000:
-                # Move the drone along z axis
-                maneuver.velocity(
-                    vx=0, vy=0, vz=0.1, wz=0, ax=0, ay=0, az=0.1, duration=0
-                )
-            elif key_map["LDOWN"] > 10000:
-                maneuver.velocity(
-                    vx=0, vy=0, vz=-0.1, wz=0, ax=0, ay=0, az=-0.1, duration=0
-                )
-            elif key_map["LTOGG_X"] > 10000:
-                maneuver.velocity(
-                    vx=-0.1, vy=0, vz=0, wz=0, ax=0.1, ay=0, az=0, duration=0
-                )
-            elif key_map["LTOGG_X"] < -10000:
-                maneuver.velocity(
-                    vx=0.1, vy=0, vz=0, wz=0, ax=-0.1, ay=0, az=0, duration=0
-                )
-            elif key_map["LTOGG_Y"] > 10000:
-                maneuver.velocity(
-                    vx=0, vy=-0.1, vz=0, wz=0, ax=0, ay=0.1, az=0, duration=0
-                )
-            elif key_map["LTOGG_Y"] < -10000:
-                maneuver.velocity(
-                    vx=0, vy=+0.1, vz=0, wz=0, ax=0, ay=-0.1, az=0, duration=0
-                )
-            elif key_map["RTOGG_Y"] > 10000:
-                maneuver.velocity(
-                    vx=0, vy=0, vz=0, wz=-0.1, ax=0, ay=0, az=0.1, duration=0
-                )
-            elif key_map["RTOGG_Y"] < -10000:
-                maneuver.velocity(
-                    vx=0, vy=0, vz=0, wz=0.1, ax=0, ay=0, az=-0.1, duration=0
-                )
             else:
+                print("Press RT or LT to accept commands", end="\r")
+    except KeyboardInterrupt:
+        print("Keyboard interrupt detected. Exiting...")
+
+
+def sign(x):
+    """Get the sign of the number"""
+    if x < 0:
+        return -1
+    else:
+        return 1
+
+
+def map_values(value, in_min, in_max, out_min, out_max):
+    """Map the value from one range to another"""
+    value = sign(value) * value**2
+    in_min = sign(in_min) * in_min**2
+    in_max = sign(in_max) * in_max**2
+    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
+
+def accept_command():
+    """Accept commands from the joystick"""
+    print(help_text)
+    print("Ready to receive joystick commands", end="\r")
+    try:
+        while True:
+            key_map = joystick.device(joystick_device)
+            key_map = get_keymap(key_map)
+            if key_map["B"]:
+                # Stop the drone
+                print("Trying to stop" + " " * 20, end="\r")
+                rotorcraft.stop()
+
+            if key_map["A"]:
+                # Stay in the air
                 maneuver.velocity(vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0)
 
-        else:
-            print("Press RT or LT to accept commands", end="\r")
-except KeyboardInterrupt:
-    print("Keyboard interrupt detected. Exiting...")
+            if (key_map["RT"] > 0) or (key_map["LT"] > 0):
+                # Process command
+                print("Processing command" + " " * 20, end="\r")
+                if key_map["LUP"] < -10000:
+                    # Move the drone along z axis
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=0.1, wz=0, ax=0, ay=0, az=0.1, duration=0
+                    )
+                elif key_map["LDOWN"] > 10000:
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=-0.1, wz=0, ax=0, ay=0, az=-0.1, duration=0
+                    )
+                elif key_map["LTOGG_X"]:
+                    value = map_values(key_map["LTOGG_X"], 32767, -32767, -vmax, vmax)
+                    maneuver.velocity(
+                        vx=value, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0
+                    )
+                elif key_map["LTOGG_Y"]:
+                    value = map_values(key_map["LTOGG_Y"], 32767, -32767, -vmax, vmax)
+                    maneuver.velocity(
+                        vx=0, vy=value, vz=0, wz=0, ax=0, ay=0, az=0, duration=0
+                    )
+                elif key_map["RTOGG_Y"]:
+                    value = map_values(key_map["RTOGG_Y"], 32767, -32767, -wmax, wmax)
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=0, wz=value, ax=0, ay=0, az=0, duration=0
+                    )
+                else:
+                    maneuver.velocity(
+                        vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0
+                    )
+            else:
+                print("Press RT or LT to accept commands", end="\r")
+    except KeyboardInterrupt:
+        print("Keyboard interrupt detected. Exiting...")
+
+
+if __name__ == "__main__":
+    if use_fixed:
+        accept_fixed_commands()
+    else:
+        accept_command()
