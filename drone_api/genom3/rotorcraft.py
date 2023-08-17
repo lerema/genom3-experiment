@@ -29,28 +29,23 @@ class RotorCraft:
         self.params = params[str(self)]
 
     def __call__(self):
-        try:
-            self._connect(self.params["connect"][0], self.params["connect"][1])
-            self._set_sensor_rate(
-                self.params["set_sensor_rate"][0],
-                self.params["set_sensor_rate"][1],
-                self.params["set_sensor_rate"][2],
-                self.params["set_sensor_rate"][3],
-            )
-            if USE_ROBOT:
-                calibration = self._load_imu_calibration()
-                self.component.set_imu_calibration(imu_calibration=calibration)
-            else:
-                self.component.set_imu_filter(**self.params["imu_filter"])
+        self._connect(self.params["connect"][0], self.params["connect"][1])
+        self.component.connect_port(
+            {"local": self.params["ports"][0], "remote": self.params["ports"][1]}
+        )
+        self._set_sensor_rate(
+            self.params["set_sensor_rate"][0],
+            self.params["set_sensor_rate"][1],
+            self.params["set_sensor_rate"][2],
+            self.params["set_sensor_rate"][3],
+        )
+        if USE_ROBOT:
+            calibration = self._load_imu_calibration()
+            self.component.set_imu_calibration(imu_calibration=calibration)
+        else:
+            self.component.set_imu_filter(**self.params["imu_filter"])
 
-            self.component.connect_port(
-                {"local": self.params["ports"][0], "remote": self.params["ports"][1]}
-            )
-        except Exception as e:
-            logger.error(f"Failed to connect to Rotorcraft. Throws {e}")
-            raise e
-        finally:
-            logger.info("Connected to Rotorcraft")
+        logger.info("Connected to Rotorcraft")
 
         return self
 

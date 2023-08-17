@@ -30,21 +30,16 @@ class Maneuver:
     def __call__(self):
         """Connect to component port"""
 
-        try:
-            logger.info("Connecting to maneuver")
-            self._connect_port(self.params["ports"][0], self.params["ports"][1])
-            if not USE_ROBOT:
-                self.component.set_velocity_limit(
-                    {
-                        "v": self.params["set_velocity_limit"][0],
-                        "w": self.params["set_velocity_limit"][1],
-                    }
-                )
-        except Exception as e:
-            logger.error(f"Failed to connect to maneuver. Throws {e}")
-            raise e
-        finally:
-            logger.info("Connected to maneuver")
+        logger.info("Connecting to maneuver")
+        self._connect_port(self.params["ports"][0], self.params["ports"][1])
+        if not USE_ROBOT:
+            self.component.set_velocity_limit(
+                {
+                    "v": self.params["set_velocity_limit"][0],
+                    "w": self.params["set_velocity_limit"][1],
+                }
+            )
+        logger.info("Connected to maneuver")
 
         return self
 
@@ -69,7 +64,7 @@ class Maneuver:
     def stop(self):
         """Stop the Maneuver component"""
         self.component.stop()
-        
+
     def kill(self):
         """Kill the Maneuver component"""
         logger.info("Killing maneuver component")

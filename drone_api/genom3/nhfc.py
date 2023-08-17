@@ -25,42 +25,38 @@ class NHFC:
         self.params = params[str(self)]
 
     def __call__(self):
-        try:
-            self.component.set_gtmrp_geom(**self.params["geometry"])
-            self._servo_gain(
-                self.params["servo_gain"][0],
-                self.params["servo_gain"][1],
-                self.params["servo_gain"][2],
-                self.params["servo_gain"][3],
-                self.params["servo_gain"][4],
-                self.params["servo_gain"][5],
-                self.params["servo_gain"][6],
-                self.params["servo_gain"][7],
-                self.params["servo_gain"][8],
-                self.params["servo_gain"][9],
-            )
+        self.component.set_gtmrp_geom(**self.params["geometry"])
+        self._servo_gain(
+            self.params["servo_gain"][0],
+            self.params["servo_gain"][1],
+            self.params["servo_gain"][2],
+            self.params["servo_gain"][3],
+            self.params["servo_gain"][4],
+            self.params["servo_gain"][5],
+            self.params["servo_gain"][6],
+            self.params["servo_gain"][7],
+            self.params["servo_gain"][8],
+            self.params["servo_gain"][9],
+        )
+        for port in self.params["ports"]:
+            self.component.connect_port({"local": port[0], "remote": port[1]})
+
+        self.component.set_emerg(
+            {
+                "emerg": {
+                    "descent": self.params["set_emerg"][0],
+                    "dx": self.params["set_emerg"][1],
+                    "dq": self.params["set_emerg"][2],
+                    "dv": self.params["set_emerg"][3],
+                    "dw": self.params["set_emerg"][4],
+                }
+            }
+        )
+        if self.params["wlimit"]:
             self.component.set_wlimit(
                 {"wmin": self.params["wlimit"][0], "wmax": self.params["wlimit"][1]}
             )
-            self.component.set_emerg(
-                {
-                    "emerg": {
-                        "descent": self.params["set_emerg"][0],
-                        "dx": self.params["set_emerg"][1],
-                        "dq": self.params["set_emerg"][2],
-                        "dv": self.params["set_emerg"][3],
-                        "dw": self.params["set_emerg"][4],
-                    }
-                }
-            )
-            self.component.set_saturation(sat=self.params["saturation"])
-            for port in self.params["ports"]:
-                self.component.connect_port({"local": port[0], "remote": port[1]})
-        except Exception as e:
-            logger.error(f"Failed to connect to NHFC. Throws {e}")
-            raise e
-        finally:
-            logger.info("Connected to NHFC")
+        logger.info("Connected to NHFC")
 
         return self
 

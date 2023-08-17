@@ -30,21 +30,16 @@ class Optitrack:
         """
         Connect to Optitrack and load all pocolib modules
         """
-        try:
-            logger.info("Connecting to Optitrack")
-            self.component.connect(
-                {
-                    "host": self.params["host"],
-                    "host_port": self.params["host_port"],
-                    "mcast": self.params["mcast"],
-                    "mcast_port": self.params["mcast_port"],
-                }
-            )
-        except Exception as e:
-            logger.error(f"Failed to connect to Optitrack. Throws {e}")
-            raise e
-        finally:
-            logger.info("Connected to Optitrack")
+        logger.info("Connecting to Optitrack")
+        self.component.connect(
+            {
+                "host": self.params["host"],
+                "host_port": self.params["host_port"],
+                "mcast": self.params["mcast"],
+                "mcast_port": self.params["mcast_port"],
+            }
+        )
+        logger.info("Connected to Optitrack")
 
         return self
 
@@ -55,7 +50,7 @@ class Optitrack:
     def stop(self):
         """Stop the Optitrack component"""
         return
-    
+
     def kill(self):
         """Kill the Optitrack component"""
         logger.info("Killing Optitrack")

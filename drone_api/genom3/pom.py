@@ -29,28 +29,26 @@ class POM:
     def __call__(self):
         """Connect to component port"""
 
-        try:
-            logger.info("Connecting to POM")
-            for port in self.params["ports"]:
-                logger.info(f"Connecting to port {port[0]}:{port[1]}")
-                self._connect_port(port[0], port[1])
+        logger.info("Connecting to POM")
+        for port in self.params["ports"]:
+            logger.info(f"Connecting to port {port[0]}:{port[1]}")
+            self._connect_port(port[0], port[1])
 
-            for measurement in self.params["add_measurements"].keys():
-                self._add_measurement(measurement)
+        for measurement in self.params["add_measurements"].keys():
+            self._add_measurement(measurement)
 
+        if self.params["set_mag_field"]:
             self._set_mag_field(
                 x=self.params["set_mag_field"][0],
                 y=self.params["set_mag_field"][1],
                 z=self.params["set_mag_field"][2],
             )
-            self.component.set_history_length(
-                {"history_length": self.params["history_length"]}
-            )
-        except Exception as e:
-            logger.error(f"Failed to connect to POM. Throws {e}")
-            raise e
-        finally:
-            logger.info("Connected to POM")
+
+        self.component.set_history_length(
+            {"history_length": self.params["history_length"]}
+        )
+
+        logger.info("Connected to POM")
 
         return self
 
