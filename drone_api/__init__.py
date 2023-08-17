@@ -18,8 +18,8 @@ USE_ROBOT = bool(os.environ.get("USE_ROBOT", False) == "1")
 DATA_PATH = "./data"
 
 EXPECTED_MODULES = [
-    "maneuver",
     "pom",
+    "maneuver",
     "rotorcraft",
     "nhfc",
     # "CT_drone",

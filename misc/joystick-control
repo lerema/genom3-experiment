@@ -37,8 +37,8 @@ handle.rpath("/opt/openrobots/lib/genom/pocolibs/plugins")
 joystick = handle.load(
     "joystick.so",
 )
-rotorcraft = handle.load("rotorcraft.so", "-i", "rotorcraft1")
-maneuver = handle.load("maneuver.so", "-i", "maneuver1")
+rotorcraft = handle.load("rotorcraft.so", "-i", f"rotorcraft{suffix}")
+maneuver = handle.load("maneuver.so", "-i", f"maneuver{suffix}")
 
 maneuver.set_velocity_limit(
     v=1.0,  # m/s
@@ -135,35 +135,35 @@ try:
             if key_map["LUP"] < -10000:
                 # Move the drone along z axis
                 maneuver.velocity(
-                    vx=0, vy=0, vz=0.5, wz=0, ax=0, ay=0, az=0.1, duration=0
+                    vx=0, vy=0, vz=0.1, wz=0, ax=0, ay=0, az=0.1, duration=0
                 )
             elif key_map["LDOWN"] > 10000:
                 maneuver.velocity(
-                    vx=0, vy=0, vz=-0.5, wz=0, ax=0, ay=0, az=-0.1, duration=0
+                    vx=0, vy=0, vz=-0.1, wz=0, ax=0, ay=0, az=-0.1, duration=0
                 )
             elif key_map["LTOGG_X"] > 10000:
                 maneuver.velocity(
-                    vx=-0.5, vy=0, vz=0, wz=0, ax=0.1, ay=0, az=0, duration=0
+                    vx=-0.1, vy=0, vz=0, wz=0, ax=0.1, ay=0, az=0, duration=0
                 )
             elif key_map["LTOGG_X"] < -10000:
                 maneuver.velocity(
-                    vx=0.5, vy=0, vz=0, wz=0, ax=-0.1, ay=0, az=0, duration=0
+                    vx=0.1, vy=0, vz=0, wz=0, ax=-0.1, ay=0, az=0, duration=0
                 )
             elif key_map["LTOGG_Y"] > 10000:
                 maneuver.velocity(
-                    vx=0, vy=-0.5, vz=0, wz=0, ax=0, ay=0.1, az=0, duration=0
+                    vx=0, vy=-0.1, vz=0, wz=0, ax=0, ay=0.1, az=0, duration=0
                 )
             elif key_map["LTOGG_Y"] < -10000:
                 maneuver.velocity(
-                    vx=0, vy=+0.5, vz=0, wz=0, ax=0, ay=-0.1, az=0, duration=0
+                    vx=0, vy=+0.1, vz=0, wz=0, ax=0, ay=-0.1, az=0, duration=0
                 )
             elif key_map["RTOGG_Y"] > 10000:
                 maneuver.velocity(
-                    vx=0, vy=0, vz=0, wz=-0.5, ax=0, ay=0, az=0.1, duration=0
+                    vx=0, vy=0, vz=0, wz=-0.1, ax=0, ay=0, az=0.1, duration=0
                 )
             elif key_map["RTOGG_Y"] < -10000:
                 maneuver.velocity(
-                    vx=0, vy=0, vz=0, wz=0.5, ax=0, ay=0, az=-0.1, duration=0
+                    vx=0, vy=0, vz=0, wz=0.1, ax=0, ay=0, az=-0.1, duration=0
                 )
             else:
                 maneuver.velocity(vx=0, vy=0, vz=0, wz=0, ax=0, ay=0, az=0, duration=0)

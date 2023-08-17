@@ -183,13 +183,21 @@ class DroneCommon:
             "rgb": (1, 1, 140),  # blue
             "threshold": 40,
             "distance_tolerance": 1.0,
-            "ports": [
+        }
+        if is_robot:
+            COLOR_TRACKER["ports"] = [
+                ("DronePose", f"pom{drone_id}/frame/robot"),
+                ("Frame", "d435/frame/raw"),
+                ("Intrinsics", "d435/intrinsics"),
+                ("Extrinsics", "d435/extrinsics"),
+            ]
+        else:
+            COLOR_TRACKER["ports"] = [
                 ("DronePose", f"pom{drone_id}/frame/robot"),
                 ("Frame", f"camgazebo{drone_id}/frame/raw"),
                 ("Intrinsics", f"camgazebo{drone_id}/intrinsics"),
                 ("Extrinsics", f"camgazebo{drone_id}/extrinsics"),
-            ],
-        }
+            ]
 
         POM = {
             "history_length": 0.5,

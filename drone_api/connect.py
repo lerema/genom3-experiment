@@ -66,7 +66,7 @@ class Connector:
             )
 
         # Connect Genom handles to python instances
-        connectors = {
+        self._connectors = {
             "optitrack": self._connect_optitrack,
             "pom": self._connect_pom,
             "maneuver": self._connect_maneuver,
@@ -82,10 +82,14 @@ class Connector:
         }
 
         # Better to start with common modules first
-        modules = list(MODULES["common"]) + list(MODULES["dedicated"])
-        for module in modules:
-            self.components[module] = connectors[module]()
-            # time.sleep(1)  # Hack to let modules start
+        self._modules = list(MODULES["common"]) + list(MODULES["dedicated"])
+        
+    def init(self):
+        for module in self._modules:
+            self.components[module] = self._connectors[module]()
+            if USE_ROBOT:
+                time.sleep(1)  # Hack to let modules start
+
 
     def setup(self):
         """Start the drone.
