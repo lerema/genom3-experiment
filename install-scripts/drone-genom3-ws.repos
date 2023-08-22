@@ -14,7 +14,7 @@ repositories:
   color-tracker-genom3:
     type: git
     url: https://github.com/lerema/color-tracker-genom3.git
-    version: 8ce8f019165b1a62d911347d936a577eba5935c7
+    version: main
   ct_drone:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/ct_drone.git
@@ -31,10 +31,6 @@ repositories:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-idl.git
     version: master
-  genom3-experiment:
-    type: git
-    url: git@github.com:lerema/genom3-experiment.git
-    version: drone
   joystick-genom3:
     type: git
     url: https://git.openrobots.org/robots/joystick-genom3.git

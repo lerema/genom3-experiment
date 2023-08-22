@@ -10,7 +10,7 @@ repositories:
   color-tracker-genom3:
     type: git
     url: https://github.com/lerema/color-tracker-genom3.git
-    version: 8ce8f019165b1a62d911347d936a577eba5935c7
+    version: main
   d435-genom3:
     type: git
     url: https://github.com/lerema/d435-genom3.git

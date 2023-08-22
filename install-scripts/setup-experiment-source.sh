@@ -2,7 +2,7 @@
 
 # Order preserved.
 ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs architecture/genom3-ros shell/eltclsh net/genomix supervision/tcl-genomix interfaces/openrobots2-idl simulation/mrsim-gazebo simulation/optitrack-gazebo path/libkdtp supervision/py-python-genomix"
-GENOM_MODULES="libkdtp maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils vision-idl d435-genom3 color-tracker-genom3" # arucotag-genom3 camgazebo-genom3 camviz-genom3 color-tracker-genom3"
+GENOM_MODULES="libkdtp maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils vision-idl d435-genom3 color-tracker-genom3 arucotag-genom3 camgazebo-genom3 camviz-genom3 color-tracker-genom3"
 
 # Get python version similar to 3.8.
 PYTHON_VERSION=$(python3 -c 'import sys; print(sys.version_info[0])').$(python3 -c 'import sys; print(sys.version_info[1])')
