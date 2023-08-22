@@ -5,7 +5,7 @@ ROBOTPKG_MODULES="architecture/genom3 architecture/genom3-pocolibs architecture/
 GENOM_MODULES="libkdtp maneuver-genom3 nhfc-genom3 pom-genom3 rotorcraft-genom3 optitrack-genom3 felix-idl felix-g3utils vision-idl d435-genom3 color-tracker-genom3" # arucotag-genom3 camgazebo-genom3 camviz-genom3 color-tracker-genom3"
 
 # Get python version similar to 3.8.
-PYTHON_VERSION=$(python -c 'import sys; print(sys.version_info[0])').$(python -c 'import sys; print(sys.version_info[1])')
+PYTHON_VERSION=$(python3 -c 'import sys; print(sys.version_info[0])').$(python3 -c 'import sys; print(sys.version_info[1])')
 
 set -e
 
@@ -83,8 +83,8 @@ function setup_installation {
 
     # Install dependencies
     sudo apt-get install -y bison python3-vcstool libudev-dev tmux \
-        asciidoctor \
-        libsdl2-dev
+    asciidoctor \
+    libsdl2-dev
 
     # Pull dependencies
     cd "$INSTALL_DIR"

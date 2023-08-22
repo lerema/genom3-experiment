@@ -1,19 +1,19 @@
 repositories:
   arucotag-genom3:
     type: git
-    url: https://github.com/franklinselva/arucotag-genom3.git
+    url: https://github.com/lerema/arucotag-genom3.git
     version: 0b6d014b7e1a397b5192c8662effac226bf5ac0b
   camgazebo-genom3:
     type: git
-    url: https://github.com/franklinselva/camgazebo-genom3.git
+    url: https://github.com/lerema/camgazebo-genom3.git
     version: 58c86915bf3aded170a7e36aa158dc01a1798394
   camviz-genom3:
     type: git
-    url: https://github.com/franklinselva/camviz-genom3.git
+    url: https://github.com/lerema/camviz-genom3.git
     version: 70f4162faaa0d9e241d7b4501c5df5fd312b40d0
   color-tracker-genom3:
     type: git
-    url: https://github.com/franklinselva/color-tracker-genom3.git
+    url: https://github.com/lerema/color-tracker-genom3.git
     version: 8ce8f019165b1a62d911347d936a577eba5935c7
   ct_drone:
     type: git
@@ -21,7 +21,7 @@ repositories:
     version: master
   d435-genom3:
     type: git
-    url: https://github.com/franklinselva/d435-genom3.git
+    url: https://github.com/lerema/d435-genom3.git
     version: master
   felix-g3utils:
     type: git
@@ -33,7 +33,7 @@ repositories:
     version: master
   genom3-experiment:
     type: git
-    url: git@github.com:franklinselva/genom3-experiment.git
+    url: git@github.com:lerema/genom3-experiment.git
     version: drone
   joystick-genom3:
     type: git
@@ -53,7 +53,7 @@ repositories:
     version: master
   monocular-camera-genom3:
     type: git
-    url: https://github.com/franklinselva/monocular-camera-genom3.git
+    url: https://github.com/lerema/monocular-camera-genom3.git
     version: main
   nhfc-genom3:
     type: git
@@ -73,9 +73,9 @@ repositories:
     version: master
   vision-idl:
     type: git
-    url: https://github.com/franklinselva/vision-idl.git
+    url: https://github.com/lerema/vision-idl.git
     version: 9cfab5615587894204873796695043efbe1a6146
   yolov8-genom3:
     type: git
-    url: https://github.com/franklinselva/yolov8-genom3.git
+    url: https://github.com/lerema/yolov8-genom3.git
     version: main

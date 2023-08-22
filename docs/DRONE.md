@@ -40,7 +40,7 @@ To setup the experiment workspace, we can use the following commands:
 ```bash
 # Setup the workspace
 mkdir -p drone-experiment && cd drone-experiment
-git clone https://github.com/franklinselva/genom3-experiment.git
+git clone https://github.com/lerema/genom3-experiment.git
 ```
 
 The easier way to install genom3 and robotpkg modules is to launch the following commands:

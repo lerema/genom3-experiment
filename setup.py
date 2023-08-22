@@ -26,7 +26,7 @@ setup(
         An experimental integration of Genom framework with Unified Planning framework.",
     author="Selvakumar H S, LAAS-CNRS",
     author_email="selvakumar.h-s@laas.com",
-    url="https://github.com/franklinselva/genom3-experiment.git",
+    url="https://github.com/lerema/genom3-experiment.git",
     requires=["up_esb"],
     packages=find_packages(
         include=["drone_api", "drone_api.*", "up_demo", "up_demo.*"]

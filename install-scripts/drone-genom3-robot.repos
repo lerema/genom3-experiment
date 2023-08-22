@@ -1,7 +1,7 @@
 repositories:
   arucotag-genom3:
     type: git
-    url: https://github.com/franklinselva/arucotag-genom3.git
+    url: https://github.com/lerema/arucotag-genom3.git
     version: 0b6d014b7e1a397b5192c8662effac226bf5ac0b
   ct_drone:
     type: git
@@ -9,11 +9,11 @@ repositories:
     version: 0b2d87fbcfa9de5ad0db9e1bc26d6c79ecde1722
   color-tracker-genom3:
     type: git
-    url: https://github.com/franklinselva/color-tracker-genom3.git
+    url: https://github.com/lerema/color-tracker-genom3.git
     version: 8ce8f019165b1a62d911347d936a577eba5935c7
   d435-genom3:
     type: git
-    url: https://github.com/franklinselva/d435-genom3.git
+    url: https://github.com/lerema/d435-genom3.git
   felix-g3utils:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-g3utils.git
@@ -28,9 +28,9 @@ repositories:
     version: aaee04c06f69a3286c292beb13aacfe94ada0db0
   rotorcraft-genom3:
     type: git
-    url: https://github.com/franklinselva/rotorcraft-genom3.git
+    url: https://github.com/lerema/rotorcraft-genom3.git
     version: 92ee8cf915e58a928f6b3eb6bef813d929f431eb
   vision-idl:
     type: git
-    url: https://github.com/franklinselva/vision-idl.git
+    url: https://github.com/lerema/vision-idl.git
     version: 9cfab5615587894204873796695043efbe1a6146
