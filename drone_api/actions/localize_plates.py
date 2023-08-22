@@ -59,7 +59,7 @@ class LocalizePlates:
         # Start the activity
         result = self.color_tracker.color_track(ack=self.ack)
 
-        self.color_tracker.start_color_tracking()
+        self.color_tracker.perform_tracking(True)
 
         return result
 
@@ -67,4 +67,4 @@ class LocalizePlates:
         self._status = request.status
 
     def __del__(self):
-        self.color_tracker.stop_color_tracking()
+        self.color_tracker.perform_tracking(False)

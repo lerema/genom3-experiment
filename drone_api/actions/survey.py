@@ -44,7 +44,7 @@ class Survey:
             logger.warning(
                 f"Speed {self.speed} is not in the range (0, 0.5]. Setting to default"
             )
-            self.speed = None
+            self.speed = 0.5
         xmin = area.get("xmin", -5.0)
         ymin = area.get("ymin", -5.0)
         xmax = area.get("xmax", 5.0)
@@ -89,10 +89,9 @@ class Survey:
             y = ymin
             while y <= ymax:
                 # Compute duration based on speed and distance
-                # if self.speed is not None:
-                #     duration = (
-                #         math.sqrt((x + self._x_step_size) ** 2 + y**2) / self.speed
-                #     )
+                duration = (
+                    math.sqrt((x + self._x_step_size) ** 2 + y**2) / self.speed
+                )
                 input_dict.update(
                     {"x": x, "y": y, "z": z, "yaw": yaw, "duration": duration}
                 )

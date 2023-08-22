@@ -83,13 +83,12 @@ class Connector:
 
         # Better to start with common modules first
         self._modules = list(MODULES["common"]) + list(MODULES["dedicated"])
-        
+
     def init(self):
         for module in self._modules:
             self.components[module] = self._connectors[module]()
             if USE_ROBOT:
                 time.sleep(1)  # Hack to let modules start
-
 
     def setup(self):
         """Start the drone.
@@ -333,3 +332,8 @@ class Connector:
     def ctdrone(self):
         """Return ctdrone handle"""
         return self.components["CT_drone"].genomix
+
+    @property
+    def color_tracker(self):
+        """Return color tracker handle"""
+        return self.components["ColorTracker"].genomix
