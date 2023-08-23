@@ -50,6 +50,10 @@ class ProblemDefinition:
     def _setup_experiment(self):
         self._drone_1 = Connector(drone_id=1)
         self._action_1 = Actions(self._drone_1.components, robot_id=1)
+
+        # Initialize the components
+        self._drone_1.init()
+        # Setup the components
         self._drone_1.setup()
 
     def _setup_domain(self):

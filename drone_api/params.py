@@ -183,6 +183,8 @@ class DroneCommon:
             "rgb": (1, 1, 140),  # blue
             "threshold": 40,
             "distance_tolerance": 1.0,
+            "object_size": {"object_width": 0.5, "object_height": 0.5},
+            "focal_length": 480.0,  # In pixels
         }
         if is_robot:
             COLOR_TRACKER["ports"] = [

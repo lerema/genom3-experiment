@@ -16,6 +16,8 @@ import logging
 
 logger = logging.getLogger("[ColorTracker]")
 
+from drone_api import USE_ROBOT
+
 
 class ColorTracker:
     """Connect to ColorTracker and load all pocolib modules"""
@@ -36,6 +38,11 @@ class ColorTracker:
                 "threshold": self.params["threshold"],
             }
         )
+
+        self.component.set_object_size(**self.params["object_size"])
+        self.component.set_focal_length(self.params["focal_length"])
+        if not USE_ROBOT:
+            self.component.show_image_frames(True)
         self.component.set_distance_threshold(self.params["distance_tolerance"])
         for local, remote in self.params["ports"]:
             self.component.connect_port(local=local, remote=remote)
