@@ -186,15 +186,18 @@ class OptimizeDistance:
 
         [current_x, current_y, _] = self.get_robot_pose(robot.id)
 
-        # Reorder the plates info based on distance from current position
+        # Reorder the plates info based on number of blobs detected
         plate_poses = []
-        for plate_info in self._plates_info.values():
-            plate_poses.append((plate_info["POSE"][0], plate_info["POSE"][1]))
+        for plate in self._plates_info.values():
+            plate_poses.append(plate["POSE"])
+
+        # Sort the plates based on number of blobs detected
+        plate_poses.sort(
+            key=lambda x: ((x[0] - current_x) ** 2 + (x[1] - current_y) ** 2) ** 0.5
+        )
 
         # Shortest path
         # self.shortest_path((current_x, current_y), plate_poses)
-
-        logger.info(f"Reordered plates info based on distance for {robot.name}")
 
         self.set_plates_info(plate_poses)
 
@@ -212,21 +215,15 @@ class OptimizeDistance:
         """Get the plate information."""
         data = {}
         for plate_id in range(JSONSerializer().get("ENV.NO_PLATES")):
-            data[plate_id] = JSONSerializer().get(f"ENV.PLATES.{plate_id}")
-            logger.debug(f"Getting the plate information {plate_id}")
+            data[plate_id] = JSONSerializer().get(f"ENV.PLATES.{plate_id + 1}")
+            logger.debug(f"Getting the plate information {plate_id + 1}")
 
         return data
 
-    def set_plates_info(self, data):
+    def set_plates_info(self, plates_info):
         """Push the plates information."""
-        for i, (x, y) in enumerate(data):
-            data = {
-                "ID": i,
-                "POSE": [x, y, 0],
-                "NAME": f"plate_{i}",
-                "INSPECTED": False,
-            }
-            JSONSerializer().update(f"ENV.PLATES.{i}", data)
+        for i, data in enumerate(plates_info):
+            JSONSerializer().update(f"ENV.PLATES.{i + 1}", data)
 
     def shortest_path(self, current_pose, plate_points):
         # Create a weighted graph where nodes are the points and edges are the distances between them

@@ -100,7 +100,7 @@ def all_plates_inspected():
         return False
 
     for plate_id in range(get_plates_no()):
-        data = get_plate_info(plate_id)
+        data = get_plate_info(plate_id + 1)
 
         if bool(data["INSPECTED"]) is not True:
             return False

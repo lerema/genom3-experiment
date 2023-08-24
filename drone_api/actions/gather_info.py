@@ -117,6 +117,7 @@ class GatherInfo:
     def __call__(self, **kwargs):
         logger.info(f"Gathering info for robot {self._id}")
 
+        self.color_tracker.perform_tracking(False)
         result = self.color_tracker.PlatesInfo()
         self._plates_info = self._prepare_plates_info(result)
 
@@ -145,15 +146,25 @@ class GatherInfo:
                     )
                     self._data.update(f"ENV.PLATES.{info['id']}.INSPECTED", False)
                     self._data.update("ENV.PLATES.ORDER_OPTIMIZED", False)
+                    self._data.update(
+                        f"ENV.PLATES.{info['id']}.NUM_BLOBS", info["num_blobs"]
+                    )
                 self._data.update("ENV.NO_PLATES", len(self._plates_info))
 
     def _prepare_plates_info(self, result):
         plates_info = []
 
-        for plate in result["PlatesInfo"]["seq"]:
+        for i, plate in enumerate(result["PlatesInfo"]["seq"]):
             x = plate["coord"]["x"]
             y = plate["coord"]["y"]
             z = plate["coord"]["z"]
-            plates_info.append({"pose": [x, y, z], "id": plate["index"]})
+            num_blobs = plate["num_blobs"]
+            plates_info.append(
+                {
+                    "pose": [x, y, z],
+                    "id": i + 1,
+                    "num_blobs": num_blobs,
+                }
+            )
 
         return plates_info
