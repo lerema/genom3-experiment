@@ -28,6 +28,7 @@ EXPECTED_MODULES = [
     "camgazebo",
     "arucotag",
     "camviz",
+    "FoxgloveStudio",
 ]
 
 COMMON_MODULES = [

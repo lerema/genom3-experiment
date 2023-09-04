@@ -233,6 +233,15 @@ class DroneCommon:
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
             "markers": [10],  # , 11, 12, 13],
         }
+
+        FOXGLOVE = {
+            "ports": [
+                (f"frames/gazebo{drone_id}", f"camgazebo{drone_id}/frame/raw"),
+            ],
+            "ports_info": [
+                (f"gazebo{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+            ],
+        }
         if is_robot:
             # Robot params
             ARUCOTAG["ports"] = [
@@ -285,6 +294,7 @@ class DroneCommon:
             "arucotag": ARUCOTAG,
             "camgazebo": CAM_GAZEBO,
             "camviz": CAM_VIZ,
+            "FoxgloveStudio": FOXGLOVE,
         }
 
         if is_robot:

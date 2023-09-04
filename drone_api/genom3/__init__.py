@@ -24,6 +24,7 @@ from .optitrack import Optitrack
 from .pom import POM
 from .rotorcraft import RotorCraft
 from .tf2 import TF2
+from .foxglove import FoxgloveStudio
 
 __all__ = [
     "CTDrone",
@@ -38,4 +39,5 @@ __all__ = [
     "CamGazebo",
     "CamViz",
     "D435Camera",
+    "FoxgloveStudio",
 ]

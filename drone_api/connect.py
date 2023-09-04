@@ -79,6 +79,7 @@ class Connector:
             "d435": self._connect_d435,
             "camgazebo": self._connect_camgazebo,
             "camviz": self._connect_camviz,
+            "FoxgloveStudio": self._connect_foxglove,
         }
 
         # Better to start with common modules first
@@ -223,6 +224,13 @@ class Connector:
         python = D435Camera(self.components["d435"].genomix, params=self.params)()
         return GenomixComponent(python, self.components["d435"].genomix)
 
+    def _connect_foxglove(self) -> FoxgloveStudio:
+        """Connect to Foxglove and load all pocolib modules"""
+        python = FoxgloveStudio(
+            self.components["FoxgloveStudio"].genomix, params=self.params
+        )()
+        return GenomixComponent(python, self.components["FoxgloveStudio"].genomix)
+
     def get_python_components(self):
         """Get all python components"""
         python_components = {}
@@ -337,3 +345,8 @@ class Connector:
     def color_tracker(self):
         """Return color tracker handle"""
         return self.components["ColorTracker"].genomix
+
+    @property
+    def foxglove(self):
+        """Return foxglove handle"""
+        return self.components["FoxgloveStudio"].genomix
