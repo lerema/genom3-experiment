@@ -22,6 +22,10 @@ repositories:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-idl.git
     version: fb72fae56e6244e84f3be4aab3a44803fa7bcd44
+  foxglove-genom3:
+    type: git
+    url: https://github.com/lerema/foxglove-genom3.git
+    version: main
   minnie-tf2:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/minnie-tf2.git

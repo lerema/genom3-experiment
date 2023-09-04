@@ -31,6 +31,10 @@ repositories:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/felix-idl.git
     version: master
+  foxglove-genom3:
+    type: git
+    url: https://github.com/lerema/foxglove-genom3.git
+    version: main
   joystick-genom3:
     type: git
     url: https://git.openrobots.org/robots/joystick-genom3.git

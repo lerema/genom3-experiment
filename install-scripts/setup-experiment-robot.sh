@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"/..
 INSTALL_DIR=$(realpath "$INSTALL_DIR")
 
-GENOM_MODULES="felix-idl vision-idl felix-g3utils rotorcraft-genom3 arucotag-genom3 ct_drone color-tracker-genom3 minnie-tf2 d435-genom3"
+GENOM_MODULES="felix-idl vision-idl felix-g3utils rotorcraft-genom3 arucotag-genom3 ct_drone color-tracker-genom3 minnie-tf2 d435-genom3 foxglove-genom3"
 GENOM_ROS_MODULES=""
 DEPENDENCIES_FILE="$SCRIPT_DIR"/drone-genom3-robot.repos
 
