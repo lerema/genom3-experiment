@@ -28,7 +28,7 @@ fi
 tmux \
     new-session "gazebo ${SCRIPT_DIR}/../gazebo/worlds/single_drone.world --verbose" \; \
     split-window -p 66 "joystick-pocolibs -f |& tee -i $logdir/joystick.log" \; \
-    split-window -p 50 "CT_drone-pocolibs -f -i CT_drone1 |& tee -i $logdir/CT_drone.log" \; \
+    split-window -p 50 "FoxgloveStudio-pocolibs -f -i FoxgloveStudio1 |& tee -i $logdir/FoxgloveStudio.log" \; \
     split-window -p 50 "arucotag-pocolibs -f -i arucotag1 |& tee -i $logdir/arucotag.log" \; \
     split-window -h -t 0 "ColorTracker-pocolibs -f -i ColorTracker1 |& tee -i $logdir/ColorTracker.log" \; \
     split-window -h -t 2 "camgazebo-pocolibs -f -i camgazebo1 |& tee -i $logdir/arucotag.log" \; \

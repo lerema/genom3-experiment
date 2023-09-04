@@ -24,7 +24,7 @@ fi
 tmux \
     new-session "gazebo ${SCRIPT_DIR}/../gazebo/worlds/single_drone.world --verbose" \; \
     split-window -p 50 "joystick-pocolibs -f |& tee -i $logdir/joystick.log" \; \
-    split-window -p 83 "ColorTracker-pocolibs -i ColorTracker1 -f |& tee -i $logdir/ColorTracker1.log" \; \
+    split-window -p 83 "FoxgloveStudio-pocolibs -i FoxgloveStudio1 -f |& tee -i $logdir/FoxgloveStudio1.log" \; \
     split-window -p 50 "arucotag-pocolibs -i arucotag1 -f |& tee -i $logdir/arucotag1.log" \; \
     split-window -h -t 1 "optitrack-pocolibs -f & tee -i $logdir/optitrack.log" \; \
     split-window -h -t 3 "camgazebo-pocolibs -i camgazebo1 -f |& tee -i $logdir/camgazebo1.log" \; \
@@ -37,7 +37,7 @@ tmux \
     split-window -h -t 2 "rotorcraft-pocolibs -i rotorcraft2 -f & tee -i $logdir/rotorcraft2.log" \; \
     split-window -h -t 4 "maneuver-pocolibs -i maneuver2 -f |& tee -i $logdir/maneuver2.log" \; \
     split-window -h -t 6 "nhfc-pocolibs -i nhfc2 -f & tee -i $logdir/nhfc2.log" \; \
-    new-window "ColorTracker-pocolibs -i ColorTracker2 -f |& tee -i $logdir/ColorTracker2.log" \; \
+    new-window "FoxgloveStudio-pocolibs -i FoxgloveStudio2 -f |& tee -i $logdir/FoxgloveStudio2.log" \; \
     split-window -p 80 "arucotag-pocolibs -i arucotag2 -f |& tee -i $logdir/arucotag2.log" \; \
     split-window -p 80 "$user_cmd" \; \
     split-window -h -t 0 "camgazebo-pocolibs -i camgazebo2 -f |& tee -i $logdir/camgazebo2.log" \; \
