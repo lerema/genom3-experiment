@@ -237,9 +237,15 @@ class DroneCommon:
         FOXGLOVE = {
             "ports": [
                 (f"frames/gazebo{drone_id}", f"camgazebo{drone_id}/frame/raw"),
+                (f"measure/imu", f"rotorcraft{drone_id}/imu"),
+                (f"measure/mag", f"rotorcraft{drone_id}/mag"),
+                (f"states/drone", f"pom{drone_id}/frame/robot"),
             ],
             "ports_info": [
                 (f"gazebo{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
+                ("imu", "::FoxgloveStudio::or_sensor_imu"),
+                ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
             ],
         }
         if is_robot:
