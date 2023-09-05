@@ -88,7 +88,7 @@ class DroneCommon:
         }
 
         if is_robot:
-            NHFC["geometry"] = {"rz": -1}
+            NHFC["geometry"] = {"rz": -1, "mass": 1.612}
             NHFC["servo_gain"] = (20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
             NHFC["wlimit"] = None
         else:
