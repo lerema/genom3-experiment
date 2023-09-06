@@ -22,7 +22,7 @@ from types import SimpleNamespace
 from typing import Dict, NamedTuple, List
 
 import genomix
-from drone_api import MODULES, USE_ROBOT
+from drone_api import MODULES, USE_ROBOT, IS_OUTDOOR
 from drone_api.genom3 import *  # noqa: F401, F403 # pylint: disable=unused-wildcard-import
 from drone_api.params import DroneCommon
 from drone_api.utils import setup_logging
@@ -50,7 +50,7 @@ class Connector:
         self, drone_id: int = 0, host: str = "localhost", port: int = 8080
     ) -> None:
         self.drone_id: int = drone_id
-        self.params: Dict[str, any] = DroneCommon()(drone_id, is_robot=USE_ROBOT)
+        self.params: Dict[str, any] = DroneCommon()(drone_id, is_robot=USE_ROBOT, is_outdoor=IS_OUTDOOR)
         self.components: Dict[str, GenomixComponent] = {}
 
         # Connect to genomix server
@@ -80,6 +80,7 @@ class Connector:
             "camgazebo": self._connect_camgazebo,
             "camviz": self._connect_camviz,
             "FoxgloveStudio": self._connect_foxglove,
+            "gps": self._connect_gps,
         }
 
         # Better to start with common modules first
@@ -230,6 +231,11 @@ class Connector:
             self.components["FoxgloveStudio"].genomix, params=self.params
         )()
         return GenomixComponent(python, self.components["FoxgloveStudio"].genomix)
+
+    def _connect_gps(self) -> Gps:
+        """Connect to Gps and load all pocolib modules"""
+        python = Gps(self.components["gps"].genomix, params=self.params)()
+        return GenomixComponent(python, self.components["gps"].genomix)
 
     def get_python_components(self):
         """Get all python components"""

@@ -15,6 +15,7 @@ import os
 
 
 USE_ROBOT = bool(os.environ.get("USE_ROBOT", False) == "1")
+IS_OUTDOOR = bool(os.environ.get("IS_OUTDOOR", False) == "1")
 DATA_PATH = "./data"
 
 EXPECTED_MODULES = [
@@ -22,9 +23,7 @@ EXPECTED_MODULES = [
     "maneuver",
     "rotorcraft",
     "nhfc",
-    # "CT_drone",
     "ColorTracker",
-    # "tf2",
     "camgazebo",
     "arucotag",
     "camviz",
@@ -32,7 +31,6 @@ EXPECTED_MODULES = [
 ]
 
 COMMON_MODULES = [
-    # "tf2",
     "optitrack"
 ]
 
@@ -40,6 +38,10 @@ if USE_ROBOT:
     EXPECTED_MODULES.remove("camgazebo")
     EXPECTED_MODULES.remove("camviz")
     EXPECTED_MODULES.insert(0, "d435")
+
+if IS_OUTDOOR:
+    COMMON_MODULES.append("gps")
+    COMMON_MODULES.remove("optitrack")
 
 MODULES = {
     "expected": EXPECTED_MODULES,

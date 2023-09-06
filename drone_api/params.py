@@ -20,7 +20,7 @@ ROBOT_NAME = "Lerema"
 
 
 class DroneCommon:
-    def __call__(self, drone_id=0, is_robot=False):
+    def __call__(self, drone_id=0, is_robot=False, is_outdoor=False):
         # To access both experiments
         drone_id = "" if drone_id == 0 else str(drone_id)
 
@@ -35,6 +35,11 @@ class DroneCommon:
             OPTITRACK["host_port"] = "1509"
             OPTITRACK["mcast"] = ""
             OPTITRACK["mcast_port"] = ""
+        
+        GPS = {
+            "port": ("/dev/ttyACM0", 115200),
+            "rtk_port": ("gps-base", 8083)
+        }
 
         MANEUVER = {
             "ports": ("state", f"pom{drone_id}/frame/robot"),
@@ -66,7 +71,7 @@ class DroneCommon:
 
         ROTORCRAFT = {}
         if is_robot:
-            ROTORCRAFT["connect"] = ("/dev/ttyUSB0", 500000)
+            ROTORCRAFT["connect"] = ("chimera-5", 500000)
             ROTORCRAFT["ports"] = ("rotor_input", f"nhfc{drone_id}/rotor_input")
             ROTORCRAFT["set_sensor_rate"] = (1000, 0, 16, 1)
         else:
@@ -179,14 +184,14 @@ class DroneCommon:
             "image_info_topic": f"/quad{str(drone_id)}/down_camera_link/down_info_image",
         }
 
-        COLOR_TRACKER = {
-            "rgb": (1, 1, 140),  # blue
-            "threshold": 40,
-            "distance_tolerance": 1.0,
-            "object_size": {"object_width": 0.5, "object_height": 0.5},
-            "focal_length": 480.0,  # In pixels
-        }
         if is_robot:
+            COLOR_TRACKER = {
+                "rgb": (70, 20, 20),  # red in d435
+                "threshold": 40,
+                "distance_tolerance": 1.0,
+                "object_size": {"object_width": 0.195, "object_height": 0.3},
+                "focal_length": 1092.0,  # In pixels
+            }
             COLOR_TRACKER["ports"] = [
                 ("DronePose", f"pom{drone_id}/frame/robot"),
                 ("Frame", "d435/frame/raw"),
@@ -194,6 +199,13 @@ class DroneCommon:
                 ("Extrinsics", "d435/extrinsics"),
             ]
         else:
+            COLOR_TRACKER = {
+                "rgb": (1, 1, 140),  # blue
+                "threshold": 40,
+                "distance_tolerance": 1.0,
+                "object_size": {"object_width": 0.5, "object_height": 0.5},
+                "focal_length": 480.0,  # In pixels
+            }
             COLOR_TRACKER["ports"] = [
                 ("DronePose", f"pom{drone_id}/frame/robot"),
                 ("Frame", f"camgazebo{drone_id}/frame/raw"),
@@ -205,14 +217,21 @@ class DroneCommon:
             "history_length": 0.5,
         }
         if is_robot:
-            POM["ports"] = [
-                ("measure/imu", f"rotorcraft{drone_id}/imu"),
-                ("measure/mocap", "optitrack/bodies/Lerema"),
+            ports = [
+                ("measure/imu", f"rotorcraft{drone_id}/imu")
             ]
-            POM["add_measurements"] = {
-                "imu": (0, 0, 0, 0, 0, 0),
-                "mocap": (0, 0, 0, 0, 0, 0),
-            }
+            if not is_outdoor:
+                ports.append(("measure/mocap", "optitrack/bodies/Lerema"))
+            POM["ports"] = ports
+            
+            if is_outdoor:
+                POM["add_measurements"] = {
+                    "imu": (0, 0, 0, 0, 0, 0)}                
+            else:
+                POM["add_measurements"] = {
+                    "imu": (0, 0, 0, 0, 0, 0),
+                    "mocap": (0, 0, 0, 0, 0, 0),
+                }
 
             POM["set_mag_field"] = None
         else:
@@ -234,8 +253,24 @@ class DroneCommon:
             "markers": [10],  # , 11, 12, 13],
         }
 
-        FOXGLOVE = {
-            "ports": [
+        FOXGLOVE = {}
+        
+        if is_robot:
+            FOXGLOVE = {"ports": [
+                ("frames/d435", "d435/frame/raw"),
+                (f"measure/imu", f"rotorcraft{drone_id}/imu"),
+                (f"measure/mag", f"rotorcraft{drone_id}/mag"),
+                (f"states/drone", f"pom{drone_id}/frame/robot"),
+            ],
+            "ports_info": [
+                ("d435", "::FoxgloveStudio::or_sensor_frame"),
+                ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
+                ("imu", "::FoxgloveStudio::or_sensor_imu"),
+                ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
+            ],
+            }
+        else:
+            FOXGLOVE = {"ports": [
                 (f"frames/gazebo{drone_id}", f"camgazebo{drone_id}/frame/raw"),
                 (f"measure/imu", f"rotorcraft{drone_id}/imu"),
                 (f"measure/mag", f"rotorcraft{drone_id}/mag"),
@@ -248,6 +283,7 @@ class DroneCommon:
                 ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
             ],
         }
+
         if is_robot:
             # Robot params
             ARUCOTAG["ports"] = [
@@ -307,6 +343,10 @@ class DroneCommon:
             components.pop("camgazebo")
             components.pop("camviz")
             components["d435"] = D435
+        
+        if is_outdoor:
+            components["gps"] = GPS
+            components.pop("optitrack")
 
         return components
 

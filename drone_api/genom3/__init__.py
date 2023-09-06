@@ -25,6 +25,7 @@ from .pom import POM
 from .rotorcraft import RotorCraft
 from .tf2 import TF2
 from .foxglove import FoxgloveStudio
+from .gps import Gps
 
 __all__ = [
     "CTDrone",
@@ -40,4 +41,5 @@ __all__ = [
     "CamViz",
     "D435Camera",
     "FoxgloveStudio",
+    "Gps"
 ]

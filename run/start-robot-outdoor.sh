@@ -22,7 +22,7 @@ fi
 tmux \
     new-session "d435-pocolibs -f|& tee -i $logdir/d435.log" \; \
     split-window -p 66 "tf2-pocolibs -f |& tee -i $logdir/tf2.log" \; \
-    split-window -p 50 "CT_drone-pocolibs -f |& tee -i $logdir/CT_drone.log" \; \
+    split-window -p 50 "FoxgloveStudio-pocolibs -f |& tee -i $logdir/FoxgloveStudio.log" \; \
     split-window -p 50 "arucotag-pocolibs -f |& tee -i $logdir/arucotag.log" \; \
     split-window -h -t 0 "ColorTracker-pocolibs -f |& tee -i $logdir/ColorTracker.log" \; \
     split-window -h -t 2 "joystick-pocolibs -f |& tee -i $logdir/joystick.log" \; \
