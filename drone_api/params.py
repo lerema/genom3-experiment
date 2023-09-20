@@ -35,11 +35,8 @@ class DroneCommon:
             OPTITRACK["host_port"] = "1509"
             OPTITRACK["mcast"] = ""
             OPTITRACK["mcast_port"] = ""
-        
-        GPS = {
-            "port": ("/dev/ttyACM0", 115200),
-            "rtk_port": ("gps-base", 8083)
-        }
+
+        GPS = {"port": ("/dev/ttyACM0", 115200), "rtk_port": ("gps-base", 8083)}
 
         MANEUVER = {
             "ports": ("state", f"pom{drone_id}/frame/robot"),
@@ -217,16 +214,13 @@ class DroneCommon:
             "history_length": 0.5,
         }
         if is_robot:
-            ports = [
-                ("measure/imu", f"rotorcraft{drone_id}/imu")
-            ]
+            ports = [("measure/imu", f"rotorcraft{drone_id}/imu")]
             if not is_outdoor:
                 ports.append(("measure/mocap", "optitrack/bodies/Lerema"))
             POM["ports"] = ports
-            
+
             if is_outdoor:
-                POM["add_measurements"] = {
-                    "imu": (0, 0, 0, 0, 0, 0)}                
+                POM["add_measurements"] = {"imu": (0, 0, 0, 0, 0, 0)}
             else:
                 POM["add_measurements"] = {
                     "imu": (0, 0, 0, 0, 0, 0),
@@ -254,35 +248,47 @@ class DroneCommon:
         }
 
         FOXGLOVE = {}
-        
+
         if is_robot:
-            FOXGLOVE = {"ports": [
-                ("frames/d435", "d435/frame/raw"),
-                (f"measure/imu", f"rotorcraft{drone_id}/imu"),
-                (f"measure/mag", f"rotorcraft{drone_id}/mag"),
-                (f"states/drone", f"pom{drone_id}/frame/robot"),
-            ],
-            "ports_info": [
-                ("d435", "::FoxgloveStudio::or_sensor_frame"),
-                ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
-                ("imu", "::FoxgloveStudio::or_sensor_imu"),
-                ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
-            ],
+            FOXGLOVE = {
+                "ports": [
+                    ("frames/d435", "d435/frame/raw"),
+                    (
+                        f"frames/CT{drone_id}",
+                        f"ColorTracker{drone_id}/output",
+                    ),
+                    (f"measure/imu", f"rotorcraft{drone_id}/imu"),
+                    (f"measure/mag", f"rotorcraft{drone_id}/mag"),
+                    (f"states/drone", f"pom{drone_id}/frame/robot"),
+                ],
+                "ports_info": [
+                    ("d435", "::FoxgloveStudio::or_sensor_frame"),
+                    (f"CT{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                    ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
+                    ("imu", "::FoxgloveStudio::or_sensor_imu"),
+                    ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
+                ],
             }
         else:
-            FOXGLOVE = {"ports": [
-                (f"frames/gazebo{drone_id}", f"camgazebo{drone_id}/frame/raw"),
-                (f"measure/imu", f"rotorcraft{drone_id}/imu"),
-                (f"measure/mag", f"rotorcraft{drone_id}/mag"),
-                (f"states/drone", f"pom{drone_id}/frame/robot"),
-            ],
-            "ports_info": [
-                (f"gazebo{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
-                ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
-                ("imu", "::FoxgloveStudio::or_sensor_imu"),
-                ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
-            ],
-        }
+            FOXGLOVE = {
+                "ports": [
+                    (f"frames/gazebo{drone_id}", f"camgazebo{drone_id}/frame/raw"),
+                    (
+                        f"frames/CT{drone_id}",
+                        f"ColorTracker{drone_id}/output",
+                    ),
+                    (f"measure/imu", f"rotorcraft{drone_id}/imu"),
+                    (f"measure/mag", f"rotorcraft{drone_id}/mag"),
+                    (f"states/drone", f"pom{drone_id}/frame/robot"),
+                ],
+                "ports_info": [
+                    (f"gazebo{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                    (f"CT{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                    ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
+                    ("imu", "::FoxgloveStudio::or_sensor_imu"),
+                    ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
+                ],
+            }
 
         if is_robot:
             # Robot params
@@ -343,7 +349,7 @@ class DroneCommon:
             components.pop("camgazebo")
             components.pop("camviz")
             components["d435"] = D435
-        
+
         if is_outdoor:
             components["gps"] = GPS
             components.pop("optitrack")
