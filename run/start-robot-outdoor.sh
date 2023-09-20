@@ -27,7 +27,7 @@ tmux \
     split-window -h -t 0 "ColorTracker-pocolibs -f |& tee -i $logdir/ColorTracker.log" \; \
     split-window -h -t 2 "joystick-pocolibs -f |& tee -i $logdir/joystick.log" \; \
     split-window -h -t 4 "rotorcraft-pocolibs -f|& tee -i $logdir/rotorcraft.log" \; \
-    new-window "gps-pocolibs -f |& tee -i $logdir/optitrack.log" \; \
+    new-window "gps-pocolibs -f |& tee -i $logdir/gps.log" \; \
     split-window -p 66 "maneuver-pocolibs -f|& tee -i $logdir/maneuver.log" \; \
     split-window -p 50 "$user_cmd" \; \
     split-window -h -t 0 "nhfc-pocolibs -f |& tee -i $logdir/nhfc.log" \; \

@@ -26,6 +26,10 @@ repositories:
     type: git
     url: https://github.com/lerema/foxglove-genom3.git
     version: main
+  gps-genom3:
+    type: git
+    url: https://git.openrobots.org/robots/gps-genom3.git
+    version: master
   minnie-tf2:
     type: git
     url: git://redmine.laas.fr/laas/users/felix/minnie-tf2.git
