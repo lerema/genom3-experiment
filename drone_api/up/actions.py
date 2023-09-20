@@ -187,19 +187,11 @@ class OptimizeDistance:
         [current_x, current_y, _] = self.get_robot_pose(robot.id)
 
         # Reorder the plates info based on number of blobs detected
-        plate_poses = []
-        for plate in self._plates_info.values():
-            plate_poses.append(plate["POSE"])
-
-        # Sort the plates based on number of blobs detected
-        plate_poses.sort(
-            key=lambda x: ((x[0] - current_x) ** 2 + (x[1] - current_y) ** 2) ** 0.5
+        plates_info = sorted(
+            self._plates_info.values(), key=lambda x: x["NUM_BLOBS"], reverse=True
         )
 
-        # Shortest path
-        # self.shortest_path((current_x, current_y), plate_poses)
-
-        self.set_plates_info(plate_poses)
+        self.set_plates_info(plates_info)
 
         # Update Optimization state
         JSONSerializer().update("ENV.PLATES.ORDER_OPTIMIZED", True)

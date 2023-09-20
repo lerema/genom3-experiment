@@ -113,7 +113,7 @@ class ProblemDefinition:
         if has_plates():
             # Add plate locations to the problem as object locations
             for plate_id in range(get_plates_no()):
-                plate_info = get_plate_info(plate_id)
+                plate_info = get_plate_info(plate_id + 1)
                 plate = Location(
                     plate_info["NAME"],
                     x=plate_info["POSE"][0],
@@ -121,6 +121,10 @@ class ProblemDefinition:
                     z=1.0,
                 )
                 objects.append(plate)
+
+                # Only add expected number of plates to start with
+                if plate_id + 1 == 5:
+                    break
 
         is_location_inspected = problem.fluent("is_location_inspected")
         is_plate_inspected = problem.fluent("is_plate_inspected")
