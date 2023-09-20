@@ -75,17 +75,15 @@ puts "simu: $simu, cam: $cam, use_hippo: $use_hippo, use_tf: $use_tf, mw: $mw, l
 
 # UAV PARAMETERS
 
-# GENOMIX & RPATH
-#set host localhost
-
 package require genomix
-#set g [genomix::connect $host:8080]
+#set g [genomix::connect localhost:8080]
 
 set g [genomix::localhost]
 
 
 if {$robot} {
     $g rpath /home/shasthamsa/drone-experiment/lib/genom/pocolibs/plugins/
+    $g rpath /home/felix/work/lib/genom/$mw/plugins/
 } elseif {$::env(USER) eq "felix"} {
     $g rpath $::env(HOME)/work/lib/genom/$mw/plugins/
     $g rpath $::env(HOME)/openrobots/lib/genom/$mw/plugins/
@@ -129,17 +127,19 @@ proc init_gps {} {
     if {$gps} {
 	
 	# set the experiment in local 0,0,0 
-    set info [gps::info]
-	lassign [dict get $info info llh] latitude lat longitude long height h
-	gps::set_reference -- $lat $long $h
+#	set info [gps::info]
+#	lassign [dict get $info info llh] latitude lat longitude long height h
+	gps::set_reference {reference  {latitude 43.561685463999993 longitude 1.4769517219999999 height 194.02610000000001}}
+    # non-ground pose    {latitude 43.561690700999996 longitude 1.4769556049999999 height 194.9186}
 
 	#start log now to avoir the set_reference jump...
 	gps::log ${log_dir}/gps.log 1
     
-	pom::add_measurement {port gps x -0. y 0. z 0. roll 0. pitch 0. yaw 0.}
+	pom::set_mag_field { magdir   {x 4.8113424001824399e-05 y -1.7750294013627847e-05 z -3.478261640180716e-05}}
 
+	pom::add_measurement {port gps x -0. y 0. z 0. roll 0. pitch 0. yaw 0.}
 	pom::add_measurement { port mag x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
-	pom::set_mag_field { magdir {x 1.69e-05 y 2.55e-06 z -1.21e-05}}
+	pom::add_measurement { port imu x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
 
 	nhfc::set_position -- 0. 0. 0. 0. 
 
@@ -159,7 +159,8 @@ proc init {} {
 	if {$gps} {
 	    # gps::set_timestamp_mode {tsmode ::gps::clock_utc}
 
-	    gps::connect /dev/ttyACM0 115200
+	    # gps::connect /dev/ttyACM2 115200
+	    gps::connect /dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00 115200
 	    gps::connect_rtk gps-base 8083
 	} else {
 	    optitrack::connect { host muybridge host_port 1510 mcast 239.192.168.30 mcast_port 1511 }
@@ -184,8 +185,6 @@ proc init {} {
 	pom::connect_port { local measure/mocap remote optitrack/bodies/QR }
     }
 
-    pom::add_measurement { port imu x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
-
     
     if {!$gps} {
 	pom::add_measurement { port mocap x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
@@ -203,6 +202,8 @@ proc init {} {
     maneuver::connect_port { local state remote pom/frame/robot }
     if {$simu} {
 	maneuver::set_velocity_limit {v 2 w 1}
+    } else {
+	maneuver::set_velocity_limit {v 0.5 w 0.5}
     }
     
     
@@ -270,6 +271,7 @@ proc init {} {
     }
     
     if {$robot} {
+	::nhfc::set_saturation {sat {x 0.2 v 0.1 ix 0}}
 	nhfc::set_servo_gain { gain {Kpxy 20 Kpz 25 Kqxy 3 Kqz 0.3 Kvxy 15
 	    Kvz 20  Kwxy 0.3 Kwz 0.03 Kixy 0.5  Kiz 3 } }
     } else {
@@ -382,17 +384,18 @@ proc get_frame_robot_xyz {} {
 # SETUP
 proc setup {} {
     global cam
-#    start_log
+
+    start_log
 
     rotorcraft::start
-    rotorcraft::servo &
 
     nhfc::set_current_position
     nhfc::servo &
+    rotorcraft::servo &
 
     maneuver::set_bounds -- -100 100 -100 100 -2 30 -10 10
     maneuver::set_current_state
-    maneuver::take_off { height 0.25 duration 0 }
+    maneuver::take_off { height 0.15 duration 0 }
 
     if {$cam} {
 	CT_drone::PublishOccupancyGrid &  
@@ -414,10 +417,11 @@ proc land {} {
 
     if {$robot} {
 	maneuver::take_off {height 0.15 duration 0 }
+
     } else {
 	maneuver::take_off {height 0.05 duration 0 }
     }
-    rotorcraft::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
+    rotorcraft::stop
 }
 
 proc stop {} {
@@ -506,16 +510,32 @@ proc carre {} {
     global robot
 
     if {$robot} {
-	::maneuver::goto {x 0.5 y 0.5 z 0.7 yaw 2 duration 0}
-	::maneuver::goto {x 0.5 y -0.5 z 0.5 yaw -2 duration 0}
-	::maneuver::goto {x -0.5 y -0.5 z 0.7 yaw 2 duration 0}
-	::maneuver::goto {x -0.5 y 0.5 z 0.3 yaw -2 duration 0}
+	::maneuver::goto {x 0.5 y 0.5 z 0.4 yaw 0 duration 0}
+	::maneuver::goto {x 0.5 y -0.5 z 0.5 yaw 0 duration 0}
+	::maneuver::goto {x -0.5 y -0.5 z 0.3 yaw 0 duration 0}
+	::maneuver::goto {x -0.5 y 0.5 z 0.5 yaw 0 duration 0}
+	::maneuver::goto {x -0. y 0. z 0.5 yaw 0 duration 0}
     } else {
 	::maneuver::set_bounds -- -10 10 -10 10 -1 10 -4 4
 	::maneuver::goto {x 6 y 6 z 1.7 yaw 2 duration 0}
 	::maneuver::goto {x 6 y -6 z 2.7 yaw -2 duration 0}
 	::maneuver::goto {x -6 y -6 z 0.7 yaw 2 duration 0}
 	::maneuver::goto {x -6 y 6 z 3.7 yaw -2 duration 0}
+    }
+}
+
+proc arena {} {
+    global gps
+
+    if {$gps} {
+	::maneuver::goto {x -2 y 11 z 1.5 yaw 0 duration 0}
+	::maneuver::goto {x -10 y 5 z 1.0 yaw 0 duration 0}
+	::maneuver::goto {x 0 y -8 z 1.5 yaw 0 duration 0}
+	::maneuver::goto {x 8 y -2 z 1.0 yaw 0 duration 0}
+	::maneuver::goto {x -2 y 11 z 1.5 yaw 0 duration 0}
+	::maneuver::goto {x 0 y 0 z 0.5 yaw 0 duration 0}
+    } else {
+	puts  "The inside arena is not big enough... use this procedure outside only."
     }
 }
 
