@@ -34,6 +34,8 @@ class Gps:
         self.component.connect(self.params["port"][0], self.params["port"][1]
         )
         self.component.connect_rtk(self.params["rtk_port"][0], self.params["rtk_port"][1])
+        
+        self.component.set_reference(reference=self.params["reference"])
         logger.info("Connected to Gps")
 
         return self

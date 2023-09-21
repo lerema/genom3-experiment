@@ -36,7 +36,7 @@ class DroneCommon:
             OPTITRACK["mcast"] = ""
             OPTITRACK["mcast_port"] = ""
 
-        GPS = {"port": ("/dev/ttyACM0", 115200), "rtk_port": ("gps-base", 8083)}
+        GPS = {"port": ("/dev/ttyACM0", 115200), "rtk_port": ("gps-base", 8083), "reference": {"latitude": 43.561685463999993, "longitude": 1.4769517219999999, "altitude": 194.02610000000001}}
 
         MANEUVER = {
             "ports": ("state", f"pom{drone_id}/frame/robot"),
