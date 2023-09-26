@@ -52,6 +52,9 @@ class NHFC:
                 }
             }
         )
+
+        self.component.set_saturation(sat=self.params["saturation"])
+        self.component.set_control_mode(att_mode="::nhfc::tilt_prioritized")
         if self.params["wlimit"]:
             self.component.set_wlimit(
                 {"wmin": self.params["wlimit"][0], "wmax": self.params["wlimit"][1]}

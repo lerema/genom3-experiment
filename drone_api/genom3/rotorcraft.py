@@ -30,9 +30,6 @@ class RotorCraft:
 
     def __call__(self):
         self._connect(self.params["connect"][0], self.params["connect"][1])
-        self.component.connect_port(
-            {"local": self.params["ports"][0], "remote": self.params["ports"][1]}
-        )
         self._set_sensor_rate(
             self.params["set_sensor_rate"][0],
             self.params["set_sensor_rate"][1],
@@ -44,6 +41,10 @@ class RotorCraft:
             self.component.set_imu_calibration(imu_calibration=calibration)
         else:
             self.component.set_imu_filter(**self.params["imu_filter"])
+
+        self.component.connect_port(
+            {"local": self.params["ports"][0], "remote": self.params["ports"][1]}
+        )
 
         logger.info("Connected to Rotorcraft")
 

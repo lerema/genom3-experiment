@@ -101,7 +101,9 @@ class DroneCommon:
             NHFC["geometry"] = {"rz": -1, "mass": 1.612}
             NHFC["servo_gain"] = (20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
             NHFC["wlimit"] = None
+            NHFC["saturation"] = {"x": 0.2, "v": 0.1, "ix": 0}
         else:
+            NHFC["saturation"] = {"x": 1, "v": 1, "ix": 0}
             NHFC["geometry"] = {
                 "rotors": 4,
                 "cx": 0,
