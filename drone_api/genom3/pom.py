@@ -34,15 +34,15 @@ class POM:
             logger.info(f"Connecting to port {port[0]}:{port[1]}")
             self._connect_port(port[0], port[1])
 
-        for measurement in self.params["add_measurements"].keys():
-            self._add_measurement(measurement)
-
         if self.params["set_mag_field"]:
             self._set_mag_field(
                 x=self.params["set_mag_field"][0],
                 y=self.params["set_mag_field"][1],
                 z=self.params["set_mag_field"][2],
             )
+
+        for measurement in self.params["add_measurements"].keys():
+            self._add_measurement(measurement)
 
         self.component.set_history_length(
             {"history_length": self.params["history_length"]}

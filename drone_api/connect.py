@@ -50,7 +50,9 @@ class Connector:
         self, drone_id: int = 0, host: str = "localhost", port: int = 8080
     ) -> None:
         self.drone_id: int = drone_id
-        self.params: Dict[str, any] = DroneCommon()(drone_id, is_robot=USE_ROBOT, is_outdoor=IS_OUTDOOR)
+        self.params: Dict[str, any] = DroneCommon()(
+            drone_id, is_robot=USE_ROBOT, is_outdoor=IS_OUTDOOR
+        )
         self.components: Dict[str, GenomixComponent] = {}
 
         # Connect to genomix server
@@ -86,8 +88,13 @@ class Connector:
         # Better to start with common modules first
         self._modules = list(MODULES["common"]) + list(MODULES["dedicated"])
 
+    def init_gps(self):
+        self.components["gps"] = self._connectors["gps"]()
+
     def init(self):
         for module in self._modules:
+            if module == "gps":
+                continue
             self.components[module] = self._connectors[module]()
             if USE_ROBOT:
                 time.sleep(1)  # Hack to let modules start
@@ -103,6 +110,25 @@ class Connector:
         self.nhfc.set_current_position()
         self.rotorcraft.servo(ack=1)
         time.sleep(1)
+
+    def wait_for_gps(self):
+        """Wait for GPS to be available and corrected"""
+        gps = self.components["gps"].genomix
+        try:
+            start = time.time()
+            while True:
+                info = gps.info()
+                print("GPS status: ", info["info"]["fix"], end="\r")
+                if info["info"]["fix"] == "::gps::fix_rtk":
+                    break
+                time.sleep(1.0)
+
+            print("Time taken to get GPS fix: ", time.time() - start)
+        except KeyboardInterrupt:
+            print("\n")
+            return
+
+    def take_off(self):
         self.maneuver.take_off(height=0.15, duration=0)
         self.nhfc.servo(ack=1)
         time.sleep(1)
@@ -356,3 +382,8 @@ class Connector:
     def foxglove(self):
         """Return foxglove handle"""
         return self.components["FoxgloveStudio"].genomix
+
+    @property
+    def gps(self):
+        """Return gps handle"""
+        return self.components["gps"].genomix

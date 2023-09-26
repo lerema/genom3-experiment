@@ -36,7 +36,15 @@ class DroneCommon:
             OPTITRACK["mcast"] = ""
             OPTITRACK["mcast_port"] = ""
 
-        GPS = {"port": ("/dev/ttyACM0", 115200), "rtk_port": ("gps-base", 8083), "reference": {"latitude": 43.561685463999993, "longitude": 1.4769517219999999, "altitude": 194.02610000000001}}
+        GPS = {
+            "port": ("/dev/ttyACM0", 115200),
+            "rtk_port": ("gps-base", 8083),
+            "reference": {
+                "latitude": 43.561685463999993,
+                "longitude": 1.4769517219999999,
+                "height": 194.02610000000001,
+            },
+        }
 
         MANEUVER = {
             "ports": ("state", f"pom{drone_id}/frame/robot"),
@@ -214,20 +222,33 @@ class DroneCommon:
             "history_length": 0.5,
         }
         if is_robot:
-            ports = [("measure/imu", f"rotorcraft{drone_id}/imu")]
+            ports = [
+                ("measure/imu", f"rotorcraft{drone_id}/imu"),
+                ("measure/mag", f"rotorcraft{drone_id}/mag"),
+            ]
             if not is_outdoor:
                 ports.append(("measure/mocap", "optitrack/bodies/Lerema"))
+            else:
+                ports.append(("measure/gps", "gps/state"))
             POM["ports"] = ports
 
             if is_outdoor:
-                POM["add_measurements"] = {"imu": (0, 0, 0, 0, 0, 0)}
+                POM["add_measurements"] = {
+                    "gps": (0, 0, 0, 0, 0, 0),
+                    "mag": (0, 0, 0, 0, 0, 0),
+                    "imu": (0, 0, 0, 0, 0, 0),
+                }
             else:
                 POM["add_measurements"] = {
                     "imu": (0, 0, 0, 0, 0, 0),
                     "mocap": (0, 0, 0, 0, 0, 0),
                 }
 
-            POM["set_mag_field"] = None
+            POM["set_mag_field"] = (
+                4.8113424001824399e-05,
+                -1.7750294013627847e-05,
+                -3.478261640180716e-05,
+            )
         else:
             POM["ports"] = [
                 ("measure/imu", f"rotorcraft{drone_id}/imu"),

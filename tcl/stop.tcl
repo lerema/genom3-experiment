@@ -8,12 +8,13 @@ set mw pocolibs
 package require genomix
 set g [genomix::connect $host:8080]
 
-$g rpath  $::env(DRONE_VV_PATH)/lib/genom/$mw/plugins/
+# $g rpath  $::env(DRONE_VV_PATH)/lib/genom/$mw/plugins/
+$g rpath /home/felix/work/lib/genom/$mw/plugins/
 
 $g load rotorcraft
 
 proc stop {} {
-    rotorcraft::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
+    # rotorcraft::set_velocity { desired {0 0  1 0  2 0  3 0  4 0  5 0  6 0  7 0} }
     rotorcraft::stop
 }
 
