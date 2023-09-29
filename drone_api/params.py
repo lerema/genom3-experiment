@@ -50,7 +50,7 @@ class DroneCommon:
             "ports": ("state", f"pom{drone_id}/frame/robot"),
         }
         if is_robot:
-            MANEUVER["set_velocity_limit"] = (1, 1)
+            MANEUVER["set_velocity_limit"] = (0.2, 1)
             MANEUVER["bounds"] = {
                 "xmin": -4,
                 "xmax": 4,
@@ -78,16 +78,16 @@ class DroneCommon:
         if is_robot:
             ROTORCRAFT["connect"] = ("chimera-5", 500000)
             ROTORCRAFT["ports"] = ("rotor_input", f"nhfc{drone_id}/rotor_input")
-            ROTORCRAFT["set_sensor_rate"] = (1000, 0, 16, 1)
+            ROTORCRAFT["set_sensor_rate"] = (1000, 100, 16, 1)
         else:
             ROTORCRAFT["connect"] = (f"/tmp/pty-quad{drone_id}", 0)
             ROTORCRAFT["ports"] = ("rotor_input", f"nhfc{drone_id}/rotor_input")
             ROTORCRAFT["set_sensor_rate"] = (1000, 0, 16, 1)
-            ROTORCRAFT["imu_filter"] = {
-                "gfc": [20, 20, 20],
-                "afc": [5, 5, 5],
-                "mfc": [20, 20, 20],
-            }
+        ROTORCRAFT["imu_filter"] = {
+            "gfc": [20, 20, 20],
+            "afc": [5, 5, 5],
+            "mfc": [20, 20, 20],
+        }
 
         NHFC = {
             "ports": [
@@ -98,9 +98,9 @@ class DroneCommon:
         }
 
         if is_robot:
-            NHFC["geometry"] = {"rz": -1, "mass": 1.612}
-            NHFC["servo_gain"] = (20, 25, 3, 0.3, 15, 20, 0.3, 0.03, 0.5, 3)
-            NHFC["wlimit"] = None
+            NHFC["geometry"] = {"rz": -1, "mass": 1.845, "cf": 7.8e-4, "ct": 1e-5}
+            NHFC["servo_gain"] = (20, 20, 3, 0.3, 15, 15, 0.3, 0.03, 0.5, 3)
+            NHFC["wlimit"] = (15, 110)
             NHFC["saturation"] = {"x": 0.2, "v": 0.1, "ix": 0}
         else:
             NHFC["saturation"] = {"x": 1, "v": 1, "ix": 0}
@@ -247,9 +247,9 @@ class DroneCommon:
                 }
 
             POM["set_mag_field"] = (
-                4.8113424001824399e-05,
-                -1.7750294013627847e-05,
-                -3.478261640180716e-05,
+                2.4016311504777697e-05,
+                -9.5490819586733245e-07,
+                -3.8850558715353451e-05,
             )
         else:
             POM["ports"] = [
@@ -276,20 +276,24 @@ class DroneCommon:
             FOXGLOVE = {
                 "ports": [
                     ("frames/d435", "d435/frame/raw"),
-                    (
-                        f"frames/CT{drone_id}",
-                        f"ColorTracker{drone_id}/output",
-                    ),
+                    # (
+                    #     f"frames/CT{drone_id}",
+                    #     f"ColorTracker{drone_id}/output",
+                    # ),
                     (f"measure/imu", f"rotorcraft{drone_id}/imu"),
                     (f"measure/mag", f"rotorcraft{drone_id}/mag"),
                     (f"states/drone", f"pom{drone_id}/frame/robot"),
+                    ("gps/gps_info", "gps/info"),
+                    ("states/gps_state", "gps/state"),
                 ],
                 "ports_info": [
                     ("d435", "::FoxgloveStudio::or_sensor_frame"),
-                    (f"CT{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                    # (f"CT{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
                     ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
                     ("imu", "::FoxgloveStudio::or_sensor_imu"),
                     ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
+                    ("gps_info", "::FoxgloveStudio::or_sensor_gps"),
+                    ("gps_state", "::FoxgloveStudio::or_pose_estimator_state"),
                 ],
             }
         else:

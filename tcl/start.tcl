@@ -1,5 +1,4 @@
-#
-# Mostly copy paste from Martin Jacquet's script
+# tcl script to start the drone experiment, sumulation, indoor and outdoor.
 #
 
 set use_hippo 0
@@ -75,6 +74,9 @@ puts "simu: $simu, cam: $cam, use_hippo: $use_hippo, use_tf: $use_tf, mw: $mw, l
 
 # UAV PARAMETERS
 
+# GENOMIX & RPATH
+#set host localhost
+
 package require genomix
 #set g [genomix::connect localhost:8080]
 
@@ -82,7 +84,7 @@ set g [genomix::localhost]
 
 
 if {$robot} {
-    $g rpath /home/shasthamsa/drone-experiment/lib/genom/pocolibs/plugins/
+    # $g rpath /home/shasthamsa/drone-experiment/lib/genom/pocolibs/plugins/
     $g rpath /home/felix/work/lib/genom/$mw/plugins/
 } elseif {$::env(USER) eq "felix"} {
     $g rpath $::env(HOME)/work/lib/genom/$mw/plugins/
@@ -104,7 +106,7 @@ $g load pom
 #$g load d435
 $g load maneuver
 $g load joystick
-#$g load js_maneuver
+$g load FoxgloveStudio
 $g load rotorcraft
 $g load nhfc
 
@@ -117,7 +119,13 @@ if {$use_tf} {
 }
 
 if {$cam} {
-    $g load CT_drone
+    if {$simu} {
+	$g load CT_drone
+    } else {
+	$g load d435
+	$g load ColorTracker
+	$g load arucotag
+    }
 }
 
 proc init_gps {} {
@@ -130,19 +138,55 @@ proc init_gps {} {
 #	set info [gps::info]
 #	lassign [dict get $info info llh] latitude lat longitude long height h
 	gps::set_reference {reference  {latitude 43.561685463999993 longitude 1.4769517219999999 height 194.02610000000001}}
-    # non-ground pose    {latitude 43.561690700999996 longitude 1.4769556049999999 height 194.9186}
+# non-ground pose    {latitude 43.561690700999996 longitude 1.4769556049999999 height 194.9186}
 
 	#start log now to avoir the set_reference jump...
 	gps::log ${log_dir}/gps.log 1
     
-	pom::set_mag_field { magdir   {x 4.8113424001824399e-05 y -1.7750294013627847e-05 z -3.478261640180716e-05}}
+	pom::set_mag_field { magdir {x 2.4016311504777697e-05 y -9.5490819586733245e-07 z -3.8850558715353451e-05}}
 
 	pom::add_measurement {port gps x -0. y 0. z 0. roll 0. pitch 0. yaw 0.}
 	pom::add_measurement { port mag x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
 	pom::add_measurement { port imu x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
 
-	nhfc::set_position -- 0. 0. 0. 0. 
+    }
+}
 
+proc init_cam {} {
+    global cam
+
+    if {$cam} {
+        d435::set_fps 30
+        d435::set_size {size {w 640 h 480}}
+        d435::connect 832112070817
+	
+        # ColorTracker
+        ColorTracker::set_color {color {r 70 g 70 b 20 threshold 40}}
+    	ColorTracker::set_object_size {object_width 0.195 object_height 0.3}
+        ColorTracker::set_focal_length 1092
+        ColorTracker::set_distance_threshold 1.0
+	
+        ColorTracker::connect_port {local DronePose remote pom/frame/robot}
+        ColorTracker::connect_port {local Frame remote d435/frame/raw}
+        ColorTracker::connect_port {local Intrinsics remote d435/intrinsics}
+        ColorTracker::connect_port {local Extrinsics remote d435/extrinsics}
+	
+        FoxgloveStudio::connect_port "frames/d435/raw" "d435/frame/raw"
+        FoxgloveStudio::add_port "d435/raw" "::FoxgloveStudio::or_sensor_frame"
+        # FoxgloveStudio::connect_port "frames/ct" "ColorTracker/output"
+        # FoxgloveStudio::add_port "ct" "::FoxgloveStudio::or_sensor_frame"
+        
+        after 2000
+        FoxgloveStudio::start_foxglove_server
+    }    
+}
+
+proc start_track {} {
+    global cam
+
+    if {$cam} {
+        ColorTracker::color_track &
+        ColorTracker::perform_tracking 1
     }
 }
 
@@ -188,6 +232,7 @@ proc init {} {
     
     if {!$gps} {
 	pom::add_measurement { port mocap x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
+	pom::add_measurement { port imu x 0. y 0. z 0. roll 0. pitch 0. yaw 0.}
     }
 
     if {$simu} {
@@ -235,7 +280,7 @@ proc init {} {
 	
 	set imu_calib [read [open calibrations/imu_calib.txt r]]
 	rotorcraft::set_imu_calibration $imu_calib
-	# rotorcraft::set_zero 4 quand tu calibres
+	# rotorcraft::set_zero 4
 	rotorcraft::set_zero_velocity 4
 	rotorcraft::set_imu_filter {
 	    gfc {0 20 1 20 2 20}
@@ -260,8 +305,9 @@ proc init {} {
     # NHFC
 
     if {$robot} {
-	nhfc::set_gtmrp_geom {rz -1 mass 1.612}
+	nhfc::set_gtmrp_geom {rz -1 mass 1.845 cf 7.8e-4 ct 1e-5 }
 	nhfc::set_emerg { emerg { descent 1.2 dx 0.1 dq 1 dv 0.3 dw 1 } }
+	nhfc::set_wlimit { wmin 15 wmax 110}
     } else {
 	::nhfc::set_gtmrp_geom {
 	    rotors 4 cx 0 cy 0 cz 0 armlen 0.23 mass 1.5
@@ -272,8 +318,8 @@ proc init {} {
     
     if {$robot} {
 	::nhfc::set_saturation {sat {x 0.2 v 0.1 ix 0}}
-	nhfc::set_servo_gain { gain {Kpxy 20 Kpz 25 Kqxy 3 Kqz 0.3 Kvxy 15
-	    Kvz 20  Kwxy 0.3 Kwz 0.03 Kixy 0.5  Kiz 3 } }
+	nhfc::set_servo_gain { gain {Kpxy 20 Kpz 20 Kqxy 3 Kqz 0.3 Kvxy 15
+	    Kvz 15  Kwxy 0.3 Kwz 0.03 Kixy 0.5  Kiz 3 } }
     } else {
 	::nhfc::set_saturation {sat {x 1 v 1 ix 0}}
 	::nhfc::set_servo_gain {
@@ -294,7 +340,7 @@ proc init {} {
 #    }
 
     #CT_drone
-    if {$cam} {
+    if {$simu && $cam} {
 	CT_drone::Set_my_r 5
 	CT_drone::Set_my_g 5
 	CT_drone::Set_my_b 255
@@ -369,8 +415,26 @@ proc get_frame_robot_rpy {} {
 }
 
 proc get_frame_robot_pos {} {
-    get_frame_robot_xyz
-    get_frame_robot_rpy
+    global pi
+
+    set pos [pom::frame robot]
+
+    lassign [dict get $pos frame pos] x x1 y y1 z z1
+    lassign [dict get $pos frame vel] vx vx1 vy vy1 vz vz1
+
+    puts [format "x: %g y: %g z: %g (m)" $x1 $y1 $z1]
+    puts [format "vx: %g vy: %g vz: %g (m/s)" $vx1 $vy1 $vz1]
+
+    lassign [dict get $pos frame att] w qw x qx y qy z qz
+    set yaw [expr {atan2(2 * ($qw*$qz + $qx*$qy), 1 - 2 * ($qy*$qy + $qz*$qz))}]
+    set pitch [expr {asin(2 * ($qw*$qy - $qz*$qx))}]
+    set roll [expr {atan2(2 * ($qw*$qx + $qy*$qz), 1 - 2 * ($qx*$qx + $qy*$qy))}]
+    
+    lassign [dict get $pos frame avel] wx wx wy wy wz wz
+    
+    puts [format "Roll: %g Pitch: %g Yaw: %g (deg)" [expr $roll*180/$pi] [expr $pitch*180/$pi] [expr $yaw*180/$pi]]
+    puts [format "VRoll: %g VPitch: %g VYaw: %g (deg/s)" [expr $wx*180/$pi] [expr $wy*180/$pi] [expr $wz*180/$pi]]
+
 }
 
 
@@ -380,24 +444,32 @@ proc get_frame_robot_xyz {} {
     puts [format "x: %g y: %g z: %g" $x1 $y1 $z1]
 }
 
+proc servo_cb {mod rqid} {
+    catch { $rqid result } m
+    
+    puts stderr "$mod servo_cb: $m."
+}
 
 # SETUP
 proc setup {} {
     global cam
+    global simu
 
     start_log
 
     rotorcraft::start
 
-    nhfc::set_current_position
-    nhfc::servo &
-    rotorcraft::servo &
+    nhfc::set_current_position 
+#    nhfc::set_position  -- -1.6281 0.10 1.8 0 
+    nhfc::servo & servo_cb nhfc
+
+    rotorcraft::servo & servo_cb rotorcraft
 
     maneuver::set_bounds -- -100 100 -100 100 -2 30 -10 10
     maneuver::set_current_state
-    maneuver::take_off { height 0.15 duration 0 }
+    maneuver::take_off { height 0.25 duration 0 }
 
-    if {$cam} {
+    if {$simu && $cam} {
 	CT_drone::PublishOccupancyGrid &  
     }
     
@@ -421,7 +493,7 @@ proc land {} {
     } else {
 	maneuver::take_off {height 0.05 duration 0 }
     }
-    rotorcraft::stop
+        rotorcraft::stop
 }
 
 proc stop {} {
@@ -453,6 +525,7 @@ proc stop_log {} {
 proc kill_all {} {
     global use_tf
     global cam
+    global simu
     global gps
 
     if {$gps} {
@@ -470,7 +543,13 @@ proc kill_all {} {
 	tf2::kill
     }
     if {$cam} {
-	CT_drone::kill
+	if {$simu} {
+	    CT_drone::kill
+	} else {
+	    ColorTracker::kill
+	    arucotag::kill
+	    d435::kill
+	}
     }
 }
 
@@ -510,10 +589,14 @@ proc carre {} {
     global robot
 
     if {$robot} {
-	::maneuver::goto {x 0.5 y 0.5 z 0.4 yaw 0 duration 0}
-	::maneuver::goto {x 0.5 y -0.5 z 0.5 yaw 0 duration 0}
-	::maneuver::goto {x -0.5 y -0.5 z 0.3 yaw 0 duration 0}
-	::maneuver::goto {x -0.5 y 0.5 z 0.5 yaw 0 duration 0}
+	::maneuver::goto {x 1.0 y 1.0 z 0.4 yaw -1.4 duration 0}
+	after 1000
+	::maneuver::goto {x 1.0 y -1.0 z 0.5 yaw 0 duration 0}
+	after 1000
+	::maneuver::goto {x -1.0 y -1.0 z 0.3 yaw 1.4 duration 0}
+	after 1000
+	::maneuver::goto {x -1.0 y 1.0 z 0.5 yaw 0 duration 0}
+	after 1000
 	::maneuver::goto {x -0. y 0. z 0.5 yaw 0 duration 0}
     } else {
 	::maneuver::set_bounds -- -10 10 -10 10 -1 10 -4 4
@@ -528,12 +611,19 @@ proc arena {} {
     global gps
 
     if {$gps} {
-	::maneuver::goto {x -2 y 11 z 1.5 yaw 0 duration 0}
-	::maneuver::goto {x -10 y 5 z 1.0 yaw 0 duration 0}
-	::maneuver::goto {x 0 y -8 z 1.5 yaw 0 duration 0}
-	::maneuver::goto {x 8 y -2 z 1.0 yaw 0 duration 0}
-	::maneuver::goto {x -2 y 11 z 1.5 yaw 0 duration 0}
-	::maneuver::goto {x 0 y 0 z 0.5 yaw 0 duration 0}
+	::maneuver::goto {x -2 y 11 z 1.0 yaw 0 duration 0}
+	after 1000
+	::maneuver::goto {x -10 y 5 z 0.8 yaw 0 duration 0}
+	after 1000
+	::maneuver::goto {x 0 y -8 z 1.0 yaw 0 duration 0}
+	after 1000
+	::maneuver::goto {x 8 y -2 z 0.8 yaw 0 duration 0}
+	after 1000
+	::maneuver::goto {x -2 y 11 z 1.0 yaw 0 duration 0}
+	after 1000
+	::maneuver::goto {x 0 y 0 z 0.8 yaw 0 duration 0}
+	after 1000
+	maneuver::take_off {height 0.15 duration 0 }
     } else {
 	puts  "The inside arena is not big enough... use this procedure outside only."
     }
@@ -617,6 +707,8 @@ proc fly_survey_x {xmin ymin z xmax ymax stepy speed} {
 	set y [expr {$y + $stepy}] 
 	::maneuver::goto  [dict create x [expr {$xmin}] y [expr {$y}] z [expr {$z}] yaw [expr 0] duration 0]
     }
+    ::maneuver::goto  0 0 1 0 0
+    maneuver::take_off {height 0.15 duration 0 }
 }
 
 proc fly_survey_y {xmin ymin z xmax ymax stepx speed} {

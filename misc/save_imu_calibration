@@ -1,0 +1,29 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+import genomix as gnx
+import os
+
+parser = argparse.ArgumentParser(description="Save IMU calibration.")
+parser.add_argument(
+    "-f",
+    "--filename",
+    help="Filename to save calibration to.",
+    default="calibrations/imu_calib_py.txt",
+    nargs="?",
+)
+args = parser.parse_args()
+
+handle = gnx.connect("localhost:8080")
+LIB_PATH = os.environ["DRONE_VV_PATH"] + "/lib/genom/pocolibs/plugins"
+print("LIB_PATH: {}".format(LIB_PATH))
+handle.rpath(LIB_PATH)
+rotorcraft = handle.load(LIB_PATH + "/rotorcraft.so")
+
+calib = rotorcraft.get_imu_calibration()
+
+with open(args.filename, "w") as f:
+    f.write(str(calib))
+
+print("Saved IMU calibration to {}".format(args.filename))

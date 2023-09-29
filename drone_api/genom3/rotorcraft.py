@@ -39,6 +39,7 @@ class RotorCraft:
         if USE_ROBOT:
             calibration = self._load_imu_calibration()
             self.component.set_imu_calibration(imu_calibration=calibration)
+            self.component.set_zero_velocity(4)
         else:
             self.component.set_imu_filter(**self.params["imu_filter"])
 
@@ -78,13 +79,29 @@ class RotorCraft:
         return "rotorcraft"
 
     @staticmethod
+    def _load_imu_calibration_txt(calibration_file: str = None):
+        # Load IMU calibration
+        if calibration_file is None:
+            calibration_file = os.path.join(
+                os.path.expanduser("~"),
+                "drone-experiment/genom3-experiment/calibrations/imu_calib_py.txt",
+            )
+
+        import ast  # to convert string to dictionary
+
+        with open(calibration_file) as f:
+            calibration = ast.literal_eval(f.read())
+
+        return calibration
+
+    @staticmethod
     def _load_imu_calibration(calibration_file: str = None):
         # Load IMU calibration
         # calibration_file = os.path.join("root_path", "calib", "imu_calib.mat")
         if calibration_file is None:
             calibration_file = os.path.join(
                 os.path.expanduser("~"),
-                "drone-experiment/genom3-experiment/calibrations/2023_07_17_lerema_stddev_increased.mat",
+                "drone-experiment/genom3-experiment/calibrations/2023_09_27_lerema.mat",
             )
 
         def _convert_to_float32(params):

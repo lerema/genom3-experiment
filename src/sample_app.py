@@ -41,7 +41,7 @@ def sample_actions(action: Actions):
                     "xmax": 1.0,
                     "ymin": -1.0,
                     "ymax": 1.0,
-                    "z": 1.5,
+                    "z": 0.75,
                     "yaw": 0.0,
                 }
             },

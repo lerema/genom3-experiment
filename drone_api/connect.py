@@ -129,7 +129,7 @@ class Connector:
             return
 
     def take_off(self):
-        self.maneuver.take_off(height=0.15, duration=0)
+        self.maneuver.take_off(height=0.30, duration=0)
         self.nhfc.servo(ack=1)
         time.sleep(1)
 
@@ -289,7 +289,7 @@ class Connector:
         rotorcraft.set_calibration_param(30)
         rotorcraft.calibrate_imu()
 
-    def save_calibration(self):
+    def save_calibration(self, path=os.environ["DRONE_VV_PATH"]):
         """Save the calibration data"""
         import datetime
 
@@ -299,7 +299,7 @@ class Connector:
 
         # Save as Matlab file
         file_name = os.path.join(
-            os.environ["DRONE_VV_PATH"],
+            path,
             "genom3-experiment/calibrations/" f"{date}_lerema.mat",
         )
         sio.savemat(
