@@ -193,11 +193,20 @@ class DroneCommon:
 
         if is_robot:
             COLOR_TRACKER = {
-                "rgb": (70, 20, 20),  # red in d435
+                "rgb": (100, 30, 30),  # red in d435
                 "threshold": 40,
                 "distance_tolerance": 1.0,
-                "object_size": {"object_width": 0.195, "object_height": 0.3},
+                "object_size": {"width": 0.195, "height": 0.3},
                 "focal_length": 1092.0,  # In pixels
+                "map_size": {"width": 10.0, "height": 10.0},
+                "camera_pose": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -0.14,  # m
+                    "roll": 0.0,
+                    "pitch": 3.14,  # 180 deg
+                    "yaw": 0.79,  # 45 deg
+                },
             }
             COLOR_TRACKER["ports"] = [
                 ("DronePose", f"pom{drone_id}/frame/robot"),
@@ -210,8 +219,17 @@ class DroneCommon:
                 "rgb": (1, 1, 140),  # blue
                 "threshold": 40,
                 "distance_tolerance": 1.0,
-                "object_size": {"object_width": 0.5, "object_height": 0.5},
+                "object_size": {"width": 0.5, "height": 0.5},
                 "focal_length": 480.0,  # In pixels
+                "map_size": {"width": 10.0, "height": 10.0},
+                "camera_pose": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -0.0,  # m
+                    "roll": 0.0,
+                    "pitch": 3.14,  # 180 deg
+                    "yaw": 0.0,
+                },
             }
             COLOR_TRACKER["ports"] = [
                 ("DronePose", f"pom{drone_id}/frame/robot"),
@@ -265,7 +283,7 @@ class DroneCommon:
             POM["set_mag_field"] = (23.8e-06, -0.4e-06, -39.8e-06)
 
         ARUCOTAG = {
-            "length": 0.2,
+            "length": 0.095,
             "output_frame": 2,  # 0: camera, 1: drone, 2: world
             "markers": [10],  # , 11, 12, 13],
         }
@@ -276,24 +294,34 @@ class DroneCommon:
             FOXGLOVE = {
                 "ports": [
                     ("frames/d435", "d435/frame/raw"),
-                    # (
-                    #     f"frames/CT{drone_id}",
-                    #     f"ColorTracker{drone_id}/output",
-                    # ),
+                    (
+                        f"frames/CT{drone_id}",
+                        f"ColorTracker{drone_id}/output/frame",
+                    ),
+                    (
+                        f"frames/CT{drone_id}_mask",
+                        f"ColorTracker{drone_id}/output/mask",
+                    ),
+                    (
+                        f"frames/aruco{drone_id}",
+                        f"arucotag{drone_id}/output",
+                    ),
                     (f"measure/imu", f"rotorcraft{drone_id}/imu"),
                     (f"measure/mag", f"rotorcraft{drone_id}/mag"),
                     (f"states/drone", f"pom{drone_id}/frame/robot"),
-                    ("gps/gps_info", "gps/info"),
-                    ("states/gps_state", "gps/state"),
+                    # ("gps/gps_info", "gps/info"),
+                    # ("states/gps_state", "gps/state"),
                 ],
                 "ports_info": [
                     ("d435", "::FoxgloveStudio::or_sensor_frame"),
-                    # (f"CT{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                    (f"CT{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                    (f"CT{drone_id}_mask", "::FoxgloveStudio::or_sensor_frame"),
+                    (f"aruco{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
                     ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
                     ("imu", "::FoxgloveStudio::or_sensor_imu"),
                     ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
-                    ("gps_info", "::FoxgloveStudio::or_sensor_gps"),
-                    ("gps_state", "::FoxgloveStudio::or_pose_estimator_state"),
+                    # ("gps_info", "::FoxgloveStudio::or_sensor_gps"),
+                    # ("gps_state", "::FoxgloveStudio::or_pose_estimator_state"),
                 ],
             }
         else:

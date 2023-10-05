@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import logging
+import time
 
 logger = logging.getLogger("[Foxglove]")
 
@@ -36,6 +37,7 @@ class FoxgloveStudio:
         for port_name, port_type in self.params["ports_info"]:
             self.component.add_port(port_name, port_type)
 
+        time.sleep(2)
         self.component.start_foxglove_server()
         logger.info("Connected to Foxglove")
 
