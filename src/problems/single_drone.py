@@ -35,7 +35,6 @@ def demo_problem():
         "is_location_inspected", BoolType(), position=Location
     )
     is_plate_inspected = Fluent("is_plate_inspected", BoolType(), location=Location)
-
     # Default objects
     robot = Object("robot", Robot)
     base_station = Object("base_station", Location)
