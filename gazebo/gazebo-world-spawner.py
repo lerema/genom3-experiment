@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 
-EXPERIMENT_PATH = os.environ.get("DRONE_VV_PATH") + "/genom3-experiment"
+EXPERIMENT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
 def spawn_gazebo_world(world_path):
@@ -29,7 +29,7 @@ def spawn_gazebo_model(model_name, model_path, x, y, z):
 
 if __name__ == "__main__":
     # Spawn model
-    world_name = f"{EXPERIMENT_PATH}/gazebo/worlds/single_drone.world"
+    world_name = f"{EXPERIMENT_PATH}/worlds/single_drone.world"
     if not os.path.exists(world_name):
         print(f"World {world_name} does not exist")
         exit(1)
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         (-1.0, 0.0, 0.0),
     ]
     for i, model_name in enumerate(["plate"]):
-        model_path = f"{EXPERIMENT_PATH}/gazebo/models/{model_name}/model.sdf"
+        model_path = f"{EXPERIMENT_PATH}/models/{model_name}/model.sdf"
         if not os.path.exists(model_path):
             print(f"Model {model_path} does not exist")
             exit(1)
