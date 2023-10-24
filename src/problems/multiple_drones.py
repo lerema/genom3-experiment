@@ -14,12 +14,36 @@
 
 """Create a set of problems for the unified planning domain."""
 import argparse
+import math
+
 import unified_planning as up
 from unified_planning.shortcuts import *
+
+TIME_EPSILON = 5
+SURVEY_START, SURVEY_END = (-5, -5), (5, 5)
+INSPECTION_HEIGHT = 1, 3
+DRONE_VELOCITY = 0.2
+
+
+def estimate_time(x1, y1, x2, y2, speed=1):
+    """Estimate the time taken to travel from (x1, y1) to (x2, y2) at the given speed in seconds"""
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2) / speed
+
+
+def estimate_inspection_time(height, speed=1):
+    """Estimate the time taken to inspect a plate at the given height at the given speed in seconds"""
+    return height / speed
 
 
 def demo_time_triggered_problem():
     """Create a simple station verification application"""
+
+    # Prequesties
+    survey_time = estimate_time(*SURVEY_START, *SURVEY_END, DRONE_VELOCITY)
+    inspect_time = estimate_inspection_time(
+       2 *(INSPECTION_HEIGHT[1] - INSPECTION_HEIGHT[0]), DRONE_VELOCITY
+    )
+
     Location = UserType("Location")
     Area = UserType("Area")
     Robot = UserType("Robot")
@@ -54,7 +78,7 @@ def demo_time_triggered_problem():
     survey = DurativeAction("survey", robot=Robot, area=Area, From=Location)
     l_from = survey.parameter("From")
     r = survey.parameter("robot")
-    survey.set_fixed_duration(10)  # TODO: make this a variable
+    survey.set_fixed_duration(int(survey_time) + TIME_EPSILON)
     survey.add_condition(StartTiming(), is_robot_available(r))
     survey.add_condition(StartTiming(), Not(is_surveyed()))
     survey.add_condition(StartTiming(), is_base_station(r, l_from))
@@ -95,7 +119,7 @@ def demo_time_triggered_problem():
     inspect_plate = DurativeAction("inspect_plate", robot=Robot, location=Location)
     r = inspect_plate.parameter("robot")
     l = inspect_plate.parameter("location")
-    inspect_plate.set_fixed_duration(2)
+    inspect_plate.set_fixed_duration(int(inspect_time) + TIME_EPSILON)
     inspect_plate.add_condition(StartTiming(), is_robot_available(r))
     inspect_plate.add_condition(StartTiming(), robot_at(r, l))
     inspect_plate.add_condition(StartTiming(), has_plates())
