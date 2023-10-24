@@ -14,7 +14,29 @@
 
 """Create a set of problems for the unified planning domain."""
 import argparse
+import math
+
 from unified_planning.shortcuts import *
+
+TIME_EPSILON = 5
+SURVEY_START, SURVEY_END = (-5, -5), (5, 5)
+INSPECTION_HEIGHT = 1, 3
+DRONE_VELOCITY = 0.2
+
+
+def estimate_time(x1, y1, x2, y2, speed=1):
+    """Estimate the time taken to travel from (x1, y1) to (x2, y2) at the given speed in seconds"""
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2) / speed
+
+
+def estimate_inspection_time(height, speed=1):
+    """Estimate the time taken to inspect a plate at the given height at the given speed in seconds"""
+    return height / speed
+
+
+def simulate_battery_usage(distance):
+    """Simulate battery usage for the given distance"""
+    return 0.5 * distance
 
 
 def demo_time_triggered_problem():
@@ -136,6 +158,12 @@ def demo_time_triggered_problem():
 
 def demo_sequential_problem():
     """Create a simple station verification application"""
+
+    # Prequesties
+    survey_time = estimate_time(*SURVEY_START, *SURVEY_END, DRONE_VELOCITY)
+    inspect_time = estimate_inspection_time(
+        2 * (INSPECTION_HEIGHT[1] - INSPECTION_HEIGHT[0]), DRONE_VELOCITY
+    )
     Location = UserType("Location")
     Area = UserType("Area")
     Robot = UserType("Robot")
@@ -172,7 +200,10 @@ def demo_sequential_problem():
     survey.add_precondition(is_base_station(r, l_from))
     survey.add_precondition(Not(has_plates()))
     survey.add_effect(is_surveyed(), True)
-    survey.add_effect(battery_level(r), Minus(battery_level(r), 40))
+    survey.add_effect(
+        battery_level(r),
+        Minus(battery_level(r), int(simulate_battery_usage(survey_time))),
+    )
 
     send_info = InstantaneousAction("send_info", robot=Robot)
     send_info.add_precondition(is_surveyed())
@@ -206,7 +237,9 @@ def demo_sequential_problem():
     inspect_plate.add_precondition(GE(battery_level(r), 40))
     inspect_plate.add_effect(is_location_inspected(l), True)
     inspect_plate.add_effect(is_plate_inspected(l), True)
-    inspect_plate.add_effect(battery_level(r), Minus(battery_level(r), 1))
+    inspect_plate.add_effect(
+        battery_level(r), Minus(battery_level(r), simulate_battery_usage(inspect_time))
+    )
 
     recharge_robot = InstantaneousAction("recharge_drone", robot=Robot)
     r = recharge_robot.parameter("robot")
