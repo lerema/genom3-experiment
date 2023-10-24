@@ -97,6 +97,14 @@ def demo_time_triggered_problem():
     inspect_plate.add_effect(EndTiming(), is_plate_inspected(l), True)
     inspect_plate.add_effect(EndTiming(), battery_level(r), Minus(battery_level(r), 1))
 
+    recharge_robot = InstantaneousAction(
+        "recharge_drone", robot=Robot, charging_station=Location
+    )
+    r = recharge_robot.parameter("robot")
+    charging_station = recharge_robot.parameter("charging_station")
+    recharge_robot.add_precondition(robot_at(r, charging_station))
+    recharge_robot.add_effect(battery_level(r), 100.0)
+
     problem = Problem()
 
     problem.add_fluent(is_surveyed, default_initial_value=False)
@@ -124,7 +132,9 @@ def demo_time_triggered_problem():
         ]
     )
 
-    problem.add_actions([survey, send_info, move, acquire_plates_order, inspect_plate])
+    problem.add_actions(
+        [survey, send_info, move, acquire_plates_order, inspect_plate, recharge_robot]
+    )
     problem.set_initial_value(robot_at(r1, base_station_1), True)
     problem.set_initial_value(is_base_station(r1, base_station_1), True)
     problem.set_initial_value(robot_at(r2, base_station_2), True)
@@ -189,7 +199,7 @@ def demo_sequential_problem():
     survey.add_precondition(is_base_station(r, l_from))
     survey.add_precondition(Not(has_plates()))
     survey.add_effect(is_surveyed(), True)
-    survey.add_effect(battery_level(r), Minus(battery_level(r), 10))
+    survey.add_effect(battery_level(r), Minus(battery_level(r), 40))
 
     send_info = InstantaneousAction("send_info", robot=Robot)
     send_info.add_precondition(is_surveyed())
@@ -225,6 +235,14 @@ def demo_sequential_problem():
     inspect_plate.add_effect(is_plate_inspected(l), True)
     inspect_plate.add_effect(battery_level(r), Minus(battery_level(r), 1))
 
+    recharge_robot = InstantaneousAction(
+        "recharge_drone", robot=Robot, charging_station=Location
+    )
+    r = recharge_robot.parameter("robot")
+    charging_station = recharge_robot.parameter("charging_station")
+    recharge_robot.add_precondition(robot_at(r, charging_station))
+    recharge_robot.add_effect(battery_level(r), 100.0)
+
     problem = Problem()
 
     problem.add_fluent(is_surveyed, default_initial_value=False)
@@ -252,7 +270,9 @@ def demo_sequential_problem():
         ]
     )
 
-    problem.add_actions([survey, send_info, move, acquire_plates_order, inspect_plate])
+    problem.add_actions(
+        [survey, send_info, move, acquire_plates_order, inspect_plate, recharge_robot]
+    )
     problem.set_initial_value(robot_at(r1, base_station_1), True)
     problem.set_initial_value(is_base_station(r1, base_station_1), True)
     problem.set_initial_value(robot_at(r2, base_station_2), True)
