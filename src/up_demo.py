@@ -55,6 +55,8 @@ class ProblemDefinition:
         self._drone_1.init()
         # Setup the components
         self._drone_1.setup()
+        # Takeoff
+        self._drone_1.take_off()
 
     def _setup_domain(self):
         self.base_station_1 = Location("base_station_1", z=1.0)

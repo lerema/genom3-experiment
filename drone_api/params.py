@@ -216,7 +216,7 @@ class DroneCommon:
             ]
         else:
             COLOR_TRACKER = {
-                "rgb": (1, 1, 140),  # blue
+                "rgb": (140, 1, 1),  # blue
                 "threshold": 40,
                 "distance_tolerance": 1.0,
                 "object_size": {"width": 0.5, "height": 0.5},
@@ -330,7 +330,15 @@ class DroneCommon:
                     (f"frames/gazebo{drone_id}", f"camgazebo{drone_id}/frame/raw"),
                     (
                         f"frames/CT{drone_id}",
-                        f"ColorTracker{drone_id}/output",
+                        f"ColorTracker{drone_id}/output/frame",
+                    ),
+                    (
+                        f"frames/CT{drone_id}_mask",
+                        f"ColorTracker{drone_id}/output/mask",
+                    ),
+                    (
+                        f"frames/aruco{drone_id}",
+                        f"arucotag{drone_id}/output",
                     ),
                     (f"measure/imu", f"rotorcraft{drone_id}/imu"),
                     (f"measure/mag", f"rotorcraft{drone_id}/mag"),

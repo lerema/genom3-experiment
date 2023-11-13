@@ -35,7 +35,7 @@ class FoxgloveStudio:
 
         # Add port info to the component
         for port_name, port_type in self.params["ports_info"]:
-            self.component.add_port(port_name, port_type)
+            self.component.add_port(port_name, port_type, ack=True)
 
         time.sleep(2)
         self.component.start_foxglove_server()
