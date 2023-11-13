@@ -41,6 +41,7 @@ class RotorCraft:
             self.component.set_imu_calibration(imu_calibration=calibration)
             self.component.set_zero_velocity(4)
         else:
+            self.component.should_simulate_battery(True)
             self.component.set_imu_filter(**self.params["imu_filter"])
 
         self.component.connect_port(

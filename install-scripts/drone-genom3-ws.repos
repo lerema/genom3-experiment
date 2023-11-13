@@ -2,7 +2,7 @@ repositories:
   arucotag-genom3:
     type: git
     url: https://github.com/lerema/arucotag-genom3.git
-    version: 0b6d014b7e1a397b5192c8662effac226bf5ac0b
+    version: master
   camgazebo-genom3:
     type: git
     url: https://github.com/lerema/camgazebo-genom3.git
@@ -69,7 +69,7 @@ repositories:
     version: master
   rotorcraft-genom3:
     type: git
-    url: git://git.openrobots.org/robots/telekyb3/rotorcraft-genom3.git
+    url: https://github.com/lerema/rotorcraft-genom3.git
     version: master
   vision-idl:
     type: git

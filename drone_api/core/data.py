@@ -7,53 +7,57 @@ from drone_api import DATA_PATH
 
 
 class Robot:
-    def __init__(
-        self, ID: int = 1, pose: tuple = (0.0, 0.0, 0.0), battery_level: int = 100
-    ):
-        assert ID > 0, "Robot ID must be greater than 0."
+    """Robot Data Representation."""
 
-        self.ID = ID
+    def __init__(
+        self, robot_id: int = 1, pose: tuple = (0.0, 0.0, 0.0), battery_level: int = 100
+    ):
+        assert robot_id > 0, "Robot ID must be greater than 0."
+
+        self.robot_id = robot_id
         self.pose = pose
         self.battery_level = battery_level
 
     def __dict__(self):
         try:
             return {
-                "ID": self.ID,
+                "ID": self.robot_id,
                 "pose": self.pose,
-                "location_name": f"base_station_{self.ID}",
+                "location_name": f"base_station_{self.robot_id}",
                 "battery_level": self.battery_level,
                 "is_available": True,
             }
-        except AttributeError:
-            raise ValueError("Robot object not initialized.")
+        except AttributeError as e:
+            raise ValueError("Robot object not initialized.") from e
 
 
 class Environment:
+    """Environment Data Representation."""
+
     def __init__(self, no_robots: int = 1, no_plates: int = 1, no_arucos: int = 1):
-        self.NO_ROBOTS = no_robots
-        self.NO_PLATES = no_plates
-        self.NO_ARUCOS = no_arucos
+        self.no_robots = no_robots
+        self.no_plates = no_plates
+        self.no_arucos = no_arucos
 
-        self.ARUCOS = {}
-        self.PLATES = {"ORDER_OPTIMIZED": False}
+        self.arucos = {}
+        self.plates = {"ORDER_OPTIMIZED": False}
 
-        self.HOME = (0.0, 0.0, 0.0)
-        self.SURVEY_AREA = []
+        self.home = (0.0, 0.0, 0.0)
+        self.survey_area = []
 
     def __dict__(self):
         try:
             return {
-                "NO_ROBOTS": self.NO_ROBOTS,
-                "NO_PLATES": self.NO_PLATES,
-                "NO_ARUCOS": self.NO_ARUCOS,
-                "HOME": self.HOME,
-                "SURVEY_AREA": self.SURVEY_AREA,
-                "ARUCOS": self.ARUCOS,
-                "PLATES": self.PLATES,
+                "NO_ROBOTS": self.no_robots,
+                "NO_PLATES": self.no_plates,
+                "NO_ARUCOS": self.no_arucos,
+                "HOME": self.home,
+                "SURVEY_AREA": self.survey_area,
+                "ARUCOS": self.arucos,
+                "PLATES": self.plates,
             }
-        except AttributeError:
-            raise ValueError("Environment object not initialized.")
+        except AttributeError as e:
+            raise ValueError("Environment object not initialized.") from e
 
 
 class DataRepresentation:
@@ -62,21 +66,21 @@ class DataRepresentation:
     def __init__(
         self, no_robots: int = 5, no_plates: int = 0, no_arucos: int = 0
     ) -> None:
-        self.ROBOTS = [Robot(ID=i + 1) for i in range(no_robots)]
-        self.ENV = Environment()
+        self.robots = [Robot(robot_id=i + 1) for i in range(no_robots)]
+        self.env = Environment()
 
-        self.ENV.NO_ARUCOS = no_arucos
-        self.ENV.NO_PLATES = no_plates
-        self.ENV.NO_ROBOTS = no_robots
-        self.ENV.ARUCO_POSES = []
-        self.ENV.PLATE_POSES = []
+        self.env.no_arucos = no_arucos
+        self.env.no_plates = no_plates
+        self.env.no_robots = no_robots
+        self.env.ARUCO_POSES = []
+        self.env.PLATE_POSES = []
 
     def __dict__(self):
         ROBOTS = {}
-        for i in range(self.ENV.NO_ROBOTS):
-            ROBOTS[i+1] = self.ROBOTS[i].__dict__()
+        for i in range(self.env.no_robots):
+            ROBOTS[i + 1] = self.robots[i].__dict__()
 
-        return {"ROBOTS": ROBOTS, "ENV": self.ENV.__dict__()}
+        return {"ROBOTS": ROBOTS, "ENV": self.env.__dict__()}
 
 
 class JSONSerializer:

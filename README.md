@@ -1,18 +1,17 @@
 # DRONE EXPERIMENT
 
-This is a Genom3 based experiment for drones in search and survey application. The experiment depends on [Genom3](https://git.openrobots.org/projects/genom3) framework, [Robotpkg](http://robotpkg.openrobots.org/) modules and [ROS](https://www.ros.org/). The experiment is using [Unified Planning](https://github.com/aiplan4eu/unified-planning) for planning and [OpenCV](https://opencv.org/) for computer vision.
+This is a Genom3 based experiment for drones in search and survey application. The experiment depends on [Genom3](https://git.openrobots.org/projects/genom3) framework, [Robotpkg](http://robotpkg.openrobots.org/) modules. The experiment is using [Unified Planning](https://github.com/aiplan4eu/unified-planning) for planning and [OpenCV](https://opencv.org/) for computer vision.
 
 ## Pre-requesties
 
-- Ubuntu 20.04
-- ROS Noetic
+- Ubuntu >= 20.04
 - Gazebo 11
 - Python 3.8
 - Pip >= 22.3
 - OpenCV4
 - Docker (Optional)
 
-The experiment has been tested on Python3.8, Ubuntu 20.04 with ROS Noetic and Gazebo 11 with the system architecture x86_64/AMD64. But it should work on other versions of Ubuntu, ROS1 and Gazebo.
+The experiment has been tested on Python3.8 / 3.10, Ubuntu 20.04 / 22.04 and Gazebo 11 with the system architecture x86_64/AMD64.
 
 ## Setup
 
@@ -50,11 +49,11 @@ The easier way to install genom3 and robotpkg modules is to launch the following
 # Move to the root of the repository
 cd genom3-experiment
 
-# Source the ROS environment to get the ROS environment variables
-source /opt/ros/noetic/setup.bash
-
-# Setup the experiment
+# Setup the experiment in Ubuntu 20.04
 bash install-scripts/setup-experiment.sh --all
+
+# Setup the experiment in Ubuntu 22.04
+bash install-scripts/setup-experiment-source.sh --all
 ```
 
 > **Note: The setup script asks for `su` permission to install robotpkg and ros packages using system package manager**
@@ -79,8 +78,7 @@ The experiment depends on Python3 by default. To install the python api, we can 
 # In the root of the repository
 # Upgrade pip to the latest version. One of the dependency uses `pyproject.toml` which is supported by pip >= 22.3
 python3 -m pip install --upgrade pip
-# Install dependencies for the experiment
-python3 -m pip install -r requirements.txt
+
 # Install the drone python api
 python3 -m pip install .
 ```
@@ -102,7 +100,7 @@ The above command will load the gazebo world, rviz and genom3 components. The te
 To start the sample experiment with the python api, run the following command:
 
 ```bash
-# Simple example for a single drone
+# Simple example for a single robotdrone
 # From the root of the repository
 python3 src/sample_app.py
 ```
