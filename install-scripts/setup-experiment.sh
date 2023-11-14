@@ -174,7 +174,7 @@ if ! grep -qF "function drone_experiment {" "$HOME/.bashrc"; then
     export PYTHONPATH=/opt/openrobots/lib/python3.8/site-packages:${INSTALL_DIR}/lib/python$PYTHON_VERSION/site-packages:${INSTALL_DIR}/openrobots/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH}
 
     export GAZEBO_PLUGIN_PATH=/opt/openrobots/lib/gazebo:${INSTALL_DIR}/openrobots/lib/gazebo:${GAZEBO_PLUGIN_PATH}
-    export GAZEBO_MODEL_PATH=/opt/openrobots/share/gazebo/models:${INSTALL_DIR}/openrobots/share/gazebo/models:"$SCRIPT_DIR"/../catkin_ws/src/quad-cam_gazebo/models:${GAZEBO_MODEL_PATH}
+    export GAZEBO_MODEL_PATH=/opt/openrobots/share/gazebo/models:${INSTALL_DIR}/openrobots/share/gazebo/models:"$SCRIPT_DIR"/../gazebo/models:${GAZEBO_MODEL_PATH}
 
     export GENOM_TMPL_PATH=/opt/openrobots/share/genom/site-templates:${INSTALL_DIR}/share/genom/site-templates:${INSTALL_DIR}/openrobots/share/genom/site-templates
     }
