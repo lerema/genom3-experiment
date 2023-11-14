@@ -11,7 +11,7 @@ drone_experiment # Added in install-scripts/setup-experiment.sh
 source "${SCRIPT_DIR}"/../catkin_ws/devel/setup.bash
 mkdir -p "$logdir"
 rm -f core
-h2 init
+h2 init -d 500 -p 2000000000
 #Source workspace
 # shellcheck source=/dev/null
 

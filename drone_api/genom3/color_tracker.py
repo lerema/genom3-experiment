@@ -41,10 +41,7 @@ class ColorTracker:
 
         self.component.set_object_size(**self.params["object_size"])
         self.component.set_focal_length(self.params["focal_length"])
-        if not USE_ROBOT:
-            self.component.show_image_frames(True)
-        if USE_ROBOT:
-            self.component.set_camera_pose(camera_pose=self.params["camera_pose"])
+        self.component.set_camera_pose(camera_pose=self.params["camera_pose"])
         self.component.set_distance_threshold(self.params["distance_tolerance"])
         self.component.set_map_size(
             self.params["map_size"]["width"], self.params["map_size"]["height"]

@@ -216,7 +216,7 @@ class DroneCommon:
             ]
         else:
             COLOR_TRACKER = {
-                "rgb": (140, 1, 1),  # blue
+                "rgb": (1, 1, 140),  # blue
                 "threshold": 40,
                 "distance_tolerance": 1.0,
                 "object_size": {"width": 0.5, "height": 0.5},
@@ -225,9 +225,9 @@ class DroneCommon:
                 "camera_pose": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": -0.0,  # m
+                    "z": -0.14,  # m
                     "roll": 0.0,
-                    "pitch": 3.14,  # 180 deg
+                    "pitch": 0,  # 180 deg
                     "yaw": 0.0,
                 },
             }
