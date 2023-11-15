@@ -216,7 +216,7 @@ class DroneCommon:
             ]
         else:
             COLOR_TRACKER = {
-                "rgb": (1, 1, 140),  # blue
+                "rgb": (1, 1, 255),  # blue (1, 1, 140)
                 "threshold": 40,
                 "distance_tolerance": 1.0,
                 "object_size": {"width": 0.5, "height": 0.5},
@@ -347,6 +347,8 @@ class DroneCommon:
                 "ports_info": [
                     (f"gazebo{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
                     (f"CT{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
+                    (f"CT{drone_id}_mask", "::FoxgloveStudio::or_sensor_frame"),
+                    (f"aruco{drone_id}", "::FoxgloveStudio::or_sensor_frame"),
                     ("drone", "::FoxgloveStudio::or_pose_estimator_state"),
                     ("imu", "::FoxgloveStudio::or_sensor_imu"),
                     ("mag", "::FoxgloveStudio::or_sensor_magnetometer"),
