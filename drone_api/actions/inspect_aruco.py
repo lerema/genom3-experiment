@@ -21,7 +21,8 @@ class DetectArucotag:
         self._id = None
 
         self._data = JSONSerializer()
-        self._aruco_id = 0
+        # First aruco marker id
+        self._aruco_id = 1
 
     @property
     def components(self):

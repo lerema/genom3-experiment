@@ -326,8 +326,8 @@ def main():
         print("Close the graph to start execution")
         # problem_def.show_graph(executable_graph)
         problem_def.execute_graph(executable_graph)
-    else:
-        print("All plates inspected")
+
+    print("All plates inspected")
 
     # draw graph
     plt.figure(figsize=(10, 10))
