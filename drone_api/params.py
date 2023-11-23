@@ -204,8 +204,8 @@ class DroneCommon:
                     "y": 0.0,
                     "z": -0.14,  # m
                     "roll": 0.0,
-                    "pitch": 3.14,  # 180 deg
-                    "yaw": 0.79,  # 45 deg
+                    "pitch": 0.0,  # 180 deg
+                    "yaw": 0.0,  # 45 deg
                 },
             }
             COLOR_TRACKER["ports"] = [

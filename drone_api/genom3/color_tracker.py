@@ -38,7 +38,7 @@ class ColorTracker:
                 "threshold": self.params["threshold"],
             }
         )
-        
+
         if not USE_ROBOT:
             self.component.show_image_frames(1)
 

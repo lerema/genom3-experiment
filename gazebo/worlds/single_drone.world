@@ -960,120 +960,6 @@
       <static>1</static>
       <pose>-2.39745 -1.16741 0 0 -0 0</pose>
     </model>
-    <model name='blue_box_1'>
-      <link name='plate'>
-        <pose>0 0 0 0 -0 0</pose>
-        <collision name='collision'>
-          <geometry>
-            <box>
-              <size>0.5 0.5 0.01</size>
-            </box>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0</mu>
-                <mu2>0</mu2>
-              </ode>
-              <torsional>
-                <ode/>
-              </torsional>
-            </friction>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-          </surface>
-          <max_contacts>10</max_contacts>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <box>
-              <size>0.5 0.5 0.01</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <uri>file://media/materials/scripts/gazebo.material</uri>
-              <name>Gazebo/Blue</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <inertial>
-          <pose>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-          <mass>1</mass>
-        </inertial>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-        <velocity>0 0 0 0 -0 0</velocity>
-        <acceleration>-0.004713 -9.7911 9.79156 0.732639 -0.009423 -4.3e-05</acceleration>
-        <wrench>-0.004713 -9.7911 9.79156 0 -0 0</wrench>
-      </link>
-      <frame name='aruco_6X6_250_10::__model__' attached_to='aruco_6X6_250_10::tag'>
-        <pose relative_to='__model__'>0 0 0.005 0 -0 0</pose>
-      </frame>
-      <link name='aruco_6X6_250_10::tag'>
-        <gravity>0</gravity>
-        <inertial>
-          <mass>0.001</mass>
-          <inertia>
-            <ixx>1e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1e-05</izz>
-          </inertia>
-        </inertial>
-        <visual name='front'>
-          <pose>0 0 0 0 -0 1.57075</pose>
-          <geometry>
-            <box>
-              <size>0.077143 0.077143 0.0005</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://aruco_6X6_250_10/materials/scripts</uri>
-              <uri>model://aruco_6X6_250_10/materials/textures</uri>
-              <name>aruco_6X6_250_10/Marker</name>
-            </script>
-          </material>
-        </visual>
-        <visual name='back'>
-          <pose>0 0 -0.001 0 -0 1.57075</pose>
-          <geometry>
-            <box>
-              <size>0.077143 0.077143 0.001</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0 0 0 1</ambient>
-            <diffuse>0 0 0 1</diffuse>
-          </material>
-        </visual>
-        <pose relative_to='aruco_6X6_250_10::__model__'>0 0 0 0 -0 0</pose>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <joint name='aruco_6X6_250_10_joint' type='fixed'>
-        <parent>plate</parent>
-        <child>aruco_6X6_250_10::tag</child>
-        <pose>0 0 0 0 -0 0</pose>
-      </joint>
-      <static>1</static>
-      <pose>-7.88708 1.67484 0 0 -0 0</pose>
-    </model>
     <model name='blue_box_2'>
       <link name='plate'>
         <pose>0 0 0 0 -0 0</pose>
@@ -1416,125 +1302,11 @@
       <static>1</static>
       <pose>2.62859 1.30132 0 0 -0 0</pose>
     </model>
-    <model name='blue_box_5'>
-      <link name='plate'>
-        <pose>0 0 0 0 -0 0</pose>
-        <collision name='collision'>
-          <geometry>
-            <box>
-              <size>0.5 0.5 0.01</size>
-            </box>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0</mu>
-                <mu2>0</mu2>
-              </ode>
-              <torsional>
-                <ode/>
-              </torsional>
-            </friction>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-          </surface>
-          <max_contacts>10</max_contacts>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <box>
-              <size>0.5 0.5 0.01</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <uri>file://media/materials/scripts/gazebo.material</uri>
-              <name>Gazebo/Blue</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <inertial>
-          <pose>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-          <mass>1</mass>
-        </inertial>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-        <velocity>0 0 0 0 -0 0</velocity>
-        <acceleration>-0.004713 -9.7911 9.79156 0.732639 -0.009423 -4.3e-05</acceleration>
-        <wrench>-0.004713 -9.7911 9.79156 0 -0 0</wrench>
-      </link>
-      <frame name='aruco_6X6_250_10::__model__' attached_to='aruco_6X6_250_10::tag'>
-        <pose relative_to='__model__'>0 0 0.005 0 -0 0</pose>
-      </frame>
-      <link name='aruco_6X6_250_10::tag'>
-        <gravity>0</gravity>
-        <inertial>
-          <mass>0.001</mass>
-          <inertia>
-            <ixx>1e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1e-05</izz>
-          </inertia>
-        </inertial>
-        <visual name='front'>
-          <pose>0 0 0 0 -0 1.57075</pose>
-          <geometry>
-            <box>
-              <size>0.077143 0.077143 0.0005</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://aruco_6X6_250_10/materials/scripts</uri>
-              <uri>model://aruco_6X6_250_10/materials/textures</uri>
-              <name>aruco_6X6_250_10/Marker</name>
-            </script>
-          </material>
-        </visual>
-        <visual name='back'>
-          <pose>0 0 -0.001 0 -0 1.57075</pose>
-          <geometry>
-            <box>
-              <size>0.077143 0.077143 0.001</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0 0 0 1</ambient>
-            <diffuse>0 0 0 1</diffuse>
-          </material>
-        </visual>
-        <pose relative_to='aruco_6X6_250_10::__model__'>0 0 0 0 -0 0</pose>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <joint name='aruco_6X6_250_10_joint' type='fixed'>
-        <parent>plate</parent>
-        <child>aruco_6X6_250_10::tag</child>
-        <pose>0 0 0 0 -0 0</pose>
-      </joint>
-      <static>1</static>
-      <pose>7.21693 -2.21772 0 0 -0 0</pose>
-    </model>
     <state world_name='mrsim'>
-      <sim_time>141 657000000</sim_time>
-      <real_time>46 100876033</real_time>
-      <wall_time>1692046687 587220870</wall_time>
-      <iterations>46085</iterations>
+      <sim_time>1828 632000000</sim_time>
+      <real_time>246 893864153</real_time>
+      <wall_time>1700747551 569427816</wall_time>
+      <iterations>246347</iterations>
       <model name='blue_box'>
         <pose>2.10311 -2.1268 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -1552,96 +1324,64 @@
         </link>
       </model>
       <model name='blue_box_0'>
-        <pose>-2.39745 -1.16741 0 0 -0 0</pose>
+        <pose>-3.93434 -2.11167 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='aruco_6X6_250_10::tag'>
-          <pose>-2.39745 -1.16741 0.005 0 -0 0</pose>
+          <pose>-3.93434 -2.11167 0.005 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='plate'>
-          <pose>-2.39745 -1.16741 0 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='blue_box_1'>
-        <pose>-7.88708 1.67484 0 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='aruco_6X6_250_10::tag'>
-          <pose>-7.88708 1.67484 0.005 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-        <link name='plate'>
-          <pose>-7.88708 1.67484 0 0 -0 0</pose>
+          <pose>-3.93434 -2.11167 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='blue_box_2'>
-        <pose>-2.92188 2.16068 0 0 -0 0</pose>
+        <pose>-3.99104 2.63096 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='aruco_6X6_250_10::tag'>
-          <pose>-2.92188 2.16068 0.005 0 -0 0</pose>
+          <pose>-3.99104 2.63096 0.005 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='plate'>
-          <pose>-2.92188 2.16068 0 0 -0 0</pose>
+          <pose>-3.99104 2.63096 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='blue_box_3'>
-        <pose>-0.798547 3.72918 0 0 -0 0</pose>
+        <pose>-0.423641 2.54787 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='aruco_6X6_250_10::tag'>
-          <pose>-0.798547 3.72918 0.005 0 -0 0</pose>
+          <pose>-0.423641 2.54787 0.005 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='plate'>
-          <pose>-0.798547 3.72918 0 0 -0 0</pose>
+          <pose>-0.423641 2.54787 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='blue_box_4'>
-        <pose>2.62859 1.30132 0 0 -0 0</pose>
+        <pose>3.07879 2.66625 0.004351 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='aruco_6X6_250_10::tag'>
-          <pose>2.62859 1.30132 0.005 0 -0 0</pose>
+          <pose>3.07879 2.66625 0.009351 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='plate'>
-          <pose>2.62859 1.30132 0 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='blue_box_5'>
-        <pose>7.21693 -2.21772 0 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='aruco_6X6_250_10::tag'>
-          <pose>7.21693 -2.21772 0.005 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-        <link name='plate'>
-          <pose>7.21693 -2.21772 0 0 -0 0</pose>
+          <pose>3.07879 2.66625 0.004351 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -1658,43 +1398,43 @@
         </link>
       </model>
       <model name='quad1'>
-        <pose>-0 -0 0.03 0 -0 0</pose>
+        <pose>-0.039406 0.018317 0.029999 1.6e-05 -9e-06 -0.070714</pose>
         <scale>1 1 1</scale>
         <link name='base'>
-          <pose>-0 -0 0.03 0 -0 0</pose>
-          <velocity>-0 -0 0 0 -0 0</velocity>
-          <acceleration>-0 -0 -0 0 -0 0</acceleration>
-          <wrench>-0 -0 -0 0 -0 0</wrench>
+          <pose>-0.039406 0.018317 0.029999 1.6e-05 -9e-06 -0.070714</pose>
+          <velocity>-9.5e-05 -0.000903 -9e-05 0.030107 -0.003172 1e-06</velocity>
+          <acceleration>0.680838 -1.38985 -0.203346 -0.795227 -0.699898 3.14124</acceleration>
+          <wrench>0.680838 -1.38985 -0.203346 0 -0 0</wrench>
         </link>
         <link name='down_camera_link'>
-          <pose>-0 -0 0.03 3.14159 1.57079 3.14159</pose>
-          <velocity>-0 -0 0 0 -0 0</velocity>
-          <acceleration>-0 -0 0 0 -0 0</acceleration>
-          <wrench>-0 -0 0 0 -0 0</wrench>
+          <pose>-0.039406 0.018317 0.029999 1.39054 1.57078 1.31983</pose>
+          <velocity>-9.5e-05 -0.000903 -9e-05 0.030108 -0.003172 5e-06</velocity>
+          <acceleration>0.680544 -1.38974 -0.203351 1.92398 0.081214 -0.012538</acceleration>
+          <wrench>0.000681 -0.00139 -0.000203 0 -0 0</wrench>
         </link>
         <link name='rotor-1::propeller'>
-          <pose>0.23 -0 0.03 0 -0 0</pose>
-          <velocity>-0 -0 0 0 -0 0</velocity>
-          <acceleration>-0 -0 0 0 -0 0</acceleration>
-          <wrench>-0 -0 0 0 -0 0</wrench>
+          <pose>0.190019 0.002067 0.030001 2e-06 -1.8e-05 0.842968</pose>
+          <velocity>-9.5e-05 -0.000902 0.000148 0.030108 -0.003172 -0</velocity>
+          <acceleration>0.68096 -1.38836 -6.16212 -0.794417 -0.699818 -3.14119</acceleration>
+          <wrench>0.047667 -0.097185 -0.431348 0 -0 0</wrench>
         </link>
         <link name='rotor-2::propeller'>
-          <pose>0 0.23 0.03 0 -0 0</pose>
-          <velocity>0 -0 0 0 -0 0</velocity>
-          <acceleration>-0 -0 0 0 -0 0</acceleration>
-          <wrench>-0 -0 0 0 -0 0</wrench>
+          <pose>-0.023156 0.247743 0.030003 1.8e-05 4e-06 -0.818165</pose>
+          <velocity>-9.6e-05 -0.000903 0.006869 0.030108 -0.003172 -0</velocity>
+          <acceleration>0.679761 -1.38924 10.0571 -0.794419 -0.6998 -3.14119</acceleration>
+          <wrench>0.047583 -0.097247 0.703994 0 -0 0</wrench>
         </link>
         <link name='rotor-3::propeller'>
-          <pose>-0.23 0 0.03 0 -0 0</pose>
-          <velocity>-0 0 0 0 -0 0</velocity>
-          <acceleration>-0 -0 -0 0 -0 0</acceleration>
-          <wrench>-0 -0 -0 0 -0 0</wrench>
+          <pose>-0.268831 0.034568 0.029997 1.1e-05 1.5e-05 -1.53083</pose>
+          <velocity>-9.5e-05 -0.000904 -0.000329 0.030108 -0.003172 -0</velocity>
+          <acceleration>0.680851 -1.39038 5.75541 -0.794422 -0.6998 -3.14119</acceleration>
+          <wrench>0.04766 -0.097327 0.402879 0 -0 0</wrench>
         </link>
         <link name='rotor-4::propeller'>
-          <pose>-0 -0.23 0.03 0 -0 0</pose>
-          <velocity>-0 -0 0 0 -0 0</velocity>
-          <acceleration>-0 -0 -0 0 -0 0</acceleration>
-          <wrench>-0 -0 -0 0 -0 0</wrench>
+          <pose>-0.055657 -0.211108 0.029995 8e-06 -1.6e-05 0.497489</pose>
+          <velocity>-9.4e-05 -0.000903 -0.007049 0.030108 -0.003172 -0</velocity>
+          <acceleration>0.681997 -1.3896 -10.4638 -0.794423 -0.699792 -3.14119</acceleration>
+          <wrench>0.04774 -0.097272 -0.732463 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -1703,7 +1443,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-0.04213 0.388693 26.1007 0 1.5698 -3.135</pose>
+        <pose>-0.192578 0.422889 15.877 0 1.5378 3.12418</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
